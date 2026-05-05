@@ -33,6 +33,12 @@ enum QuestStatus {
   abandoned
 }
 
+/** Retour utilisateur explicite sur une quête générée (apprentissage préférences). */
+enum QuestRating {
+  upvote
+  downvote
+}
+
 enum UserRole {
   user
   admin
@@ -270,6 +276,10 @@ model QuestLog {
   wasFallback       Boolean         @default(false) @map("was_fallback")
   xpAwarded         Int?            @map("xp_awarded")
   xpBreakdown       Json?           @map("xp_breakdown")
+
+  /** Pouce haut / bas — influence la sélection des prochaines quêtes. */
+  rating            QuestRating?    @map("rating")
+  feedbackReason    String?         @map("feedback_reason") @db.Text
 
   // Snapshot of profile state at quest time
   phaseAtAssignment     EscalationPhase @default(calibration) @map("phase_at_assignment")

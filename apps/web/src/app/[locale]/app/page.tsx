@@ -10,6 +10,7 @@ import { Navbar } from '@/components/Navbar';
 import { QuestHomeLoading } from '@/components/QuestHomeLoading';
 import { Icon } from '@/components/Icons';
 import { QuestShareComposer } from '@/components/QuestShareComposer';
+import { QuestFeedbackBar } from '@/components/QuestFeedbackBar';
 import { QuestXpCelebration } from '@/components/QuestXpCelebration';
 import {
   ProfileRefinementModal,
@@ -51,6 +52,7 @@ const QUEST_CARD_RETURN_MS = 210;
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface DailyQuest {
+  id?: string;
   questDate: string;
   archetypeId: number;
   archetypeName: string;
@@ -66,6 +68,8 @@ interface DailyQuest {
   weather: string | null;
   weatherTemp: number | null;
   status: 'pending' | 'accepted' | 'completed' | 'rejected' | 'replaced' | 'abandoned';
+  /** Retour utilisateur explicite — pilote la sélection future. */
+  rating?: 'upvote' | 'downvote' | null;
   questPace?: 'instant' | 'planned';
   /** Après report : date notée pour une quête plus ambitieuse (rappel) */
   deferredSocialUntil?: string | null;
@@ -281,6 +285,9 @@ function AppPageContent() {
   const completeInFlightRef = useRef(false);
   const abandonInFlightRef = useRef(false);
   const reportInFlightRef = useRef(false);
+  const rateQuestInFlightRef = useRef(false);
+  const [optimisticQuestRating, setOptimisticQuestRating] = useState<'upvote' | 'downvote' | null>(null);
+  const [ratingBusy, setRatingBusy] = useState(false);
 
   // ── Ensure profile exists (get-or-create from onboarding localStorage) ───────
 
@@ -777,6 +784,40 @@ function AppPageContent() {
   const isAbandoned = questStatus === 'abandoned';
   const questPace = quest?.questPace ?? 'instant';
   const isPlannedQuest = questPace === 'planned';
+  const displayQuestRating = optimisticQuestRating ?? quest?.rating ?? null;
+
+  useEffect(() => {
+    setOptimisticQuestRating(null);
+  }, [quest?.id]);
+
+  const submitQuestRating = useCallback(
+    async (next: 'upvote' | 'downvote') => {
+      if (!quest?.id || quest.status === 'abandoned') return;
+      if (rateQuestInFlightRef.current) return;
+      setOptimisticQuestRating(next);
+      setRatingBusy(true);
+      rateQuestInFlightRef.current = true;
+      try {
+        const res = await fetch('/api/quest/rate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ questLogId: quest.id, rating: next }),
+          cache: 'no-store',
+        });
+        if (!res.ok) {
+          setOptimisticQuestRating(null);
+          return;
+        }
+        setQuest((prev) => (prev ? { ...prev, rating: next } : null));
+      } catch {
+        setOptimisticQuestRating(null);
+      } finally {
+        rateQuestInFlightRef.current = false;
+        setRatingBusy(false);
+      }
+    },
+    [quest, t],
+  );
 
   const ownedPacksChips = useMemo(() => {
     const ids = quest?.ownedQuestPackIds;
@@ -1309,6 +1350,7 @@ function AppPageContent() {
                       {t('questCardMissionEyebrow')}
                     </p>
                     <p className="text-[15px] leading-relaxed text-[var(--text)]">{quest.mission}</p>
+
                     <p className="mt-3 text-xs font-semibold tabular-nums text-[var(--muted)]">{quest.duration}</p>
 
                     {isPending && isPlannedQuest ? (
@@ -1336,6 +1378,22 @@ function AppPageContent() {
                         </p>
                         <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{quest.safetyNote}</p>
                       </section>
+                    ) : null}
+
+                    {quest.id && !isAbandoned ? (
+                      <div className="mt-6 flex justify-center pb-0.5">
+                        <QuestFeedbackBar
+                          value={displayQuestRating}
+                          busy={ratingBusy}
+                          onVote={(v) => void submitQuestRating(v)}
+                          mountKey={`${quest.questDate}-${quest.id ?? ''}`}
+                          labels={{
+                            upAria: t('feedbackUpAria'),
+                            downAria: t('feedbackDownAria'),
+                            notedShort: t('feedbackNotedShort'),
+                          }}
+                        />
+                      </div>
                     ) : null}
                   </div>
                 </div>

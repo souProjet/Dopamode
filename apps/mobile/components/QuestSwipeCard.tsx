@@ -27,6 +27,7 @@ import { elevationAndroidSafe } from '../lib/elevationAndroid';
 import { hapticSuccess, hapticWarning } from '../lib/haptics';
 import { useQuestCardDeviceTilt } from '../lib/useQuestCardDeviceTilt';
 import { QuestDestinationMapWebView } from './QuestDestinationMapWebView';
+import { QuestRatingJuicyDock } from './QuestRatingJuicyDock';
 
 const SWIPE_THRESHOLD = 120;
 /** Au-delà de ce déplacement, on fige soit le swipe horizontal, soit le vertical (pas les deux). */
@@ -38,6 +39,7 @@ const SNAP_EASING = Easing.out(Easing.cubic);
 const snapToCenter = { duration: SNAP_MS, easing: SNAP_EASING } as const;
 
 export interface SwipeCardQuest {
+  id?: string;
   emoji: string;
   title: string;
   /** Accroche courte fournie par le serveur — ne pas résumer côté client. */
@@ -69,6 +71,10 @@ interface Props {
   /** Quête planifiée : reporter (relance) — uniquement si défini. */
   onReport?: () => void;
   onAbandon: () => void;
+  /** Retour visuel pouce haut/bas — même logique que le web. */
+  displayQuestRating?: 'upvote' | 'downvote' | null;
+  onQuestRate?: (r: 'upvote' | 'downvote') => void;
+  ratingBusy?: boolean;
   strings: {
     swipeAccept: string;
     swipeChange: string;
@@ -98,6 +104,9 @@ interface Props {
     mapNoGeocodeBody: string;
     mapRendezvous: string;
     mapUserHere: string;
+    feedbackUpAria: string;
+    feedbackDownAria: string;
+    feedbackNotedMicro: string;
   };
   /** Position GPS récente (même logique que le site : itinéraire OSRM + marqueur). */
   userPosition?: { lat: number; lon: number } | null;
@@ -120,6 +129,9 @@ export function QuestSwipeCard({
   onShare,
   onReport,
   onAbandon,
+  displayQuestRating = null,
+  onQuestRate,
+  ratingBusy = false,
   strings: s,
   userPosition = null,
   rerolling = false,
@@ -371,6 +383,7 @@ export function QuestSwipeCard({
         <View style={[styles.missionBlock, { borderTopColor: `${p.muted}22` }]}>
           <Text style={[styles.missionEyebrow, { color: p.muted }]}>{s.missionEyebrow}</Text>
           <Text style={[styles.missionFull, { color: p.text }]}>{quest.mission}</Text>
+
           <Text style={[styles.duration, { color: p.muted }]}>{quest.duration}</Text>
         </View>
 
@@ -411,6 +424,18 @@ export function QuestSwipeCard({
             <Text style={[styles.sectionLabel, { color: p.orange }]}>{s.safetyLabel}</Text>
             <Text style={[styles.safetyText, { color: p.text }]}>{safetyText}</Text>
           </View>
+        ) : null}
+
+        {quest.id && onQuestRate && !isAbandoned ? (
+          <QuestRatingJuicyDock
+            palette={p}
+            displayQuestRating={displayQuestRating}
+            onQuestRate={onQuestRate}
+            ratingBusy={ratingBusy}
+            feedbackUpAria={s.feedbackUpAria}
+            feedbackDownAria={s.feedbackDownAria}
+            feedbackNotedMicro={s.feedbackNotedMicro}
+          />
         ) : null}
       </ScrollView>
     </View>

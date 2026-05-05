@@ -97,6 +97,9 @@ export interface UserProfile {
 }
 
 // Quest log entry
+/** Feedback explicite sur une quête (synchronisé avec Prisma `QuestRating`). */
+export type QuestRatingValue = 'upvote' | 'downvote';
+
 export interface QuestLog {
   id: string;
   userId: string;
@@ -111,6 +114,7 @@ export interface QuestLog {
   wasRerolled: boolean;
   wasFallback: boolean;
   safetyConsentGiven: boolean;
+  rating?: QuestRatingValue | null;
 }
 
 // Weather check result

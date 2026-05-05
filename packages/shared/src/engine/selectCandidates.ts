@@ -2,7 +2,7 @@ import type { EscalationPhase, PersonalityVector, PsychologicalCategory, QuestMo
 import { archetypeNeedsTravelOrPlanning } from '../constants/quests';
 import { computeGentleness } from './congruence';
 import { computeAffinityScore } from './affinity';
-import { computeArchetypeFeedbackPenalty, computeFreshnessScore, listSaturatedCategories } from './freshness';
+import { computeArchetypeFeedbackPenalty, affinityMultiplierFromCategoryRatings, categoriesBlacklistedAfterLastDownvote, computeFreshnessScore, listSaturatedCategories } from './freshness';
 import { computePhaseFit, computeTargetComfortLevel } from './phaseFit';
 import { promptSeedIndex, pickDeterministicFromPool } from './promptSeed';
 import {
@@ -71,6 +71,11 @@ export function buildQuestParameters(
 
   const taxonomyById = new Map<number, QuestModel>(taxonomy.map((q) => [q.id, q]));
 
+  const categoryDownvoteBlacklist = categoriesBlacklistedAfterLastDownvote(
+    profile.recentLogs,
+    taxonomyById,
+  );
+
   const recentlyServedIds = collectRecentlyServedIds(
     profile.recentLogs,
     recentDays,
@@ -99,11 +104,22 @@ export function buildQuestParameters(
       excludedReasons.set(archetype.id, 'planned-but-instant-only');
       continue;
     }
+    if (categoryDownvoteBlacklist.includes(archetype.category)) {
+      excludedReasons.set(archetype.id, 'downvote-category-blacklist');
+      continue;
+    }
 
-    const affinity = computeAffinityScore(scoringVector, archetype, {
+    const affinityRaw = computeAffinityScore(scoringVector, archetype, {
       exhibited: profile.exhibitedPersonality,
       exhibitedWeight: phaseExhibitedWeight(profile),
     });
+    const ratingMul = affinityMultiplierFromCategoryRatings(
+      archetype.category,
+      profile.recentLogs,
+      taxonomyById,
+    );
+    const affinity = Math.max(0, Math.min(1, affinityRaw * ratingMul));
+
     const phaseFit = computePhaseFit(archetype, profile.phase, scoringVector);
     const freshness = computeFreshnessScore(archetype, profile.recentLogs, taxonomyById);
     const refinementBias = profile.refinementBias[archetype.category] ?? 0;

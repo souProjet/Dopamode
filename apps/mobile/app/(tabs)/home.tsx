@@ -64,6 +64,7 @@ interface ProgressionPayload {
 }
 
 interface DailyQuest {
+  id?: string;
   questDate: string;
   archetypeId: number;
   archetypeName: string;
@@ -79,6 +80,7 @@ interface DailyQuest {
   weather: string | null;
   weatherTemp: number | null;
   status: 'pending' | 'accepted' | 'completed' | 'rejected' | 'replaced' | 'abandoned';
+  rating?: 'upvote' | 'downvote' | null;
   questPace?: 'instant' | 'planned';
   deferredSocialUntil?: string | null;
   day: number;
@@ -244,6 +246,9 @@ export default function DashboardScreen() {
   const [userMapPosition, setUserMapPosition] = useState<{ lat: number; lon: number } | null>(null);
   const abandonInFlightRef = useRef(false);
   const reportInFlightRef = useRef(false);
+  const rateQuestInFlightRef = useRef(false);
+  const [optimisticQuestRating, setOptimisticQuestRating] = useState<'upvote' | 'downvote' | null>(null);
+  const [ratingBusy, setRatingBusy] = useState(false);
 
   const ensureProfile = useCallback(async (token: string | null): Promise<{ ok: boolean; error?: string }> => {
     try {
@@ -752,6 +757,40 @@ export default function DashboardScreen() {
       .filter((x): x is NonNullable<typeof x> => x != null);
   }, [quest?.ownedQuestPackIds, appLocale]);
 
+  useEffect(() => {
+    setOptimisticQuestRating(null);
+  }, [quest?.id]);
+
+  const displayQuestRating = optimisticQuestRating ?? quest?.rating ?? null;
+
+  const submitQuestRating = useCallback(
+    async (next: 'upvote' | 'downvote') => {
+      if (!quest?.id || quest.status === 'abandoned') return;
+      if (rateQuestInFlightRef.current) return;
+      setOptimisticQuestRating(next);
+      setRatingBusy(true);
+      rateQuestInFlightRef.current = true;
+      try {
+        const token = await getToken();
+        const res = await apiFetch(`${API_BASE_URL}/api/quest/rate`, token, {
+          method: 'POST',
+          body: JSON.stringify({ questLogId: quest.id, rating: next }),
+        });
+        if (!res.ok) {
+          setOptimisticQuestRating(null);
+          return;
+        }
+        setQuest((prev) => (prev ? { ...prev, rating: next } : null));
+      } catch {
+        setOptimisticQuestRating(null);
+      } finally {
+        rateQuestInFlightRef.current = false;
+        setRatingBusy(false);
+      }
+    },
+    [quest, getToken, homeUi.feedbackThanks],
+  );
+
   const swipeStrings = useMemo(() => ({
     swipeAccept: homeUi.swipeAccept,
     swipeChange: homeUi.swipeChange,
@@ -780,6 +819,9 @@ export default function DashboardScreen() {
     mapNoGeocodeBody: homeUi.mapNoGeocodeBody,
     mapRendezvous: homeUi.mapRendezvous,
     mapUserHere: homeUi.mapUserHere,
+    feedbackUpAria: homeUi.feedbackUpAria,
+    feedbackDownAria: homeUi.feedbackDownAria,
+    feedbackNotedMicro: homeUi.feedbackNotedMicro,
   }), [homeUi]);
 
   if (loading && !quest) {
@@ -937,6 +979,9 @@ export default function DashboardScreen() {
                   : undefined
               }
               onAbandon={() => setShowAbandonModal(true)}
+              displayQuestRating={displayQuestRating}
+              onQuestRate={(r) => void submitQuestRating(r)}
+              ratingBusy={ratingBusy}
               strings={swipeStrings}
               userPosition={userMapPosition}
               rerolling={rerolling}

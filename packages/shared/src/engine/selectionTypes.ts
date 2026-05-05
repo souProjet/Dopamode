@@ -5,6 +5,7 @@ import type {
   PsychologicalCategory,
   QuestLog,
   QuestModel,
+  QuestRatingValue,
   SociabilityLevel,
 } from '../types';
 import type { HeavyQuestPreference } from '../profilePreferences';
@@ -59,6 +60,8 @@ export interface ScoringQuestLog {
   status: QuestLog['status'];
   /** YYYY-MM-DD — utilisé pour la fenêtre de fraîcheur. */
   questDate: string | null;
+  /** Feedback explicite (optionnel). */
+  rating?: QuestRatingValue | null;
 }
 
 /** Score détaillé d'un candidat — utile pour debug, logs, et explainability. */

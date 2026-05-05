@@ -1,4 +1,4 @@
-import type { PersonalityVector, QuestLog, QuestModel } from '../types';
+import type { PersonalityVector, QuestLog, QuestModel, QuestRatingValue } from '../types';
 import { ACTIVITY_PERSONALITY_CORRELATION, PERSONALITY_KEYS } from '../constants/personality';
 import {
   EXHIBITED_BASELINE,
@@ -20,6 +20,18 @@ export function neutralExhibitedVector(): PersonalityVector {
     thrillSeeking: EXHIBITED_BASELINE,
     boredomSusceptibility: EXHIBITED_BASELINE,
   };
+}
+
+/**
+ * Combine statut de quête et vote explicite : un downvote tire fortement le vecteur
+ * observé à l'opposé de la signature catégorielle (malus catégorie).
+ */
+function effectiveExhibitedStatusWeight(log: QuestLog): number {
+  const base = STATUS_WEIGHT[log.status as keyof typeof STATUS_WEIGHT] ?? 0;
+  const r = log.rating as QuestRatingValue | null | undefined;
+  if (r === 'downvote') return base - 1.35;
+  if (r === 'upvote') return base + 0.42;
+  return base;
 }
 
 function zeroVector(): PersonalityVector {
@@ -58,7 +70,7 @@ export function computeExhibitedPersonality(
     const quest = questById.get(log.questId);
     if (!quest) continue;
 
-    const statusWeight = STATUS_WEIGHT[log.status] ?? 0;
+    const statusWeight = effectiveExhibitedStatusWeight(log);
     if (statusWeight === 0) continue;
 
     const recency = RECENCY_DECAY ** i;

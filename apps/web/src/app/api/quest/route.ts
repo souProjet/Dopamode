@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
       archetypeId: l.questId,
       status: l.status,
       questDate: l.questDate ?? null,
+      rating: l.rating ?? null,
     }));
     const sociabilityLevel: SociabilityLevel | null = isValidSociabilityLevel(sociability)
       ? sociability

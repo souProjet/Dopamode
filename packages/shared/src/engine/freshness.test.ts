@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { QuestModel } from '../types';
 import type { ScoringQuestLog } from './selectionTypes';
 import {
+  categoriesBlacklistedAfterLastDownvote,
   computeArchetypeFeedbackPenalty,
   computeFreshnessScore,
   listSaturatedCategories,
@@ -67,5 +68,20 @@ describe('freshness', () => {
   it('listSaturatedCategories ignore id inconnu', () => {
     const logs: ScoringQuestLog[] = [{ archetypeId: 999, status: 'completed', questDate: null }];
     expect(listSaturatedCategories(logs, tax)).toEqual([]);
+  });
+
+  it('categoriesBlacklistedAfterLastDownvote exclut la catégorie de la dernière quête', () => {
+    const logs: ScoringQuestLog[] = [
+      { archetypeId: 1, status: 'pending', questDate: '2026-05-04', rating: 'downvote' },
+      { archetypeId: 2, status: 'completed', questDate: '2026-05-03' },
+    ];
+    expect(categoriesBlacklistedAfterLastDownvote(logs, tax)).toEqual(['spatial_adventure']);
+  });
+
+  it('categoriesBlacklistedAfterLastDownvote vide sans pouce bas récent', () => {
+    const logs: ScoringQuestLog[] = [
+      { archetypeId: 1, status: 'completed', questDate: '2026-05-04', rating: 'upvote' },
+    ];
+    expect(categoriesBlacklistedAfterLastDownvote(logs, tax)).toEqual([]);
   });
 });

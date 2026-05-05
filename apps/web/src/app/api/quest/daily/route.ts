@@ -38,6 +38,7 @@ import type {
   QuestLog,
   QuestModel,
   QuestParameters,
+  QuestRatingValue,
   RiskAxis,
   ScoringQuestLog,
   SociabilityLevel,
@@ -58,6 +59,11 @@ import {
 import { findArchetypeById } from '@/lib/quest-taxonomy/map-prisma';
 
 export const dynamic = 'force-dynamic';
+
+function mapPrismaQuestRating(r: string | null | undefined): QuestRatingValue | null {
+  if (r === 'upvote' || r === 'downvote') return r;
+  return null;
+}
 
 /** Fenêtre d'historique injectée au moteur (sélection + résumé pour le LLM). */
 const HISTORY_WINDOW_LOGS = 28;
@@ -294,6 +300,7 @@ export async function GET(request: NextRequest) {
       questDate: true,
       generatedTitle: true,
       generatedMission: true,
+      rating: true,
     },
   });
 
@@ -311,6 +318,7 @@ export async function GET(request: NextRequest) {
       wasRerolled: false,
       wasFallback: false,
       safetyConsentGiven: false,
+      rating: mapPrismaQuestRating(r.rating),
     })),
     taxonomy,
   );
@@ -328,6 +336,7 @@ export async function GET(request: NextRequest) {
     wasRerolled: false,
     wasFallback: false,
     safetyConsentGiven: false,
+    rating: mapPrismaQuestRating(r.rating),
   }));
   const effectivePhase = getEffectivePhase(profile.currentDay, phaseLogs, today);
 
@@ -361,6 +370,7 @@ export async function GET(request: NextRequest) {
     archetypeId: r.archetypeId,
     status: r.status as QuestLog['status'],
     questDate: r.questDate,
+    rating: mapPrismaQuestRating(r.rating),
   }));
 
   const snapshot: ProfileSnapshot = {
@@ -996,6 +1006,7 @@ export async function POST(request: NextRequest) {
 
 async function toQuestResponse(
   log: {
+    id: string;
     questDate: string;
     archetypeId: number;
     generatedEmoji: string;
@@ -1015,6 +1026,7 @@ async function toQuestResponse(
     wasRerolled?: boolean;
     wasFallback?: boolean;
     xpAwarded?: number | null;
+    rating?: string | null;
   },
   profile?: { deferredSocialUntil?: string | null } | null,
   cachedTaxonomy?: QuestModel[],
@@ -1036,6 +1048,7 @@ async function toQuestResponse(
         }
       : null;
   return {
+    id: log.id,
     questDate: log.questDate,
     archetypeId: log.archetypeId,
     archetypeName: archetype?.title ?? '',
@@ -1052,6 +1065,7 @@ async function toQuestResponse(
     weather: log.weatherDescription,
     weatherTemp: log.weatherTemp,
     status: log.status,
+    rating: mapPrismaQuestRating(log.rating),
     wasRerolled: log.wasRerolled ?? false,
     wasFallback: log.wasFallback ?? false,
     xpAwarded: log.xpAwarded ?? null,

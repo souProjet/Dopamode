@@ -1,6 +1,9 @@
 import type { PsychologicalCategory, QuestModel } from '../types';
 import type { ScoringQuestLog } from './selectionTypes';
 
+/** Saturation catégorielle renforcée si l'utilisateur a mis un pouce bas explicite. */
+const DOWNVOTE_FRESHNESS_EXTRA = 1.15;
+
 /**
  * Score de fraîcheur dans [0, 1].
  *  - 1 : la catégorie n'a pas été servie récemment
@@ -48,8 +51,9 @@ export function computeFreshnessScore(
       continue;
     }
     const rejectionWeight = STATUS_REJECTION_WEIGHT[log.status] ?? 0.5;
+    const downvoteBump = log.rating === 'downvote' ? DOWNVOTE_FRESHNESS_EXTRA : 0;
     const recency = RECENCY_DECAY ** i;
-    penalty += rejectionWeight * recency;
+    penalty += (rejectionWeight + downvoteBump) * recency;
     i++;
   }
   // Normalisation : 1 occurrence rejected récente → ~0.0 ; 1 completed récente → 1.0
@@ -81,7 +85,9 @@ export function computeArchetypeFeedbackPenalty(
   for (const log of recentLogs) {
     if (log.archetypeId === archetypeId) {
       const recency = RECENCY_DECAY ** i;
-      if (log.status === 'rejected' || log.status === 'abandoned') {
+      if (log.rating === 'downvote') {
+        penalty -= 0.42 * recency;
+      } else if (log.status === 'rejected' || log.status === 'abandoned') {
         penalty -= 0.4 * recency;
       } else if (log.status === 'completed' || log.status === 'accepted') {
         penalty -= 0.12 * recency;
@@ -103,7 +109,7 @@ export function listSaturatedCategories(
   for (const log of recentLogs) {
     const arch = taxonomyById.get(log.archetypeId);
     if (!arch) continue;
-    const w = STATUS_REJECTION_WEIGHT[log.status] ?? 0.5;
+    const w = (STATUS_REJECTION_WEIGHT[log.status] ?? 0.5) + (log.rating === 'downvote' ? DOWNVOTE_FRESHNESS_EXTRA : 0);
     const recency = RECENCY_DECAY ** i;
     counts.set(arch.category, (counts.get(arch.category) ?? 0) + w * recency);
     i++;
@@ -113,4 +119,45 @@ export function listSaturatedCategories(
     if (score >= threshold) out.push(cat);
   }
   return out;
+}
+
+/**
+ * Si la quête **la plus récente** a reçu un pouce bas, on exclut entièrement sa
+ * catégorie psychologique pour la génération du lendemain (liste utilisée comme liste noire).
+ */
+export function categoriesBlacklistedAfterLastDownvote(
+  recentLogs: ScoringQuestLog[],
+  taxonomyById: Map<number, QuestModel>,
+): PsychologicalCategory[] {
+  const first = recentLogs[0];
+  if (!first || first.rating !== 'downvote') return [];
+  const arch = taxonomyById.get(first.archetypeId);
+  return arch ? [arch.category] : [];
+}
+
+/**
+ * Multiplicateur d'affinité ∈ ]0, ~1.15] selon les votes récents sur une même famille.
+ */
+export function affinityMultiplierFromCategoryRatings(
+  category: PsychologicalCategory,
+  recentLogs: ScoringQuestLog[],
+  taxonomyById: Map<number, QuestModel>,
+): number {
+  let mul = 1;
+  let i = 0;
+  for (const log of recentLogs) {
+    const arch = taxonomyById.get(log.archetypeId);
+    if (!arch || arch.category !== category) {
+      i++;
+      continue;
+    }
+    const recency = RECENCY_DECAY ** i;
+    if (log.rating === 'downvote') {
+      mul *= Math.max(0.06, 1 - 0.62 * recency);
+    } else if (log.rating === 'upvote') {
+      mul *= Math.min(1.12, 1 + 0.09 * recency);
+    }
+    i++;
+  }
+  return Math.max(0.05, Math.min(1.15, mul));
 }
