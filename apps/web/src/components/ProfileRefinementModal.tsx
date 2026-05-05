@@ -101,14 +101,14 @@ export function ProfileRefinementModal({
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-3 sm:p-4"
+      className="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-3 sm:p-4 motion-safe:animate-modal-fade-slow motion-reduce:animate-none"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
     >
       <div className="quest-modal-backdrop absolute inset-0 cursor-default" aria-hidden />
       <div
-        className="quest-modal-panel relative z-10 flex max-h-[min(88vh,640px)] w-full max-w-lg flex-col overflow-hidden motion-safe:animate-modal-fade-slow motion-reduce:animate-none"
+        className="quest-modal-panel relative z-10 flex max-h-[min(88vh,640px)] w-full max-w-lg flex-col overflow-hidden"
       >
         <div className="quest-modal-panel-accent h-1.5" />
 

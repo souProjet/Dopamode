@@ -152,13 +152,13 @@ function SafetySheet({
   const ok = checked.size === rules.length;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:p-4 md:items-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:p-4 md:items-center motion-safe:animate-modal-fade motion-reduce:animate-none">
       <div className="quest-modal-backdrop absolute inset-0 cursor-pointer" onClick={onClose} />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="safety-sheet-title"
-        className="quest-modal-sheet relative z-10 flex max-h-[min(92dvh,100%)] w-full max-w-md flex-col overflow-hidden motion-safe:animate-modal-fade motion-reduce:animate-none"
+        className="quest-modal-sheet relative z-10 flex max-h-[min(92dvh,100%)] w-full max-w-md flex-col overflow-hidden"
       >
         <div className="quest-modal-panel-accent" />
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 pb-4 pt-3 sm:p-7 sm:pt-6">
@@ -1545,9 +1545,9 @@ function AppPageContent() {
       )}
 
       {showRerollConfirm && quest && (
-        <div className="fixed inset-0 z-[95] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="reroll-confirm-title">
+        <div className="fixed inset-0 z-[95] flex items-center justify-center p-4 motion-safe:animate-modal-fade motion-reduce:animate-none" role="dialog" aria-modal="true" aria-labelledby="reroll-confirm-title">
           <div className="quest-modal-backdrop absolute inset-0 cursor-pointer" onClick={() => setShowRerollConfirm(false)} aria-hidden />
-          <div className="quest-modal-panel relative z-10 w-full motion-safe:animate-modal-fade motion-reduce:animate-none">
+          <div className="quest-modal-panel relative z-10 w-full">
             <div className="quest-modal-panel-accent" />
             <div className="quest-modal-panel-body">
               <h3 id="reroll-confirm-title" className="font-display text-lg font-black text-[var(--text)]">{t('rerollConfirmTitle')}</h3>
@@ -1562,9 +1562,9 @@ function AppPageContent() {
       )}
 
       {showReportModal && quest && isPlannedQuest && (
-        <div className="fixed inset-0 z-[95] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="report-title">
+        <div className="fixed inset-0 z-[95] flex items-center justify-center p-4 motion-safe:animate-modal-fade motion-reduce:animate-none" role="dialog" aria-modal="true" aria-labelledby="report-title">
           <div className="quest-modal-backdrop absolute inset-0 cursor-pointer" onClick={() => setShowReportModal(false)} aria-hidden />
-          <div className="quest-modal-panel relative z-10 w-full motion-safe:animate-modal-fade motion-reduce:animate-none">
+          <div className="quest-modal-panel relative z-10 w-full">
             <div className="quest-modal-panel-accent" />
             <div className="quest-modal-panel-body">
               <h3 id="report-title" className="font-display text-lg font-black text-[var(--text)]">{t('reportModalTitle')}</h3>
@@ -1581,9 +1581,9 @@ function AppPageContent() {
       )}
 
       {showAbandonConfirm && quest && (
-        <div className="fixed inset-0 z-[95] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="abandon-title">
+        <div className="fixed inset-0 z-[95] flex items-center justify-center p-4 motion-safe:animate-modal-fade motion-reduce:animate-none" role="dialog" aria-modal="true" aria-labelledby="abandon-title">
           <div className="quest-modal-backdrop absolute inset-0 cursor-pointer" onClick={() => setShowAbandonConfirm(false)} aria-hidden />
-          <div className="quest-modal-panel relative z-10 w-full motion-safe:animate-modal-fade motion-reduce:animate-none">
+          <div className="quest-modal-panel relative z-10 w-full">
             <div className="quest-modal-panel-accent" />
             <div className="quest-modal-panel-body">
               <h3 id="abandon-title" className="font-display text-lg font-black text-[var(--text)]">{t('abandonModalTitle')}</h3>

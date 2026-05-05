@@ -168,12 +168,17 @@ function SlotModal({
   const safety = slot.safetyNote ? pickLocale(loc, slot.safetyNote) : null;
   return (
     <div
-      className="quest-modal-backdrop fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
-      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4 motion-safe:animate-modal-fade motion-reduce:animate-none"
       role="presentation"
     >
+      <button
+        type="button"
+        className="quest-modal-backdrop absolute inset-0 cursor-pointer border-0"
+        onClick={onClose}
+        aria-label={loc === 'en' ? 'Close' : 'Fermer'}
+      />
       <div
-        className="quest-modal-sheet relative z-10 flex max-h-[min(90vh,760px)] w-full max-w-xl flex-col overflow-hidden sm:max-h-[min(88vh,720px)] motion-safe:animate-modal-fade motion-reduce:animate-none"
+        className="quest-modal-sheet relative z-10 flex max-h-[min(90vh,760px)] w-full max-w-xl flex-col overflow-hidden sm:max-h-[min(88vh,720px)]"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal

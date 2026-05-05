@@ -907,7 +907,7 @@ function ShopPageInner() {
             {/* ── Modale recharge ─────────────────────────────────────────── */}
             {rechargeOpen ? (
               <div
-                className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center p-4 sm:p-6"
+                className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center p-4 sm:p-6 motion-safe:animate-modal-fade motion-reduce:animate-none"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="recharge-modal-title"
@@ -918,7 +918,7 @@ function ShopPageInner() {
                   aria-label={t('close')}
                   onClick={() => setRechargeOpen(false)}
                 />
-                <div className="quest-modal-sheet relative z-10 flex max-h-[min(92dvh,100%)] w-full max-w-3xl flex-col overflow-hidden motion-safe:animate-shop-modal-in motion-reduce:animate-none">
+                <div className="quest-modal-sheet relative z-10 flex max-h-[min(92dvh,100%)] w-full max-w-3xl flex-col overflow-hidden">
                   <div className="quest-modal-panel-accent shrink-0" aria-hidden />
                   <RechargeModalContent
                     coinPacksSorted={coinPacksSorted}
@@ -936,7 +936,7 @@ function ShopPageInner() {
             {/* ── Modale info article ──────────────────────────────────────── */}
             {infoModal ? (
               <div
-                className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6"
+                className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 motion-safe:animate-modal-fade motion-reduce:animate-none"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="info-modal-title"
@@ -947,7 +947,7 @@ function ShopPageInner() {
                   aria-label={t('close')}
                   onClick={() => setInfoModal(null)}
                 />
-                <div className="quest-modal-panel relative z-10 w-full max-w-md overflow-hidden shadow-2xl motion-safe:animate-modal-fade motion-reduce:animate-none">
+                <div className="quest-modal-panel relative z-10 w-full max-w-md overflow-hidden shadow-2xl">
                   <div className="quest-modal-panel-accent shrink-0" aria-hidden />
                   <div className="relative p-5 pt-4">
                     <button

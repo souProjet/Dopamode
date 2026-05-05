@@ -810,16 +810,25 @@ function createStyles(p: ThemePalette) {
     rewardCardBody: { color: p.text, fontWeight: '800', fontSize: 13, lineHeight: 18 },
 
     sheetBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: p.overlay },
-    sheetAccentBar: { height: 4, width: '100%' },
+    /** Rayons alignés sur sheetCard — sinon la bande reste rectangulaire sous les coins arrondis. */
+    sheetAccentBar: {
+      height: 4,
+      width: '100%',
+      borderTopLeftRadius: 28,
+      borderTopRightRadius: 28,
+    },
     sheetCard: {
       backgroundColor: p.card,
       borderTopLeftRadius: 28,
       borderTopRightRadius: 28,
       maxHeight: '90%',
       paddingBottom: 12,
-      borderWidth: 2,
-      borderColor: colorWithAlpha(p.cyan, 0.28),
+      overflow: 'hidden',
+      borderLeftWidth: 2,
+      borderRightWidth: 2,
+      borderTopWidth: 0,
       borderBottomWidth: 0,
+      borderColor: colorWithAlpha(p.cyan, 0.28),
     },
     sheetHeader: {
       flexDirection: 'row',

@@ -53,7 +53,7 @@ export function InAppAnnouncementGate() {
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-end md:items-center justify-center p-3 sm:p-4"
+      className="fixed inset-0 z-[70] flex items-end md:items-center justify-center p-3 sm:p-4 motion-safe:animate-modal-fade-slow motion-reduce:animate-none"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
@@ -64,7 +64,7 @@ export function InAppAnnouncementGate() {
         aria-label="Fermer"
         onClick={dismiss}
       />
-      <div className="quest-modal-panel relative z-10 flex max-h-[min(88vh,560px)] w-full max-w-lg flex-col overflow-hidden motion-safe:animate-modal-fade-slow motion-reduce:animate-none">
+      <div className="quest-modal-panel relative z-10 flex max-h-[min(88vh,560px)] w-full max-w-lg flex-col overflow-hidden">
         <div className="quest-modal-panel-accent h-1.5" />
         <div className="flex flex-col flex-1 min-h-0 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
           <div className="flex items-start justify-between gap-3 mb-3">
