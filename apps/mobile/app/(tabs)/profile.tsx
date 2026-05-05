@@ -261,12 +261,13 @@ export default function ProfileScreen() {
         easing: Easing.out(Easing.cubic),
         useNativeDriver: false,
       }).start();
+      void refreshAppTheme();
     } catch {
       setError(s.errLoad);
     } finally {
       setLoading(false);
     }
-  }, [barAnim, s, appLocale]);
+  }, [barAnim, s, appLocale, refreshAppTheme]);
 
   const loadToday = useCallback(async () => {
     try {

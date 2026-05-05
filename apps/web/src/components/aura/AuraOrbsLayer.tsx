@@ -22,7 +22,7 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { computeWebAuraColors } from '@/lib/auraColors';
-import type { PersonalityVector } from '@questia/shared';
+import { normalizePersonalityForAura, type PersonalityVector } from '@questia/shared';
 
 type ProfileResponse = {
   exhibitedPersonality?: PersonalityVector | null;
@@ -54,7 +54,10 @@ export function AuraOrbsLayer() {
       const res = await fetch('/api/profile', { method: 'GET' });
       if (!res.ok) return;
       const j = (await res.json()) as ProfileResponse;
-      setPersonality(j.exhibitedPersonality ?? j.declaredPersonality ?? null);
+      const exhibited = normalizePersonalityForAura(j.exhibitedPersonality);
+      const declared = normalizePersonalityForAura(j.declaredPersonality);
+      /** Exhibée si au moins un trait exploitable ; sinon `{}` Prisma par défaut écrasait la déclarée. */
+      setPersonality(exhibited ?? declared ?? null);
       setThemeId(j.shop?.activeThemeId ?? null);
     } catch { /* ignore */ }
   }, []);

@@ -5,6 +5,7 @@ import {
   applySociabilityAdjustment,
   isValidSociabilityLevel,
   softUpdateDeclaredPersonality,
+  normalizePersonalityForAura,
 } from './personality';
 import type { PersonalityVector, PsychologicalCategory } from '../types';
 
@@ -155,5 +156,33 @@ describe('softUpdateDeclaredPersonality', () => {
   it('returns null for unknown category', () => {
     const result = softUpdateDeclaredPersonality(declared, 'nonexistent' as PsychologicalCategory, 'accepted', 1);
     expect(result).toBeNull();
+  });
+});
+
+describe('normalizePersonalityForAura', () => {
+  it('returns null for empty / invalid inputs', () => {
+    expect(normalizePersonalityForAura(null)).toBeNull();
+    expect(normalizePersonalityForAura(undefined)).toBeNull();
+    expect(normalizePersonalityForAura({})).toBeNull();
+    expect(normalizePersonalityForAura([])).toBeNull();
+    expect(normalizePersonalityForAura({ openness: NaN })).toBeNull();
+  });
+
+  it('fills missing traits with 0.5 when at least one valid number exists', () => {
+    const v = normalizePersonalityForAura({ openness: 0.8 });
+    expect(v).not.toBeNull();
+    expect(v!.openness).toBe(0.8);
+    expect(v!.extraversion).toBe(0.5);
+    expect(PERSONALITY_KEYS.every((k) => typeof v![k] === 'number' && Number.isFinite(v![k]))).toBe(true);
+  });
+
+  it('clamps trait values to [0, 1]', () => {
+    const v = normalizePersonalityForAura({ openness: 1.5, conscientiousness: -0.2 });
+    expect(v!.openness).toBe(1);
+    expect(v!.conscientiousness).toBe(0);
+  });
+
+  it('returns null for empty object (Prisma default exhibited)', () => {
+    expect(normalizePersonalityForAura({})).toBeNull();
   });
 });

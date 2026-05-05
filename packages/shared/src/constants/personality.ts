@@ -185,3 +185,34 @@ export function softUpdateDeclaredPersonality(
   }
   return changed ? out : null;
 }
+
+const NEUTRAL_TRAIT = 0.5;
+
+function clamp01(n: number): number {
+  return Math.min(1, Math.max(0, n));
+}
+
+/**
+ * Prépare le vecteur pour le rendu d'aura (web / mobile) :
+ * au moins une dimension numérique finie requise ; les clés manquantes sont complétées à 0,5.
+ * Retourne `null` si aucune donnée exploitable (évite les rgba NaN quand le JSON est `{}` ou cassé).
+ */
+export function normalizePersonalityForAura(raw: unknown): PersonalityVector | null {
+  if (raw == null || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const o = raw as Record<string, unknown>;
+  const parsed: Partial<Record<keyof PersonalityVector, number>> = {};
+  for (const key of PERSONALITY_KEYS) {
+    const v = o[key as string];
+    if (typeof v === 'number' && Number.isFinite(v)) {
+      parsed[key] = clamp01(v);
+    }
+  }
+  const keysFound = PERSONALITY_KEYS.filter((k) => parsed[k] !== undefined);
+  if (keysFound.length === 0) return null;
+
+  const out = {} as PersonalityVector;
+  for (const key of PERSONALITY_KEYS) {
+    out[key] = parsed[key] ?? NEUTRAL_TRAIT;
+  }
+  return out;
+}

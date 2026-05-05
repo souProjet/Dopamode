@@ -6,11 +6,11 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { AppState, type AppStateStatus } from 'react-native';
+import { AppState, DeviceEventEmitter, type AppStateStatus } from 'react-native';
 import { useAuth } from '@clerk/expo';
 import { useSegments } from 'expo-router';
 import { getThemePalette, themeUsesLightStatusBar, type ThemePalette } from '@questia/ui';
-import type { PersonalityVector } from '@questia/shared';
+import { QUESTIA_SHOP_GRANTS_UPDATED, normalizePersonalityForAura, type PersonalityVector } from '@questia/shared';
 
 import { API_BASE_URL } from '../lib/api';
 
@@ -57,8 +57,9 @@ export function AppThemeProvider({ children }: { children: React.ReactNode }) {
       };
       const id = j.shop?.activeThemeId ?? 'default';
       setThemeId(typeof id === 'string' && id.length > 0 ? id : 'default');
-      // Préférer la personnalité exhibée (comportementale) ; sinon déclarée
-      setPersonality(j.exhibitedPersonality ?? j.declaredPersonality ?? null);
+      const exhibited = normalizePersonalityForAura(j.exhibitedPersonality);
+      const declared = normalizePersonalityForAura(j.declaredPersonality);
+      setPersonality(exhibited ?? declared ?? null);
     } catch {
       /* ignore */
     }
@@ -71,6 +72,14 @@ export function AppThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const sub = AppState.addEventListener('change', (next: AppStateStatus) => {
       if (next === 'active') void refresh();
+    });
+    return () => sub.remove();
+  }, [refresh]);
+
+  /** Aligné sur le web : après achat boutique, recharger thème + personnalité (aura). */
+  useEffect(() => {
+    const sub = DeviceEventEmitter.addListener(QUESTIA_SHOP_GRANTS_UPDATED, () => {
+      void refresh();
     });
     return () => sub.remove();
   }, [refresh]);
