@@ -816,7 +816,7 @@ function AppPageContent() {
         setRatingBusy(false);
       }
     },
-    [quest, t],
+    [quest],
   );
 
   const ownedPacksChips = useMemo(() => {
