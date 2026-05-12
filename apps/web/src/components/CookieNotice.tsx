@@ -1,10 +1,12 @@
 'use client';
 
 import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { CONSENT_STORAGE_KEY, writeMarketingConsent } from '@/lib/analytics/consent';
 
 export function CookieNotice() {
+  const t = useTranslations('CookieNotice');
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -31,10 +33,9 @@ export function CookieNotice() {
     >
       <div className="mx-auto flex max-w-4xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         <p id="cookie-notice-title" className="min-w-0 text-sm leading-relaxed text-[var(--muted)]">
-          Ce site utilise des cookies pour le fonctionnement et, si tu l'acceptes, pour la mesure d'audience et la
-          publicité.{' '}
+          {t('text')}{' '}
           <Link href="/legal/confidentialite#cookies" className="font-semibold text-[var(--orange)] hover:underline">
-            En savoir plus
+            {t('learnMore')}
           </Link>
         </p>
         <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end">
@@ -46,7 +47,7 @@ export function CookieNotice() {
             }}
             className="rounded-lg border border-[var(--border-ui)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold text-[var(--text)] transition hover:bg-[color:color-mix(in_srgb,var(--card)_88%,var(--surface))]"
           >
-            Refuser
+            {t('refuse')}
           </button>
           <button
             type="button"
@@ -56,7 +57,7 @@ export function CookieNotice() {
             }}
             className="rounded-lg bg-[var(--orange)] px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:brightness-105"
           >
-            Accepter
+            {t('accept')}
           </button>
         </div>
       </div>

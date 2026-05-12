@@ -47,6 +47,7 @@ import ProfileRefinementSheet, { type RefinementQuestionUi } from '../../compone
 import { QuestHomeLoading } from '../../components/QuestHomeLoading';
 import { QuestSwipeCard } from '../../components/QuestSwipeCard';
 import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Defs, RadialGradient, Stop, Ellipse } from 'react-native-svg';
 import { hapticError, hapticMedium, hapticSuccess, hapticWarning } from '../../lib/haptics';
 import { getQuestReportStrings } from '../../lib/questReportStrings';
 import { trackMobileEvent } from '../../lib/analytics/track';
@@ -1125,29 +1126,20 @@ function buildDashboardStyles(p: ThemePalette, themeId: string) {
     /** Remplit l'écran ; le SafeAreaView est à l'intérieur pour éviter les bandes / clipping. */
     homeGradient: { flex: 1 },
     safe: { flex: 1, backgroundColor: 'transparent' },
-    homeBackdropBlob: {
-      position: 'absolute',
-    },
     homeBackdropBlobTR: {
+      position: 'absolute',
       top: -100,
       right: -130,
-      width: 400,
-      height: 400,
-      borderRadius: 200,
     },
     homeBackdropBlobBL: {
+      position: 'absolute',
       bottom: -80,
       left: -150,
-      width: 440,
-      height: 440,
-      borderRadius: 220,
     },
     homeBackdropBlobTL: {
+      position: 'absolute',
       top: '12%',
       left: -100,
-      width: 260,
-      height: 260,
-      borderRadius: 130,
     },
     minimalHeader: {
       flexDirection: 'row',
@@ -1398,9 +1390,42 @@ function HomeBackdropShell({
         style={styles.homeGradient}
       >
         <View pointerEvents="none" style={StyleSheet.absoluteFillObject}>
-          <View style={[styles.homeBackdropBlob, styles.homeBackdropBlobTR, { backgroundColor: orbTints.tr }]} />
-          <View style={[styles.homeBackdropBlob, styles.homeBackdropBlobBL, { backgroundColor: orbTints.bl }]} />
-          <View style={[styles.homeBackdropBlob, styles.homeBackdropBlobTL, { backgroundColor: orbTints.tl }]} />
+          <View style={[styles.homeBackdropBlobTR]}>
+            <Svg width={400} height={400}>
+              <Defs>
+                <RadialGradient id="home-tr" cx="50%" cy="50%" r="50%">
+                  <Stop offset="0%"   stopColor={orbTints.tr} stopOpacity="1" />
+                  <Stop offset="55%"  stopColor={orbTints.tr} stopOpacity="0.5" />
+                  <Stop offset="100%" stopColor={orbTints.tr} stopOpacity="0" />
+                </RadialGradient>
+              </Defs>
+              <Ellipse cx={200} cy={200} rx={200} ry={200} fill="url(#home-tr)" />
+            </Svg>
+          </View>
+          <View style={[styles.homeBackdropBlobBL]}>
+            <Svg width={440} height={440}>
+              <Defs>
+                <RadialGradient id="home-bl" cx="50%" cy="50%" r="50%">
+                  <Stop offset="0%"   stopColor={orbTints.bl} stopOpacity="1" />
+                  <Stop offset="55%"  stopColor={orbTints.bl} stopOpacity="0.5" />
+                  <Stop offset="100%" stopColor={orbTints.bl} stopOpacity="0" />
+                </RadialGradient>
+              </Defs>
+              <Ellipse cx={220} cy={220} rx={220} ry={220} fill="url(#home-bl)" />
+            </Svg>
+          </View>
+          <View style={[styles.homeBackdropBlobTL]}>
+            <Svg width={260} height={260}>
+              <Defs>
+                <RadialGradient id="home-tl" cx="50%" cy="50%" r="50%">
+                  <Stop offset="0%"   stopColor={orbTints.tl} stopOpacity="1" />
+                  <Stop offset="55%"  stopColor={orbTints.tl} stopOpacity="0.5" />
+                  <Stop offset="100%" stopColor={orbTints.tl} stopOpacity="0" />
+                </RadialGradient>
+              </Defs>
+              <Ellipse cx={130} cy={130} rx={130} ry={130} fill="url(#home-tl)" />
+            </Svg>
+          </View>
         </View>
         <SafeAreaView style={[styles.safe, { zIndex: 1 }]}>{children}</SafeAreaView>
       </LinearGradient>

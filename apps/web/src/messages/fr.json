@@ -665,5 +665,11 @@
     "subtitle": "Inscris-toi — ta première quête personnalisée t'attend de l'autre côté.",
     "footerPrompt": "Déjà un compte ?",
     "footerLink": "Se connecter"
+  },
+  "CookieNotice": {
+    "text": "Ce site utilise des cookies pour le fonctionnement et, si tu l'acceptes, pour la mesure d'audience et la publicité.",
+    "learnMore": "En savoir plus",
+    "refuse": "Refuser",
+    "accept": "Accepter"
   }
 }

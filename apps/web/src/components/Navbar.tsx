@@ -76,25 +76,23 @@ export function Navbar() {
   }, [pathname, closeMobile]);
 
   useEffect(() => {
+    const reduced =
+      typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (mobileOpen) {
       setDrawerMounted(true);
       setDrawerReady(false);
-      const reduced =
-        typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduced) {
         setDrawerReady(true);
         return;
       }
-      const id = requestAnimationFrame(() => {
-        requestAnimationFrame(() => setDrawerReady(true));
-      });
+      // Un seul rAF suffit : la frame suivante garantit que le DOM est peint avant d'activer la transition.
+      const id = requestAnimationFrame(() => setDrawerReady(true));
       return () => cancelAnimationFrame(id);
     }
     setDrawerReady(false);
-    const reduced =
-      typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const t = window.setTimeout(() => setDrawerMounted(false), reduced ? 50 : 300);
-    return () => window.clearTimeout(t);
+    const delay = reduced ? 50 : 300;
+    const timer = window.setTimeout(() => setDrawerMounted(false), delay);
+    return () => window.clearTimeout(timer);
   }, [mobileOpen]);
 
   useEffect(() => {
@@ -280,8 +278,8 @@ export function Navbar() {
           <div
             id={panelId}
             aria-hidden={!drawerReady}
-            className={`navbar-mobile-drawer fixed inset-y-0 right-0 z-[101] flex w-[min(100%,19rem)] max-w-[calc(100vw-2.5rem)] flex-col md:hidden transition-opacity duration-300 ease-out motion-reduce:duration-75 motion-reduce:ease-out pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)] ${
-              drawerReady ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            className={`navbar-mobile-drawer fixed inset-y-0 right-0 z-[101] flex w-[min(100%,19rem)] max-w-[calc(100vw-2.5rem)] flex-col md:hidden transition-[transform,opacity] duration-300 ease-out motion-reduce:duration-75 motion-reduce:ease-out pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)] ${
+              drawerReady ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'
             }`}
             role="dialog"
             aria-modal="true"

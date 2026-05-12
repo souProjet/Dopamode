@@ -1048,7 +1048,7 @@ export default function ShopScreen() {
       {shop && !error ? (
         <Modal
           visible={rechargeModalVisible}
-          animationType="slide"
+          animationType="fade"
           transparent
           statusBarTranslucent={Platform.OS === 'android'}
           onRequestClose={() => setRechargeModalVisible(false)}
@@ -1794,6 +1794,7 @@ function createShopStyles(p: ThemePalette, themeId: string) {
   },
   modalSheetRecharge: {
     maxHeight: '88%',
+    flex: 1,
   },
   modalSheetClip: {
     overflow: 'hidden',
@@ -1802,6 +1803,7 @@ function createShopStyles(p: ThemePalette, themeId: string) {
     backgroundColor: 'transparent',
   },
   rechargeModalClip: {
+    flex: 1,
     paddingHorizontal: 0,
     paddingTop: 0,
   },

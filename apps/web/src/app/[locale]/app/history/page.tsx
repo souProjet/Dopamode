@@ -321,7 +321,7 @@ function HistoryPageInner() {
   return (
     <div className="min-h-screen bg-adventure">
       <Navbar />
-      <main id="main-content" tabIndex={-1} className="max-w-4xl mx-auto px-3 sm:px-5 pt-24 pb-20 outline-none">
+      <main id="main-content" tabIndex={-1} className="relative z-10 max-w-4xl mx-auto px-3 sm:px-5 pt-24 pb-20 outline-none">
         <header className="mb-8">
           <p className="text-xs font-black uppercase tracking-widest text-[var(--orange)] mb-2">{t('eyebrow')}</p>
           <h1 className="font-display font-black text-3xl text-[var(--text)]">{t('title')}</h1>
@@ -733,7 +733,7 @@ export default function HistoryPage() {
       fallback={
         <div className="min-h-screen bg-adventure">
           <Navbar />
-          <main id="main-content" tabIndex={-1} className="max-w-4xl mx-auto px-3 sm:px-5 pt-24 pb-24 flex justify-center outline-none">
+          <main id="main-content" tabIndex={-1} className="relative z-10 max-w-4xl mx-auto px-3 sm:px-5 pt-24 pb-24 flex justify-center outline-none">
             <div className="h-10 w-10 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
           </main>
         </div>

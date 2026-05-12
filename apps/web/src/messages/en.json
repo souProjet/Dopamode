@@ -465,7 +465,7 @@
     "deletePlaceholder": "DELETE",
     "deleteCta": "Delete permanently",
     "deleteDeleting": "Deleting…",
-    "deleteConfirmWrong": "Type SUPPRIMER exactly to confirm.",
+    "deleteConfirmWrong": "Type DELETE exactly to confirm.",
     "errNotSignedIn": "Not signed in.",
     "errProfileMissing": "Profile not found.",
     "errLoad": "Could not load profile.",
@@ -663,5 +663,11 @@
     "subtitle": "Sign up — your first personalized quest is on the other side.",
     "footerPrompt": "Already have an account?",
     "footerLink": "Sign in"
+  },
+  "CookieNotice": {
+    "text": "This site uses cookies for core functionality and, if you agree, for analytics and advertising.",
+    "learnMore": "Learn more",
+    "refuse": "Decline",
+    "accept": "Accept"
   }
 }

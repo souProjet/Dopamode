@@ -7,6 +7,7 @@ const plexSans = IBM_Plex_Sans({
   weight: ['400', '500', '600', '700'],
   variable: '--font-inter',
   display: 'swap',
+  adjustFontFallback: false,
 });
 
 const plexSerif = IBM_Plex_Serif({
@@ -15,6 +16,7 @@ const plexSerif = IBM_Plex_Serif({
   style: ['normal', 'italic'],
   variable: '--font-space',
   display: 'swap',
+  adjustFontFallback: false,
 });
 
 /**

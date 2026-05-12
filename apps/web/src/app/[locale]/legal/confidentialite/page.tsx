@@ -105,9 +105,25 @@ export default function ConfidentialitePage() {
                 des missions, avec date de consentement lorsque applicable.
               </li>
               <li>
-                <strong>Contexte des quêtes</strong> : ville ou zone approximative, météo, éventuellement coordonnées
-                approximatives si tu les partages pour personnaliser une sortie ; lieux suggérés pour des missions
-                extérieures.
+                <strong>Données de localisation</strong> — trois niveaux distincts selon ce que tu autorises :
+                <ul className="list-disc pl-5 mt-1 space-y-1">
+                  <li>
+                    <strong>Géolocalisation par adresse IP</strong> (passive, non demandée explicitement) : ville ou
+                    région approximative utilisée pour adapter la météo et le contexte des quêtes. Base légale : intérêt
+                    légitime.
+                  </li>
+                  <li>
+                    <strong>GPS / localisation précise — premier plan (foreground)</strong> : coordonnées GPS
+                    transmises si tu accordes l'accès à ta position dans l'app ou le navigateur, pour suggérer un lieu
+                    public pertinent. Base légale : consentement. Révocable à tout moment dans les paramètres de
+                    l'appareil.
+                  </li>
+                  <li>
+                    <strong>Localisation en arrière-plan (background)</strong> : l'application mobile{' '}
+                    <strong>ne collecte pas</strong> ta position lorsqu'elle est en arrière-plan. Si cette fonctionnalité
+                    était introduite à l'avenir, un consentement explicite séparé serait recueilli.
+                  </li>
+                </ul>
               </li>
               <li>
                 <strong>Notifications</strong> : jetons d'appareil pour les rappels push (mobile), si tu les actives.
@@ -146,19 +162,39 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">4. Contenu généré par intelligence artificielle</h2>
+            <h2 className="text-xl font-black text-slate-900">4. Contenu généré par intelligence artificielle et profilage</h2>
             <p>
-              Certaines missions et textes affichés sont <strong>produits par des modèles d'IA</strong> (ex. OpenAI)
-              à partir de ton profil, du contexte du jour (météo, lieu) et de règles internes. Ce contenu est une{' '}
-              <strong>suggestion ludique</strong> : il peut parfois être inadapté ou imprécis ; tu restes seul·e
+              Certaines missions et textes affichés sont <strong>produits par des modèles d'IA</strong> (OpenAI API)
+              à partir de ton profil, de ton historique de quêtes et du contexte du jour (météo, lieu). Ce contenu est
+              une <strong>suggestion ludique</strong> : il peut parfois être inadapté ou imprécis ; tu restes seul·e
               responsable de tes choix dans la vie réelle. Questia ne fournit pas de conseil médical, psychologique ou
               juridique.
             </p>
             <p>
+              <strong>Profilage automatisé (art. 22 RGPD) :</strong> le moteur de Questia analyse tes réponses
+              d'onboarding, ton historique de quêtes et tes comportements pour inférer des tendances (phase de parcours,
+              intensité préférée, affinités). Cette analyse influence les missions proposées. Elle ne produit{' '}
+              <strong>pas de décision juridique ou significative</strong> te concernant ; elle sert uniquement à
+              personnaliser l'expérience de jeu. Tu peux consulter le détail du fonctionnement sur la page{' '}
+              <Link href="/generation-quetes" className="text-orange-600 font-semibold hover:underline">
+                Comment sont générées tes quêtes
+              </Link>
+              . En vertu de l'article 21 du RGPD, tu as le droit de{' '}
+              <strong>t'opposer à ce profilage</strong> à tout moment en supprimant ton profil ou en contactant le
+              support — dans ce cas, les quêtes proposées seront génériques.
+            </p>
+            <p>
+              <strong>Utilisation des données pour l'entraînement des modèles IA :</strong> tes données personnelles
+              (profil, historique, comportements) <strong>ne sont pas transmises à OpenAI à des fins d'entraînement
+              de modèles</strong>. Questia utilise l'API OpenAI dans le cadre de l'accord de traitement des données
+              (DPA) d'OpenAI, qui exclut l'utilisation des données API pour l'amélioration des modèles, sauf opt-in
+              explicite de notre part (ce qui n'est pas le cas).
+            </p>
+            <p>
               Nous appliquons des <strong>garde-fous dans les prompts</strong> (interdiction de contenus dangereux ou
               illégaux, limitation des conseils de santé, pas de collecte de données sensibles via les missions). Ces
-              mesures réduisent les risques mais ne garantissent pas un résultat parfait : signale tout contenu problématique
-              via le support.
+              mesures réduisent les risques mais ne garantissent pas un résultat parfait : signale tout contenu
+              problématique via le support.
             </p>
             <p>
               Pour le cadre d'usage (ludique, non médical) : voir aussi la page{' '}
@@ -170,20 +206,105 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">5. Sous-traitants et transferts</h2>
+            <h2 className="text-xl font-black text-slate-900">5. Sous-traitants et transferts hors UE</h2>
             <p>
-              Nous faisons appel à des prestataires de confiance (hébergement, base de données, authentification, envoi
-              d'e-mails, IA, paiements). Certains peuvent être situés hors de l'Espace économique européen : dans ce cas,
-              nous mettons en place des garanties appropriées (clauses types de la Commission européenne ou équivalent).
+              Nous faisons appel à des sous-traitants pour opérer le service. Les prestataires situés hors de l'Espace
+              économique européen (EEE) sont encadrés par des garanties appropriées au sens de l'article 46 du RGPD
+              (clauses contractuelles types de la Commission européenne — SCCs — ou décision d'adéquation).
+            </p>
+            <div className="overflow-x-auto mt-4">
+              <table className="min-w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-200">
+                    <th className="text-left py-2 pr-4 font-bold text-slate-900">Prestataire</th>
+                    <th className="text-left py-2 pr-4 font-bold text-slate-900">Rôle</th>
+                    <th className="text-left py-2 pr-4 font-bold text-slate-900">Pays</th>
+                    <th className="text-left py-2 font-bold text-slate-900">Garanties</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  <tr>
+                    <td className="py-2 pr-4 font-semibold">OpenAI LLC</td>
+                    <td className="py-2 pr-4">Génération des quêtes et textes (API)</td>
+                    <td className="py-2 pr-4">États-Unis</td>
+                    <td className="py-2">SCCs (Data Processing Agreement OpenAI)</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-semibold">Clerk Inc.</td>
+                    <td className="py-2 pr-4">Authentification et gestion des comptes</td>
+                    <td className="py-2 pr-4">États-Unis</td>
+                    <td className="py-2">SCCs (DPA Clerk)</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-semibold">Stripe Inc.</td>
+                    <td className="py-2 pr-4">Traitement des paiements</td>
+                    <td className="py-2 pr-4">États-Unis</td>
+                    <td className="py-2">SCCs (DPA Stripe) — certifié PCI DSS</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-semibold">Vercel Inc.</td>
+                    <td className="py-2 pr-4">Hébergement du site et de l'API</td>
+                    <td className="py-2 pr-4">États-Unis</td>
+                    <td className="py-2">SCCs (DPA Vercel)</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-semibold">PostHog Inc.</td>
+                    <td className="py-2 pr-4">Analyse du produit (opt-in uniquement)</td>
+                    <td className="py-2 pr-4">États-Unis</td>
+                    <td className="py-2">SCCs (DPA PostHog)</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-semibold">Google LLC</td>
+                    <td className="py-2 pr-4">Analytics (GA4 / GTM) — si consentement</td>
+                    <td className="py-2 pr-4">États-Unis</td>
+                    <td className="py-2">SCCs (DPA Google) — IP anonymisée</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-semibold">Meta Platforms</td>
+                    <td className="py-2 pr-4">Publicité / Remarketing — si consentement</td>
+                    <td className="py-2 pr-4">États-Unis</td>
+                    <td className="py-2">SCCs (DPA Meta)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-3">
+              Tu peux demander une copie des garanties en vigueur en contactant notre service aux données personnelles
+              (adresse en section 1).
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-black text-slate-900">6. Durée de conservation</h2>
+            <p>Les données sont conservées selon les durées suivantes :</p>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>
+                <strong>Données de compte et de profil de jeu</strong> (e-mail, progression, historique de quêtes,
+                préférences) : conservées pendant toute la durée d'activité du compte, puis supprimées ou anonymisées
+                dans un délai de <strong>30 jours</strong> suivant la demande de suppression du compte, sauf exception
+                technique ou obligation légale.
+              </li>
+              <li>
+                <strong>Données comptables et pièces justificatives de paiement</strong> (références de transaction
+                Stripe) : conservées <strong>10 ans</strong> à compter de la date de transaction, conformément aux
+                obligations légales de conservation comptable (art. L123-22 du Code de commerce).
+              </li>
+              <li>
+                <strong>Journaux techniques</strong> (logs d'accès, erreurs, horodatages de sécurité) :{' '}
+                <strong>90 jours</strong> glissants, puis suppression automatique.
+              </li>
+              <li>
+                <strong>Consentements enregistrés</strong> (cookies, raffinement de profil) :{' '}
+                <strong>3 ans</strong> à compter de l'enregistrement, conformément aux recommandations de la CNIL.
+              </li>
+              <li>
+                <strong>Jetons push (notifications)</strong> : supprimés dès la révocation de l'autorisation ou la
+                clôture du compte, et au plus tard <strong>6 mois</strong> après le dernier usage actif.
+              </li>
+            </ul>
             <p>
-              Les données sont conservées le temps nécessaire aux finalités ci-dessus. En cas de clôture de compte, les
-              données associées sont supprimées ou anonymisées dans des délais raisonnables, sous réserve des obligations
-              légales (ex. facturation).
+              À l'expiration de ces durées, les données sont supprimées de manière irréversible ou anonymisées. Ces
+              durées peuvent être allongées si une obligation légale, réglementaire ou judiciaire l'impose.
             </p>
           </section>
 
@@ -207,25 +328,71 @@ export default function ConfidentialitePage() {
           <section id="cookies">
             <h2 className="text-xl font-black text-slate-900">8. Cookies et traceurs</h2>
             <p>
-              Le site utilise des cookies ou stockages locaux nécessaires au fonctionnement (session, préférences) et,
-              le cas échéant, à la mesure d'audience. Un bandeau d'information peut s'afficher lors de ta première
-              visite. Les paramètres de ton navigateur te permettent de limiter les cookies lorsque la loi l'autorise.
+              Le site utilise des cookies ou stockages locaux. Un bandeau t'est présenté lors de ta première visite pour
+              recueillir ton choix sur les traceurs non essentiels. Conformément à l'article 82 de la loi Informatique
+              et Libertés et aux recommandations de la CNIL, aucun cookie non essentiel n'est déposé avant ton accord
+              explicite.
             </p>
-            <p>
-              Si tu acceptes le <strong>non essentiel</strong> via le bandeau, des cookies ou identifiants peuvent être
-              déposés par des prestataires tiers pour la mesure d'audience (ex. Google Analytics 4 — directement ou via
-              Google Tag Manager) et/ou la publicité et le remarketing (ex. Meta Pixel, tags publicitaires
-              configurés dans GTM). Ces choix sont stockés localement dans ton navigateur et peuvent être modifiés en
-              effaçant les données du site ou via les paramètres du navigateur.
+            <div className="overflow-x-auto mt-4">
+              <table className="min-w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-200">
+                    <th className="text-left py-2 pr-4 font-bold text-slate-900">Catégorie</th>
+                    <th className="text-left py-2 pr-4 font-bold text-slate-900">Finalité</th>
+                    <th className="text-left py-2 pr-4 font-bold text-slate-900">Base légale</th>
+                    <th className="text-left py-2 font-bold text-slate-900">Exemples</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  <tr>
+                    <td className="py-2 pr-4 font-semibold">Essentiels</td>
+                    <td className="py-2 pr-4">Session, authentification, préférences de langue, sécurité</td>
+                    <td className="py-2 pr-4">Intérêt légitime / Exécution du contrat (art. 6.1.b et 6.1.f RGPD)</td>
+                    <td className="py-2">Clerk session, stockage local préférences</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-semibold">Analytiques</td>
+                    <td className="py-2 pr-4">Mesure d'audience, amélioration du produit</td>
+                    <td className="py-2 pr-4">Consentement (art. 6.1.a RGPD)</td>
+                    <td className="py-2">Google Analytics 4, Google Tag Manager, PostHog</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-semibold">Publicitaires</td>
+                    <td className="py-2 pr-4">Publicité ciblée, remarketing</td>
+                    <td className="py-2 pr-4">Consentement (art. 6.1.a RGPD)</td>
+                    <td className="py-2">Meta Pixel, tags configurés dans GTM</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-3">
+              Tes choix sont enregistrés localement dans ton navigateur. Tu peux les modifier à tout moment en effaçant
+              les données du site ou en contactant le support.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-black text-slate-900">9. Mineurs</h2>
             <p>
-              Le service ne s'adresse pas aux personnes de moins de 13 ans (ou l'âge légal de consentement numérique dans
-              ton pays). Si tu es parent et penses qu'un enfant nous a transmis des données, contacte-nous pour qu'elles
-              soient supprimées.
+              L'accès au service est soumis aux conditions d'âge suivantes, conformément à la réglementation applicable :
+            </p>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>
+                <strong>Site web questia.fr :</strong> réservé aux personnes âgées d'au moins{' '}
+                <strong>15 ans</strong>, conformément à l'article 7-1 de la loi Informatique et Libertés (transposant
+                l'article 8 du RGPD en droit français), qui fixe à 15 ans l'âge de consentement numérique pour les
+                services de la société de l'information.
+              </li>
+              <li>
+                <strong>Application mobile (App Store / Google Play) :</strong> réservée aux personnes âgées d'au moins{' '}
+                <strong>13 ans</strong>, conformément aux règles des plateformes de distribution (Apple App Store, Google
+                Play) et aux exigences du Children's Online Privacy Protection Act (COPPA) applicables aux stores.
+              </li>
+            </ul>
+            <p>
+              Dans tous les cas, si tu as moins de 18 ans, l'accord d'un parent ou tuteur légal est recommandé avant
+              utilisation. Si tu es parent et penses qu'un enfant nous a transmis des données sans ton accord,
+              contacte-nous à l'adresse indiquée en section 1 pour en obtenir la suppression.
             </p>
           </section>
 

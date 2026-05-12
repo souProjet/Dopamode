@@ -4,6 +4,7 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   transpilePackages: ['@questia/shared', '@questia/ui', 'solito', 'react-native', 'react-native-web'],
   serverExternalPackages: ['@prisma/client', 'prisma'],
   /** Apple exige le type JSON pour les Universal Links */
