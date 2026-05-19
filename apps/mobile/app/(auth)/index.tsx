@@ -12,10 +12,15 @@ import {
   Image,
 } from 'react-native';
 import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
 import * as ClerkExpo from '@clerk/expo';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { DA, UiLucideIcon } from '@questia/ui';
 import { hasOnboardingAnswers } from '../../lib/onboardingGate';
+
+// Doit être appelé au niveau module pour que la complétion OAuth soit
+// signalée à startSSOFlow dès que l'écran auth se remonte après le redirect.
+WebBrowser.maybeCompleteAuthSession();
 
 const { useSignIn, useSignUp, useSSO } = ClerkExpo as any;
 
@@ -24,16 +29,9 @@ type AuthMode = 'sign-in' | 'sign-up';
 function useWarmUpBrowser() {
   useEffect(() => {
     if (Platform.OS !== 'android') return;
-    let cancelled = false;
-    let wb: typeof import('expo-web-browser') | null = null;
-    void import('expo-web-browser').then((m) => {
-      if (cancelled) return;
-      wb = m;
-      void m.warmUpAsync().catch(() => {});
-    });
+    void WebBrowser.warmUpAsync().catch(() => {});
     return () => {
-      cancelled = true;
-      if (wb) void wb.coolDownAsync().catch(() => {});
+      void WebBrowser.coolDownAsync().catch(() => {});
     };
   }, []);
 }
@@ -42,12 +40,6 @@ export default function AuthScreen() {
   useWarmUpBrowser();
   const router = useRouter();
   const { flow: flowParam } = useLocalSearchParams<{ flow?: string | string[] }>();
-
-  useEffect(() => {
-    void import('expo-web-browser')
-      .then((m) => m.maybeCompleteAuthSession())
-      .catch(() => {});
-  }, []);
 
   const { signIn, isLoaded: signInLoaded, setActive } = useSignIn();
   const { signUp, isLoaded: signUpLoaded } = useSignUp();
