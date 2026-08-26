@@ -143,50 +143,58 @@
       "ariaDownloadAndroid": "Télécharger Questia sur Google Play",
       "ariaDownloadIos": "Télécharger Questia sur l'App Store",
       "ariaWeb": "Questia sur le web",
-      "webOnly": "Joue depuis ton navigateur : onboarding, quêtes du jour et progression — tout sur le site."
+      "webOnly": "Joue depuis ton navigateur : profil, quête du jour et progression, tout sur le site."
     },
     "jsonLd": {
       "appDescription": "Application de quêtes quotidiennes dans la vraie vie : missions courtes personnalisées selon ton profil et ton style de joueur.",
       "webDescription": "Questia transforme ton quotidien en aventure : une quête IRL par jour, personnalisée."
     },
     "hero": {
-      "line1": "L'app de",
-      "line1Web": "Le site des",
-      "gradient": "quêtes quotidiennes",
-      "line2": "dans la vraie vie",
-      "lead": "Une mission chaque matin, <strong>ajustée à ton profil</strong> et à ton rythme — pour sortir un peu plus, sans te mettre la pression.",
+      "eyebrow": "Carnet de route",
+      "title": "Une quête par jour, dans la vraie vie.",
+      "lead": "Chaque matin, une mission courte calibrée sur ton profil. Tu la fais, tu la coches, tu refermes le carnet. Pas de série à tenir, pas de culpabilité.",
+      "ctaFree": "Commencer gratuitement",
+      "ctaSecondary": "Voir comment ça marche",
+      "webOnly": "Tout se passe dans ton navigateur. Rien à installer.",
       "preferWeb": "Tu préfères le web ?",
       "continueBrowser": "Continuer dans le navigateur",
-      "webOnly": "Tout se passe sur le web : crée ton profil et joue depuis ton navigateur.",
-      "ctaFree": "Commencer gratuitement",
-      "discoverHow": "Comment ça marche",
-      "soonStores": "Bientôt sur iPhone & Android",
-      "examplesAsideLabel": "Missions en carrousel"
+      "examplesAsideLabel": "Exemples de quêtes",
+      "examplesCaption": "Trois quêtes tirées du carnet",
+      "facts": [
+        {
+          "value": "1",
+          "label": "quête par matin, jamais deux"
+        },
+        {
+          "value": "30 à 90",
+          "label": "minutes par mission"
+        },
+        {
+          "value": "2",
+          "label": "questions pour te calibrer"
+        }
+      ]
     },
-    "how": {
-      "label": "Fonctionnement",
-      "title": "Trois étapes, puis ta quête du matin",
-      "subtitleStoresBoth": "Tu te calibres en une minute, puis chaque matin tu reçois ta mission. Sur l'app mobile, tout dans la poche ; sur le web, même expérience depuis un navigateur.",
-      "subtitleStoresAndroid": "Tu te calibres en une minute, puis chaque matin tu reçois ta mission. Sur Android, tout dans la poche ; sur le web, même expérience depuis un navigateur.",
-      "subtitleStoresIos": "Tu te calibres en une minute, puis chaque matin tu reçois ta mission. Sur iPhone, tout dans la poche ; sur le web, même expérience depuis un navigateur.",
-      "subtitleWeb": "Tu te calibres en une minute, puis chaque matin tu reçois ta mission — tout depuis ton navigateur, sans installation.",
-      "stepLabel": "Étape"
+    "principle": {
+      "eyebrow": "Le principe",
+      "title": "Tu te calibres une fois. Le reste arrive tout seul.",
+      "leadWeb": "Trois minutes au départ, puis une mission qui t'attend chaque matin sur le site.",
+      "leadStoresBoth": "Trois minutes au départ, puis une mission qui t'attend chaque matin sur ton téléphone comme sur le site, avec le même compte.",
+      "leadStoresAndroid": "Trois minutes au départ, puis une mission qui t'attend chaque matin sur ton Android comme sur le site, avec le même compte.",
+      "leadStoresIos": "Trois minutes au départ, puis une mission qui t'attend chaque matin sur ton iPhone comme sur le site, avec le même compte."
     },
     "steps": [
       {
-        "icon": "Target",
-        "title": "Toi, d'abord",
-        "desc": "Tu indiques ton style et ce que tu es prêt à tenter — les missions s'alignent sur ton profil et ton énergie du moment."
+        "title": "Tu dis qui tu es",
+        "desc": "Ton style, ton énergie du moment, ce que tu es prêt à tenter. Deux questions suffisent."
       },
       {
-        "icon": "Brain",
-        "title": "Profil en 2 questions",
-        "desc": "Deux réponses pour calibrer le défi — ni trop facile, ni injouable."
+        "title": "On calibre le défi",
+        "desc": "Assez haut pour que ça compte, assez bas pour que tu y ailles vraiment."
       },
       {
-        "icon": "Swords",
-        "title": "Ta quête du matin",
-        "desc": "Une mission courte, avec une fin claire. Tu coches, tu passes à autre chose."
+        "title": "Tu reçois ta quête",
+        "desc": "Une mission courte, avec une fin nette. Tu coches, tu passes à autre chose."
       }
     ],
     "examples": [
@@ -202,7 +210,7 @@
         "icon": "Coffee",
         "title": "Le Café des Étrangers",
         "contextLabel": "Pause sociale · 45 min",
-        "mission": "Va dans un café que tu ne connais pas. Commande quelque chose que tu ne prends jamais. 45 min sans téléphone — mode boss fight.",
+        "mission": "Va dans un café que tu ne connais pas. Commande quelque chose que tu ne prends jamais. 45 min sans téléphone.",
         "duration": "1h",
         "outdoor": false
       },
@@ -215,94 +223,88 @@
         "outdoor": false
       }
     ],
-    "download": {
-      "label": "Télécharger",
-      "titleStoresBoth": "iPhone & Android",
-      "titleStoresAndroid": "Android",
-      "titleStoresIos": "iPhone",
-      "subtitleStoresBoth": "Quête du jour et progression sur ton téléphone. Tu peux aussi tout faire depuis le web avec le même compte.",
-      "subtitleStoresAndroid": "Quête du jour et progression sur ton téléphone Android. Tu peux aussi tout faire depuis le web avec le même compte.",
-      "subtitleStoresIos": "Quête du jour et progression sur ton iPhone. Tu peux aussi tout faire depuis le web avec le même compte.",
-      "labelWeb": "Sur le web",
-      "titleWeb": "Joue depuis ton navigateur",
-      "subtitleWeb": "Crée ton profil, reçois ta quête du matin et coche tes missions — tout sur le site, avec le même compte partout.",
-      "webLink": "Utiliser Questia sur le web"
+    "usage": {
+      "eyebrowWeb": "Sur le web",
+      "eyebrowStores": "Sur mobile",
+      "titleWeb": "Rien à installer",
+      "titleStoresBoth": "iPhone, Android, ou simplement le web",
+      "titleStoresAndroid": "Android, ou simplement le web",
+      "titleStoresIos": "iPhone, ou simplement le web",
+      "leadWeb": "Profil, quête du matin, progression : tout tient dans un onglet, avec un seul compte.",
+      "leadStoresBoth": "Ta quête du matin dans la poche, ou dans un onglet. Le même compte des deux côtés.",
+      "leadStoresAndroid": "Ta quête du matin sur ton Android, ou dans un onglet. Le même compte des deux côtés.",
+      "leadStoresIos": "Ta quête du matin sur ton iPhone, ou dans un onglet. Le même compte des deux côtés.",
+      "webLink": "Créer mon profil sur le web"
     },
-    "testimonials": {
-      "label": "Avis & résultats",
-      "title": "Des joueurs qui avaient la flemme aussi",
-      "subtitle": "Pas de miracle, juste des petits pas — quand le jeu remplace la culpabilité.",
+    "voices": {
+      "eyebrow": "Retours",
+      "title": "Ils avaient la flemme aussi",
+      "lead": "Trois retours, pris tels quels.",
       "yearsOld": "ans"
     },
     "testimonialQuotes": [
       {
-        "quote": "Jour 23. Je pensais être une fille sociable. J'ai réalisé que non. Maintenant je le suis vraiment.",
+        "quote": "Jour 23. Je pensais être quelqu'un de sociable. J'ai découvert que non. Maintenant je le suis vraiment.",
         "name": "Sarah",
         "age": 29
       },
       {
-        "quote": "En 3 semaines j'ai découvert 8 restos, 3 musées et un nouvel ami — dans des lieux que je passais sans les voir.",
+        "quote": "En trois semaines : huit restos, trois musées, un nouvel ami. Dans des rues que je traversais sans les voir.",
         "name": "Marc",
         "age": 34
       },
       {
-        "quote": "Je pensais que j'aimais rester chez moi. J'aimais juste avoir peur de sortir. Grosse différence.",
+        "quote": "Je croyais aimer rester chez moi. J'aimais surtout éviter de sortir. Ce n'est pas la même chose.",
         "name": "Camille",
         "age": 26
       }
     ],
     "faq": {
-      "label": "FAQ",
-      "title": "Questions fréquentes",
-      "subtitleStoresBoth": "Tout ce qu'il faut savoir avant de te lancer — web ou mobile.",
-      "subtitleStoresAndroid": "Tout ce qu'il faut savoir avant de te lancer — web ou Android.",
-      "subtitleStoresIos": "Tout ce qu'il faut savoir avant de te lancer — web ou iPhone.",
-      "subtitleWeb": "Tout ce qu'il faut savoir avant de te lancer sur le site."
+      "eyebrow": "Questions",
+      "title": "Ce qu'on nous demande",
+      "leadWeb": "Ce qu'il faut savoir avant de te lancer sur le site.",
+      "leadStoresBoth": "Ce qu'il faut savoir avant de te lancer, sur le web comme sur mobile.",
+      "leadStoresAndroid": "Ce qu'il faut savoir avant de te lancer, sur le web comme sur Android.",
+      "leadStoresIos": "Ce qu'il faut savoir avant de te lancer, sur le web comme sur iPhone."
     },
     "faqItems": [
       {
-        "question": "En quoi une quête Questia diffère-t-elle d'une simple liste de tâches ?",
-        "answer": "Chaque matin tu reçois une mission courte, calibrée sur ton profil, ton style de jeu et le niveau de défi que tu t'es choisi. L'objectif : une petite action réalisable dans la vraie vie, avec une fin claire — pas une todo qui s'allonge sans fin."
+        "question": "En quoi une quête diffère-t-elle d'une liste de tâches ?",
+        "answer": "Une todo s'allonge. Une quête se termine. Chaque matin tu en reçois une seule, calibrée sur ton profil et sur le niveau de défi que tu as choisi, avec une fin claire et rien derrière."
       },
       {
         "question": "Un seul compte pour tout ?",
-        "answer": "Oui. Profil, quêtes et progression : tout se passe sur le site, dans ton navigateur, avec un seul compte."
+        "answer": "Oui. Profil, quêtes et progression vivent sur le même compte, quel que soit l'endroit d'où tu joues."
       },
       {
-        "question": "L'app est-elle gratuite ?",
-        "answer": "Tu peux commencer gratuitement pour calibrer ton profil et découvrir le fonctionnement sur le site. Si des options payantes arrivent plus tard, elles seront indiquées clairement."
+        "question": "C'est gratuit ?",
+        "answer": "Tu peux calibrer ton profil et jouer tes premières quêtes gratuitement. Si des options payantes arrivent, elles seront annoncées clairement, sans piège."
       },
       {
-        "question": "Comment Questia personnalise-t-il mes quêtes ?",
-        "answer": "À partir de ton profil et des réglages que tu acceptes, les missions sont ajustées pour rester réalistes pour toi — ni trop molles, ni injouables. Tu gardes la main sur ce que tu tentes vraiment."
+        "question": "Comment mes quêtes sont-elles personnalisées ?",
+        "answer": "À partir de ton profil et des réglages que tu acceptes. Les missions restent réalistes pour toi, et tu gardes la main : rien ne t'oblige à accepter celle du jour."
       },
       {
-        "question": "Questia remplace-t-il un professionnel de santé ou un coach ?",
-        "answer": "Non. Questia est un outil de motivation et de structure, pas un dispositif médical ou psychologique. Si tu traverses une difficulté sérieuse, parle-en à un professionnel de santé."
+        "question": "Est-ce que ça remplace un professionnel de santé ?",
+        "answer": "Non. Questia est un outil de motivation, pas un dispositif médical ou psychologique. Si tu traverses une difficulté sérieuse, parles-en à un professionnel de santé."
       },
       {
-        "question": "Pour qui est-ce pensé ?",
-        "answer": "Pour les adultes qui veulent bouger un peu plus dans leur semaine, avec des défis légers et du fun — sans culpabiliser. Utile si tu aimes les jeux, les quêtes et les petites victoires concrètes."
+        "question": "C'est fait pour qui ?",
+        "answer": "Pour les adultes qui veulent bouger un peu plus dans leur semaine sans se flageller. Utile si tu aimes les jeux, les quêtes et les petites victoires concrètes."
       }
     ],
     "cta": {
-      "label": "C'est parti",
-      "titleBefore": "Prêt pour ta prochaine",
-      "titleGradient": "quête IRL",
-      "titleAfter": "?",
-      "storesReady": "Gratuit pour commencer — sur les stores ou dans ton navigateur, avec le même compte.",
-      "storesReadyAndroid": "Gratuit pour commencer — sur Google Play ou dans ton navigateur, avec le même compte.",
-      "storesReadyIos": "Gratuit pour commencer — sur l'App Store ou dans ton navigateur, avec le même compte.",
-      "storesPending": "Crée ton profil sur le web ; quand l'app sera dispo, tu reprends avec le même compte.",
-      "storesPendingWeb": "Crée ton profil et lance ta première quête — tout sur le web, gratuit pour commencer.",
-      "or": "ou",
-      "continueWeb": "Continuer sur le web",
-      "ctaFree": "Commencer gratuitement",
-      "appStoresLink": "L'app sur iPhone et Android",
-      "appStoresLinkWeb": "Découvrir Questia sur le web"
+      "eyebrow": "Commencer",
+      "title": "Ta première quête t'attend.",
+      "leadWeb": "Gratuit pour commencer. Deux questions, puis ta mission du matin.",
+      "leadStoresBoth": "Gratuit pour commencer, sur les stores ou dans ton navigateur, avec le même compte.",
+      "leadStoresAndroid": "Gratuit pour commencer, sur Google Play ou dans ton navigateur, avec le même compte.",
+      "leadStoresIos": "Gratuit pour commencer, sur l'App Store ou dans ton navigateur, avec le même compte.",
+      "ctaFree": "Créer mon profil",
+      "secondary": "Comment les quêtes sont créées"
     },
     "footer": {
-      "tagline": "Des quêtes secondaires dans la vraie vie — une mission par jour, sans te mettre la pression.",
+      "tagline": "Des quêtes secondaires dans la vraie vie. Une mission par jour, sans pression.",
       "navLabel": "Liens de pied de page",
       "examples": "Exemples",
       "how": "Comment ça marche",
@@ -409,7 +411,7 @@
     "acceptChallenge": "Je relève le défi !",
     "changeQuest": "Changer de quête ({label})",
     "rerollConfirmTitle": "Changer de quête ?",
-    "rerollConfirmBody": "Tu consommes une relance et l\u2019XP de la nouvelle quête sera réduit de 25 %. Cette action est irréversible.",
+    "rerollConfirmBody": "Tu consommes une relance et l’XP de la nouvelle quête sera réduit de 25 %. Cette action est irréversible.",
     "rerollLoading": "Nouvelle quête en cours…",
     "rerollConfirmAction": "Changer",
     "notForMe": "Ce n'est pas pour moi",

@@ -7,6 +7,10 @@
     --bg:       #ebe8e0;
     --surface:  #f2efe8;
     --card:     #faf8f4;
+    /** Panneaux surélevés (aligné sur ThemePalette.cardCream du mobile) */
+    --card-cream: #fdfaf5;
+    /** Bordure accent teal (aligné ThemePalette.borderCyan du mobile) */
+    --border-cyan: rgba(19, 78, 74, 0.22);
     --border:   rgba(28, 25, 23, 0.08);
     --border-m: rgba(28, 25, 23, 0.12);
     --border-ui: rgba(28, 25, 23, 0.09);
@@ -41,10 +45,12 @@
     /* Aura visuelle — valeurs par défaut (thème clair).
        AuraOrbsLayer les remplace dès que la personnalité est chargée.
        Si clearAuraVars() retire l'inline-style, ces valeurs :root reprennent
-       automatiquement → les orbes restent visibles même sans personnalité. */
-    --aura-tr: rgba(194, 65, 12, 0.42);
-    --aura-bl: rgba(19,  78, 74, 0.36);
-    --aura-tl: rgba(146, 64, 14, 0.30);
+       automatiquement → les orbes restent visibles même sans personnalité.
+       Alphas volontairement bas : sans personnalité (landing), le fond doit lire
+       « papier » comme le mobile ; AuraOrbsLayer remonte l'intensité sur /app. */
+    --aura-tr: rgba(194, 65, 12, 0.16);
+    --aura-bl: rgba(19,  78, 74, 0.13);
+    --aura-tl: rgba(146, 64, 14, 0.11);
   }
 
   /* Thèmes boutique (data-theme sur <html>) */
@@ -52,6 +58,8 @@
     --bg: #0c0a09;
     --surface: #1c1917;
     --card: #292524;
+    --card-cream: #f5f5f4;
+    --border-cyan: rgba(45, 212, 191, 0.25);
     --text: #e7e5e4;
     --muted: #a8a29e;
     --subtle: #78716c;
@@ -73,9 +81,9 @@
     --glass-sat-subtle: 1.02;
     --glass-sat-nav: 1.03;
     /* Aura defaults — thème dark : plus vifs pour compenser le fond sombre */
-    --aura-tr: rgba(251, 146, 60, 0.50);
-    --aura-bl: rgba(45,  212, 191, 0.42);
-    --aura-tl: rgba(252, 211, 77, 0.36);
+    --aura-tr: rgba(251, 146, 60, 0.20);
+    --aura-bl: rgba(45,  212, 191, 0.16);
+    --aura-tl: rgba(252, 211, 77, 0.14);
   }
 
   html[data-theme="aurora"] {
@@ -83,6 +91,8 @@
     --bg: #e8e4e1;
     --surface: #f0ebe6;
     --card: #faf7f3;
+    --card-cream: #fdfaf7;
+    --border-cyan: rgba(15, 118, 110, 0.2);
     --text: #292524;
     --muted: #57534e;
     --subtle: #78716c;
@@ -109,6 +119,8 @@
     --bg: #e7e2d8;
     --surface: #efe9df;
     --card: #faf6ee;
+    --card-cream: #fffdf8;
+    --border-cyan: rgba(22, 101, 52, 0.2);
     --text: #292524;
     --muted: #57534e;
     --subtle: #78716c;
@@ -363,12 +375,10 @@
   /** Pied de page marketing : évite bg-white/50 sur fond sombre (bandeau « givré » géant). */
   .landing-footer {
     border-top: 1px solid color-mix(in srgb, var(--text) 10%, var(--border-ui-strong));
-    background: color-mix(in srgb, var(--card) 68%, transparent);
-    backdrop-filter: blur(10px) saturate(var(--glass-sat-subtle));
-    -webkit-backdrop-filter: blur(10px) saturate(var(--glass-sat-subtle));
+    background: var(--surface);
   }
 
-  /* Bandes de section : tons neutres + léger flou (moins « palette arc-en-ciel »). */
+  /* Bandes de section : teintes papier, sans flou (aligné sur les surfaces plates du mobile). */
   .section-band-how {
     background: linear-gradient(
       180deg,
@@ -376,8 +386,6 @@
       transparent 48%,
       color-mix(in srgb, var(--text) 3%, transparent) 100%
     );
-    backdrop-filter: blur(var(--glass-blur-tint)) saturate(var(--glass-sat-subtle));
-    -webkit-backdrop-filter: blur(var(--glass-blur-tint)) saturate(var(--glass-sat-subtle));
   }
   .section-band-social {
     background: linear-gradient(
@@ -386,8 +394,6 @@
       transparent 52%,
       color-mix(in srgb, var(--text) 3.5%, transparent) 100%
     );
-    backdrop-filter: blur(var(--glass-blur-tint)) saturate(var(--glass-sat-subtle));
-    -webkit-backdrop-filter: blur(var(--glass-blur-tint)) saturate(var(--glass-sat-subtle));
   }
 
   /* CTA final — même famille que .quest-slider-embedded (carte quête / plateau) */
@@ -398,11 +404,9 @@
       color-mix(in srgb, var(--surface) 22%, transparent) 45%,
       color-mix(in srgb, var(--text) 3%, transparent) 100%
     );
-    backdrop-filter: blur(var(--glass-blur-tint)) saturate(var(--glass-sat-subtle));
-    -webkit-backdrop-filter: blur(var(--glass-blur-tint)) saturate(var(--glass-sat-subtle));
   }
 
-  /** Pleine largeur : voile givré derrière le contenu (landing). */
+  /** Pleine largeur : dégradé papier derrière le contenu (landing). */
   .landing-section-frost {
     background: linear-gradient(
       180deg,
@@ -410,38 +414,105 @@
       color-mix(in srgb, var(--surface) 12%, transparent) 55%,
       color-mix(in srgb, var(--bg) 8%, transparent) 100%
     );
-    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat-subtle));
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat-subtle));
   }
 
-  /** Cartes témoignages / encarts : verre lisible, bordure unique. */
+  /* ─────────────────────────────────────────────────────────────────
+   * Landing « carnet de route »
+   * Registre éditorial imprimé : filets 1px, numérotation sérif en
+   * marge, aplats. Aucune carte flottante, aucune ombre portée, aucun
+   * dégradé de texte. C'est la typographie et les filets qui portent la
+   * hiérarchie, pas des boîtes empilées.
+   * ───────────────────────────────────────────────────────────────── */
+
+  /** Surtitre de section : petites capitales espacées, chiffres tabulaires. */
+  .carnet-eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--subtle);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /** Filet de section : la règle horizontale qui rythme la page. */
+  .carnet-rule {
+    border-top: 1px solid var(--border-ui);
+  }
+
+  /** Numéro de chapitre en marge (01, 02, 03) — remplace les icônes décoratives. */
+  .carnet-numeral {
+    font-family: var(--font-space), Georgia, 'Times New Roman', serif;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums lining-nums;
+    line-height: 0.82;
+    letter-spacing: -0.04em;
+    color: color-mix(in srgb, var(--violet) 42%, transparent);
+  }
+
+  /** Entrée de carnet : filet vertical à gauche, pas de fond. */
+  .carnet-entry {
+    border-left: 1px solid var(--border-ui);
+    transition: border-color 200ms ease;
+  }
+  .carnet-entry:hover {
+    border-left-color: var(--border-cyan);
+  }
+
+  /** Citation : sérif, en registre « note manuscrite ». */
+  .carnet-quote {
+    font-family: var(--font-space), Georgia, 'Times New Roman', serif;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  @media (min-width: 768px) {
+    .carnet-quote {
+      font-size: 1.1875rem;
+    }
+  }
+
+  /** Ligne de métadonnée : chiffres tabulaires, alignement de tableau. */
+  .carnet-meta {
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+
+  /** FAQ : lignes réglées, pas de bloc vitré. */
+  .carnet-faq {
+    border-top: 1px solid var(--border-ui);
+  }
+  .carnet-faq > details {
+    border-bottom: 1px solid var(--border-ui);
+  }
+  .carnet-faq summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /**
+   * CTA final : bande pleine largeur en contraste inversé (encre sur papier
+   * devient papier sur encre). S'inverse toute seule en thème sombre puisque
+   * --text et --bg y sont déjà permutés.
+   */
+  .carnet-cta {
+    background: var(--text);
+    color: var(--bg);
+  }
+  .carnet-cta .carnet-eyebrow {
+    color: color-mix(in srgb, var(--bg) 62%, transparent);
+  }
+
+  /** Cartes témoignages / encarts : papier opaque, bordure unique (= Card du mobile). */
   .landing-glass-card {
     position: relative;
     isolation: isolate;
-    background: linear-gradient(
-      165deg,
-      color-mix(in srgb, var(--card) 34%, transparent),
-      color-mix(in srgb, var(--surface) 22%, transparent)
-    );
-    border: 1px solid color-mix(in srgb, var(--text) 9%, var(--border-ui-strong));
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.52),
-      0 16px 44px -20px color-mix(in srgb, var(--text) 14%, transparent);
-    backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-sat));
-    -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-sat));
+    background: var(--card);
+    border: 1px solid var(--border-ui-strong);
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
   }
   .landing-cta-panel {
-    background: linear-gradient(
-      168deg,
-      color-mix(in srgb, var(--card) 38%, transparent),
-      color-mix(in srgb, var(--surface) 24%, transparent)
-    );
-    border: 1px solid color-mix(in srgb, var(--violet) 10%, var(--border-ui-strong));
-    box-shadow:
-      0 18px 44px -12px color-mix(in srgb, var(--text) 11%, transparent),
-      inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-sat));
-    -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-sat));
+    background: var(--card);
+    border: 1px solid var(--border-cyan);
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 7%, transparent);
     border-radius: 20px;
   }
   @media (min-width: 768px) {
@@ -458,17 +529,9 @@
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    background: linear-gradient(
-      168deg,
-      color-mix(in srgb, var(--card) 36%, transparent),
-      color-mix(in srgb, var(--surface) 22%, transparent)
-    );
-    border: 1px solid color-mix(in srgb, var(--violet) 10%, var(--border-ui-strong));
-    box-shadow:
-      0 20px 48px -16px color-mix(in srgb, var(--text) 10%, transparent),
-      inset 0 1px 0 rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-sat));
-    -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-sat));
+    background: var(--card);
+    border: 1px solid var(--border-cyan);
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 7%, transparent);
     border-radius: 18px;
   }
   .landing-hero-panel::before {

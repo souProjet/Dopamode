@@ -141,50 +141,58 @@
       "ariaDownloadAndroid": "Download Questia on Google Play",
       "ariaDownloadIos": "Download Questia on the App Store",
       "ariaWeb": "Questia on the web",
-      "webOnly": "Play in your browser: onboarding, daily quests, and progress — all on the site."
+      "webOnly": "Play in your browser: profile, daily quest, and progress, all on the site."
     },
     "jsonLd": {
       "appDescription": "Daily real-life quest app: short missions tailored to your profile and play style.",
       "webDescription": "Questia turns your day into an adventure: one personalized IRL quest every day."
     },
     "hero": {
-      "line1": "The app for",
-      "line1Web": "The site for",
-      "gradient": "daily quests",
-      "line2": "in real life",
-      "lead": "One mission every morning, <strong>tuned to your profile</strong> and pace — to get out a bit more, without pressure.",
-      "preferWeb": "Prefer the web?",
-      "continueBrowser": "Continue in the browser",
-      "webOnly": "Everything happens on the web: create your profile and play in your browser.",
+      "eyebrow": "Field notes",
+      "title": "One quest a day, out in the real world.",
+      "lead": "Every morning, one short mission tuned to your profile. You do it, you tick it off, you close the notebook. No streak to keep, no guilt.",
       "ctaFree": "Start for free",
-      "discoverHow": "How it works",
-      "soonStores": "Coming soon on iPhone & Android",
-      "examplesAsideLabel": "Mission carousel"
+      "ctaSecondary": "See how it works",
+      "webOnly": "Everything runs in your browser. Nothing to install.",
+      "preferWeb": "Prefer the web?",
+      "continueBrowser": "Continue in your browser",
+      "examplesAsideLabel": "Example quests",
+      "examplesCaption": "Three quests from the notebook",
+      "facts": [
+        {
+          "value": "1",
+          "label": "quest each morning, never two"
+        },
+        {
+          "value": "30 to 90",
+          "label": "minutes per mission"
+        },
+        {
+          "value": "2",
+          "label": "questions to calibrate you"
+        }
+      ]
     },
-    "how": {
-      "label": "How it works",
-      "title": "Three steps, then your morning quest",
-      "subtitleStoresBoth": "You calibrate in about a minute, then every morning you get your mission. On mobile, everything in your pocket; on the web, the same experience in a browser.",
-      "subtitleStoresAndroid": "You calibrate in about a minute, then every morning you get your mission. On Android, everything in your pocket; on the web, the same experience in a browser.",
-      "subtitleStoresIos": "You calibrate in about a minute, then every morning you get your mission. On iPhone, everything in your pocket; on the web, the same experience in a browser.",
-      "subtitleWeb": "You calibrate in about a minute, then every morning you get your mission — all in your browser, nothing to install.",
-      "stepLabel": "Step"
+    "principle": {
+      "eyebrow": "How it works",
+      "title": "Calibrate once. The rest shows up on its own.",
+      "leadWeb": "Three minutes up front, then a mission waiting for you every morning on the site.",
+      "leadStoresBoth": "Three minutes up front, then a mission waiting for you every morning on your phone and on the site, same account.",
+      "leadStoresAndroid": "Three minutes up front, then a mission waiting for you every morning on Android and on the site, same account.",
+      "leadStoresIos": "Three minutes up front, then a mission waiting for you every morning on your iPhone and on the site, same account."
     },
     "steps": [
       {
-        "icon": "Target",
-        "title": "You first",
-        "desc": "You share your style and what you're willing to try — missions align with your profile and your energy."
+        "title": "You say who you are",
+        "desc": "Your style, your energy today, what you are willing to try. Two questions is enough."
       },
       {
-        "icon": "Brain",
-        "title": "Profile in 2 questions",
-        "desc": "Two answers to calibrate the challenge — not too easy, not impossible."
+        "title": "We calibrate the challenge",
+        "desc": "High enough to count, low enough that you actually go."
       },
       {
-        "icon": "Swords",
-        "title": "Your morning quest",
-        "desc": "A short mission with a clear ending. Check it off and move on."
+        "title": "Your quest arrives",
+        "desc": "A short mission with a clear ending. Tick it off and move on."
       }
     ],
     "examples": [
@@ -192,7 +200,7 @@
         "icon": "Camera",
         "title": "The Urban Explorer",
         "contextLabel": "Curiosity · afternoon",
-        "mission": "Spend 1 hour in a neighbourhood you usually just pass through. Photograph 5 things that surprise you.",
+        "mission": "Spend 1 hour in a neighborhood you usually just pass through. Photograph 5 things that surprise you.",
         "duration": "1h30",
         "outdoor": true
       },
@@ -200,7 +208,7 @@
         "icon": "Coffee",
         "title": "The Strangers' Café",
         "contextLabel": "Social break · 45 min",
-        "mission": "Go to a café you've never tried. Order something you never pick. 45 minutes phone-free — boss fight mode.",
+        "mission": "Go to a café you've never tried. Order something you never pick. 45 minutes phone-free.",
         "duration": "1h",
         "outdoor": false
       },
@@ -213,94 +221,88 @@
         "outdoor": false
       }
     ],
-    "download": {
-      "label": "Download",
-      "titleStoresBoth": "iPhone & Android",
-      "titleStoresAndroid": "Android",
-      "titleStoresIos": "iPhone",
-      "subtitleStoresBoth": "Your daily quest and progress on your phone — or do everything on the web with the same account.",
-      "subtitleStoresAndroid": "Your daily quest and progress on your Android phone — or do everything on the web with the same account.",
-      "subtitleStoresIos": "Your daily quest and progress on your iPhone — or do everything on the web with the same account.",
-      "labelWeb": "On the web",
-      "titleWeb": "Play in your browser",
-      "subtitleWeb": "Create your profile, get your morning quest, and check off missions — all on the site, one account.",
-      "webLink": "Use Questia on the web"
+    "usage": {
+      "eyebrowWeb": "On the web",
+      "eyebrowStores": "On mobile",
+      "titleWeb": "Nothing to install",
+      "titleStoresBoth": "iPhone, Android, or just the web",
+      "titleStoresAndroid": "Android, or just the web",
+      "titleStoresIos": "iPhone, or just the web",
+      "leadWeb": "Profile, morning quest, progress: it all fits in one tab, on one account.",
+      "leadStoresBoth": "Your morning quest in your pocket, or in a tab. Same account on both sides.",
+      "leadStoresAndroid": "Your morning quest on Android, or in a tab. Same account on both sides.",
+      "leadStoresIos": "Your morning quest on your iPhone, or in a tab. Same account on both sides.",
+      "webLink": "Create my profile on the web"
     },
-    "testimonials": {
-      "label": "Stories & results",
-      "title": "Players who were tired too",
-      "subtitle": "No magic — just small steps when play replaces guilt.",
+    "voices": {
+      "eyebrow": "Feedback",
+      "title": "They were short on motivation too",
+      "lead": "Three replies, unedited.",
       "yearsOld": "years old"
     },
     "testimonialQuotes": [
       {
-        "quote": "Day 23. I thought I was outgoing. I wasn't. Now I actually am.",
+        "quote": "Day 23. I thought I was a sociable person. Turns out I wasn't. Now I actually am.",
         "name": "Sarah",
         "age": 29
       },
       {
-        "quote": "In three weeks I found 8 restaurants, 3 museums, and a new friend — in places I walked past without seeing.",
+        "quote": "Three weeks in: eight restaurants, three museums, one new friend. All on streets I used to walk past.",
         "name": "Marc",
         "age": 34
       },
       {
-        "quote": "I thought I loved staying home. I was just scared to go out. Big difference.",
+        "quote": "I thought I liked staying home. I mostly liked avoiding going out. Not the same thing.",
         "name": "Camille",
         "age": 26
       }
     ],
     "faq": {
-      "label": "FAQ",
-      "title": "Frequently asked questions",
-      "subtitleStoresBoth": "What you should know before you start — web or mobile.",
-      "subtitleStoresAndroid": "What you should know before you start — web or Android.",
-      "subtitleStoresIos": "What you should know before you start — web or iPhone.",
-      "subtitleWeb": "What you should know before you start on the site."
+      "eyebrow": "Questions",
+      "title": "What people ask us",
+      "leadWeb": "What to know before you start on the site.",
+      "leadStoresBoth": "What to know before you start, on the web or on mobile.",
+      "leadStoresAndroid": "What to know before you start, on the web or on Android.",
+      "leadStoresIos": "What to know before you start, on the web or on iPhone."
     },
     "faqItems": [
       {
-        "question": "How is a Questia quest different from a simple to-do list?",
-        "answer": "Each morning you get a short mission, tuned to your profile, play style, and chosen difficulty. The goal: a small, doable action in real life with a clear ending — not an endless backlog."
+        "question": "How is a quest different from a to-do list?",
+        "answer": "A to-do list grows. A quest ends. Each morning you get exactly one, tuned to your profile and the challenge level you picked, with a clear ending and nothing queued behind it."
       },
       {
         "question": "One account for everything?",
-        "answer": "Yes. Profile, quests, and progress all live on the site in your browser — one account."
+        "answer": "Yes. Profile, quests, and progress live on the same account, wherever you play from."
       },
       {
-        "question": "Is the app free?",
-        "answer": "You can start for free to tune your profile and learn how it works on the site. If paid options appear later, they'll be clearly labelled."
+        "question": "Is it free?",
+        "answer": "You can calibrate your profile and play your first quests for free. If paid options arrive, they will be announced clearly, with no traps."
       },
       {
-        "question": "How does Questia personalize my quests?",
-        "answer": "From your profile and the settings you accept, missions stay realistic for you — not too soft, not impossible. You stay in control of what you actually try."
+        "question": "How are my quests personalized?",
+        "answer": "From your profile and the settings you agree to. Missions stay realistic for you, and you stay in control: nothing forces you to accept today's quest."
       },
       {
-        "question": "Does Questia replace a health professional or coach?",
-        "answer": "No. Questia is a motivation and structure tool, not medical or psychological care. If you're going through something serious, talk to a qualified professional."
+        "question": "Does this replace a health professional?",
+        "answer": "No. Questia is a motivation tool, not a medical or psychological device. If you are going through something serious, talk to a health professional."
       },
       {
         "question": "Who is it for?",
-        "answer": "Adults who want to move a little more in their week, with light challenges and fun — without guilt. Great if you like games, quests, and concrete small wins."
+        "answer": "Adults who want a bit more movement in their week without beating themselves up. Useful if you like games, quests, and small concrete wins."
       }
     ],
     "cta": {
-      "label": "Let's go",
-      "titleBefore": "Ready for your next",
-      "titleGradient": "IRL quest",
-      "titleAfter": "?",
-      "storesReady": "Start free — on the stores or in your browser, with the same account.",
-      "storesReadyAndroid": "Start free — on Google Play or in your browser, with the same account.",
-      "storesReadyIos": "Start free — on the App Store or in your browser, with the same account.",
-      "storesPending": "Create your profile on the web; when the app is ready, pick up with the same account.",
-      "storesPendingWeb": "Create your profile and start your first quest — all on the web, free to begin.",
-      "or": "or",
-      "continueWeb": "Continue on the web",
-      "ctaFree": "Start for free",
-      "appStoresLink": "The app on iPhone and Android",
-      "appStoresLinkWeb": "Discover Questia on the web"
+      "eyebrow": "Get started",
+      "title": "Your first quest is waiting.",
+      "leadWeb": "Free to start. Two questions, then your morning mission.",
+      "leadStoresBoth": "Free to start, on the stores or in your browser, same account.",
+      "leadStoresAndroid": "Free to start, on Google Play or in your browser, same account.",
+      "leadStoresIos": "Free to start, on the App Store or in your browser, same account.",
+      "ctaFree": "Create my profile",
+      "secondary": "How quests are created"
     },
     "footer": {
-      "tagline": "Side quests in real life — one mission a day, without pressure.",
+      "tagline": "Side quests in real life. One mission a day, without pressure.",
       "navLabel": "Footer links",
       "examples": "Examples",
       "how": "How it works",

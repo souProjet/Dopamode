@@ -1,14 +1,11 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import { ArrowRight } from 'lucide-react';
-import { Icon } from '@/components/Icons';
 import { Navbar } from '@/components/Navbar';
 import { QuestiaLogo } from '@/components/QuestiaLogo';
 import { QuestExamplesSlider, type ExampleQuestSlide } from '@/components/QuestExamplesSlider';
 import { AppStoreButtons } from '@/components/AppStoreButtons';
 import { LandingJsonLd } from '@/components/LandingJsonLd';
-import { LandingReveal } from '@/components/LandingReveal';
 import { hasAnyStoreLink, storeAvailability } from '@/config/marketing';
 import { canonicalUrlFor } from '@/lib/seo/alternates';
 
@@ -58,13 +55,50 @@ export async function generateMetadata({
   };
 }
 
+/** Gouttière commune : la page entière est alignée sur cette colonne. */
+const SHELL = 'mx-auto w-full max-w-6xl px-5 sm:px-8';
+
+/**
+ * En-tête de section du carnet : filet, surtitre, titre, chapô.
+ * Aligné à gauche partout — c'est ce qui distingue la page d'une landing
+ * générique où tout est centré.
+ */
+function SectionHeading({
+  id,
+  eyebrow,
+  title,
+  lead,
+}: {
+  id: string;
+  eyebrow: string;
+  title: string;
+  lead?: string;
+}) {
+  return (
+    <header className="carnet-rule pt-6 sm:pt-8">
+      <p className="carnet-eyebrow">{eyebrow}</p>
+      <h2
+        id={id}
+        className="mt-4 max-w-3xl font-display text-[clamp(1.75rem,3.4vw+0.9rem,2.9rem)] font-semibold leading-[1.1] tracking-[-0.02em] text-balance text-[var(--text)]"
+      >
+        {title}
+      </h2>
+      {lead ? (
+        <p className="mt-4 max-w-2xl text-base leading-[1.65] text-[var(--muted)] sm:text-lg">
+          {lead}
+        </p>
+      ) : null}
+    </header>
+  );
+}
+
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations('HomePage');
   const storesReady = hasAnyStoreLink();
   const storeAvail = storeAvailability();
-  const landingStoreSuffix: 'Both' | 'Android' | 'Ios' | null =
+  const storeSuffix: 'Both' | 'Android' | 'Ios' | null =
     storesReady && storeAvail !== 'none'
       ? storeAvail === 'both'
         ? 'Both'
@@ -72,412 +106,301 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           ? 'Android'
           : 'Ios'
       : null;
-  const STEPS = t.raw('steps') as { icon: string; title: string; desc: string }[];
+  const STEPS = t.raw('steps') as { title: string; desc: string }[];
+  const FACTS = t.raw('hero.facts') as { value: string; label: string }[];
   const EXAMPLE_QUESTS = t.raw('examples') as ExampleQuestSlide[];
-  const testimonialQuotes = t.raw('testimonialQuotes') as { quote: string; name: string; age: number }[];
-  const LANDING_FAQ = t.raw('faqItems') as { question: string; answer: string }[];
+  const VOICES = t.raw('testimonialQuotes') as { quote: string; name: string; age: number }[];
+  const FAQ_ITEMS = t.raw('faqItems') as { question: string; answer: string }[];
 
   return (
-    <div className="min-h-screen bg-adventure relative overflow-x-hidden">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden z-0" aria-hidden>
-        <div
-          className="landing-hero-ambient-glow absolute -top-28 left-1/2 w-[min(100rem,200%)] max-w-none -translate-x-1/2 h-[min(38vh,24rem)] rounded-[100%] motion-safe:animate-glow-soft opacity-50 motion-reduce:animate-none motion-reduce:opacity-35"
-          aria-hidden
-        />
-      </div>
-
+    <div className="relative min-h-screen overflow-x-hidden bg-adventure">
       <div className="relative z-10">
         <LandingJsonLd locale={locale} />
         <Navbar />
+
         <main id="main-content" tabIndex={-1} className="outline-none">
-        <section
-          id="hero"
-          className="relative min-h-[100dvh] flex flex-col justify-center pt-[max(7.25rem,calc(env(safe-area-inset-top,0px)+5.75rem))] pb-[max(1.25rem,calc(env(safe-area-inset-bottom,0px)+0.75rem))] sm:py-14 md:py-16 pl-[max(0.75rem,env(safe-area-inset-left,0px))] pr-[max(0.75rem,env(safe-area-inset-right,0px))] sm:px-5 md:px-6 lg:px-8 xl:px-10 overflow-hidden"
-          aria-labelledby="hero-heading"
-        >
-          <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
-            <div className="absolute top-20 sm:top-28 right-[8%] sm:right-[12%] flex items-center justify-center opacity-[0.11] sm:opacity-[0.14] select-none motion-safe:animate-float motion-reduce:animate-none [animation-delay:1.2s]">
-              <Icon name="Compass" className="h-9 w-9 sm:h-11 sm:w-11 text-stone-700" aria-hidden />
-            </div>
-          </div>
-
-          <div className="relative w-full max-w-[min(100%,88rem)] mx-auto">
-            <div className="landing-hero-panel p-4 sm:p-6 md:p-8 lg:p-10 xl:p-11 2xl:p-12 motion-safe:animate-fade-up motion-reduce:opacity-100">
-              <div className="relative z-[1] grid grid-cols-1 lg:grid-cols-[minmax(0,1.06fr)_minmax(280px,min(520px,42vw))] xl:grid-cols-[minmax(0,1.1fr)_minmax(300px,540px)] 2xl:grid-cols-[minmax(0,1.14fr)_minmax(320px,560px)] gap-7 sm:gap-9 md:gap-10 lg:gap-12 xl:gap-14 2xl:gap-16 lg:items-center">
-            <div className="space-y-5 sm:space-y-7 md:space-y-8 min-w-0">
-              <h1
-                id="hero-heading"
-                className="font-display font-black text-[clamp(1.5rem,3.2vw+0.85rem,2.75rem)] sm:text-[clamp(1.85rem,2.2vw+1.1rem,2.5rem)] md:text-5xl lg:text-[clamp(2.5rem,2vw+1.75rem,3.5rem)] xl:text-[3.5rem] leading-[1.08] sm:leading-[1.1] text-[var(--on-cream)] mb-1 sm:mb-2 motion-safe:animate-fade-up motion-reduce:opacity-100 [overflow-wrap:anywhere] text-balance"
-              >
-              {t(storesReady ? 'hero.line1' : 'hero.line1Web')}{' '}
-              <span className="text-gradient-pop text-[1.06em] md:text-[1.1em] lg:text-[1.12em] tracking-[-0.02em]">
-                {t('hero.gradient')}
-              </span>
-              <br />
-              <span className="inline-flex items-center gap-2 flex-wrap">
-                {t('hero.line2')}{' '}
-                <Icon name="Map" className="inline-block h-[1.1em] w-[1.1em] shrink-0 translate-y-[0.06em] text-teal-900/85" aria-hidden />
-              </span>
-            </h1>
-
-            <div className="space-y-4 max-w-xl lg:max-w-2xl xl:max-w-[44rem] motion-safe:animate-fade-up motion-safe:delay-100 motion-reduce:opacity-100">
-              <p className="text-[0.9375rem] sm:text-lg md:text-xl font-medium text-[var(--on-cream-muted)] leading-[1.55] sm:leading-relaxed">
-                {t.rich('hero.lead', {
-                  strong: (chunks) => <strong className="text-[var(--on-cream)]">{chunks}</strong>,
-                })}
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-4 pt-2 motion-safe:animate-fade-up motion-safe:delay-200 motion-reduce:opacity-100">
-              {storesReady ? (
-                <>
-                  <AppStoreButtons className="w-full sm:justify-start" />
-                  <div className="flex flex-col gap-2 pt-1 border-t border-orange-200/45">
-                    <p className="text-xs text-[var(--on-cream-subtle)]">
-                      {t('hero.preferWeb')}{' '}
-                      <Link href="/onboarding" className="font-semibold text-cyan-800 underline-offset-2 hover:underline">
-                        {t('hero.continueBrowser')}
-                      </Link>
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="space-y-2">
-                    <p className="text-sm text-[var(--on-cream-muted)] leading-snug">
-                      {t('hero.webOnly')}
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-3 sm:gap-3.5 items-stretch sm:items-start">
-                    <Link
-                      href="/onboarding"
-                      className="btn btn-cta btn-lg text-base w-full sm:w-auto text-center font-black"
-                    >
-                      {t('hero.ctaFree')}
-                    </Link>
-                    <a
-                      href="#how"
-                      className="text-sm font-semibold text-cyan-900/90 underline-offset-2 hover:underline decoration-orange-300/70 text-center sm:text-left w-full sm:w-auto"
-                    >
-                      {t('hero.discoverHow')}
-                    </a>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          <aside
-            id="hero-examples"
-            className="flex w-full max-w-lg mx-auto justify-center items-stretch lg:max-w-none lg:mx-0 lg:justify-end scroll-mt-[5.5rem] sm:scroll-mt-28 motion-safe:animate-fade-up motion-safe:delay-300 motion-reduce:opacity-100 min-w-0 pt-1 lg:pt-0"
-            aria-label={t('hero.examplesAsideLabel')}
+          {/* Ouverture : titre à gauche, extrait du carnet à droite. Pas de panneau. */}
+          <section
+            id="hero"
+            className="pt-[max(8rem,calc(env(safe-area-inset-top,0px)+7rem))] pb-14 sm:pb-20"
+            aria-labelledby="hero-heading"
           >
-            <div className="w-full min-w-0 max-w-[min(100%,28rem)] sm:max-w-[min(100%,30rem)] xl:max-w-[min(100%,34rem)] 2xl:max-w-[min(100%,36rem)]">
-              <QuestExamplesSlider quests={EXAMPLE_QUESTS} variant="embedded" nestedInPanel />
-            </div>
-          </aside>
-              </div>
-            </div>
-        </div>
-      </section>
-
-      <section id="how" className="section-band-how min-h-[100dvh] flex flex-col justify-center py-12 sm:py-16 md:py-20 lg:py-24 px-3 sm:px-4 sm:px-6 scroll-mt-20 sm:scroll-mt-24" aria-labelledby="how-heading">
-        <LandingReveal>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-10 sm:mb-14 md:mb-20 space-y-4 sm:space-y-5">
-            <p className="label flex items-center justify-center gap-2 text-stone-600">
-              <Icon name="Zap" size="sm" className="text-stone-500 shrink-0" aria-hidden />
-              {t('how.label')}
-            </p>
-            <h2 id="how-heading" className="font-display font-black text-2xl sm:text-3xl md:text-5xl text-slate-900 leading-tight [overflow-wrap:anywhere] px-1">
-              {t('how.title')}
-            </h2>
-            <p className="text-slate-600 text-base sm:text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed px-1">
-              {t(landingStoreSuffix ? `how.subtitleStores${landingStoreSuffix}` : 'how.subtitleWeb')}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-            {STEPS.map((s, i) => (
-              <div
-                key={i}
-                className="card card-hover rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-9 flex flex-col items-start gap-4 sm:gap-5 border border-stone-400/25 shadow-[0_8px_28px_-12px_rgba(28,25,23,0.12)]"
-              >
-                <Icon name={s.icon} size="2xl" className="text-stone-700 shrink-0" aria-hidden />
-                <div className="space-y-3">
-                  <p className="text-xs font-bold text-stone-500 uppercase tracking-wider">
-                    {t('how.stepLabel')} {i + 1}
-                  </p>
-                  <h3 className="font-display font-bold text-slate-900 text-xl leading-snug">{s.title}</h3>
-                  <p className="text-slate-600 text-sm md:text-base leading-relaxed">{s.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        </LandingReveal>
-      </section>
-
-      <section
-        id="telecharger"
-        className="landing-section-frost min-h-[100dvh] flex flex-col justify-center py-12 sm:py-16 md:py-20 lg:py-24 px-3 sm:px-4 sm:px-6 scroll-mt-20 sm:scroll-mt-24 border-y border-stone-400/20"
-        aria-labelledby="download-heading"
-      >
-        <LandingReveal delayMs={40}>
-        <div className="max-w-3xl mx-auto text-center space-y-5 sm:space-y-6 px-1">
-          <p className="label flex items-center justify-center gap-2 text-stone-600">
-            <Icon name="Smartphone" size="sm" className="text-stone-500 shrink-0" aria-hidden />
-            {t(storesReady ? 'download.label' : 'download.labelWeb')}
-          </p>
-          <h2 id="download-heading" className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-slate-900 leading-tight [overflow-wrap:anywhere]">
-            {t(landingStoreSuffix ? `download.titleStores${landingStoreSuffix}` : 'download.titleWeb')}
-          </h2>
-          <p className="text-slate-600 text-base sm:text-lg md:text-xl font-medium leading-relaxed max-w-2xl mx-auto">
-            {t(landingStoreSuffix ? `download.subtitleStores${landingStoreSuffix}` : 'download.subtitleWeb')}
-          </p>
-          <div className="pt-4 flex flex-col items-center gap-4">
-            <AppStoreButtons className="justify-center" />
-            <p className="text-sm text-slate-500 max-w-md">
-              <Link href="/onboarding" className="font-semibold text-cyan-800 underline-offset-2 hover:underline">
-                {t('download.webLink')}
-              </Link>
-            </p>
-          </div>
-        </div>
-        </LandingReveal>
-      </section>
-
-      <section id="testimonials" className="section-band-social min-h-[100dvh] flex flex-col justify-center py-12 sm:py-16 md:py-20 lg:py-24 px-3 sm:px-4 sm:px-6 relative scroll-mt-20 sm:scroll-mt-24" aria-labelledby="testimonials-heading">
-        <LandingReveal delayMs={40}>
-        <div className="max-w-5xl mx-auto relative">
-          <div className="text-center mb-10 sm:mb-12 md:mb-16 space-y-3 sm:space-y-4 px-1">
-            <p className="label flex items-center justify-center gap-2 text-stone-600">
-              <Icon name="MessageCircle" size="sm" className="text-stone-500 shrink-0" aria-hidden />
-              {t('testimonials.label')}
-            </p>
-            <h2 id="testimonials-heading" className="font-display font-black text-2xl sm:text-3xl md:text-5xl text-slate-900 leading-tight [overflow-wrap:anywhere]">
-              {t('testimonials.title')}
-            </h2>
-            <p className="text-slate-600 text-base sm:text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed">
-              {t('testimonials.subtitle')}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-            {testimonialQuotes.map((row) => (
-              <article
-                key={row.name}
-                className="landing-glass-card rounded-2xl sm:rounded-3xl p-6 sm:p-7 md:p-8 transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-0.5 motion-reduce:hover:translate-y-0"
-              >
-                <blockquote className="text-slate-900 text-[15px] sm:text-base leading-relaxed font-semibold mb-5 sm:mb-6 [overflow-wrap:anywhere]">
-                  « {row.quote} »
-                </blockquote>
-                <p className="text-sm text-slate-600">
-                  <span className="font-bold text-slate-800">{row.name}</span>
-                  {', '}
-                  {row.age} {t('testimonials.yearsOld')}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
-        </LandingReveal>
-      </section>
-
-      <section
-        id="faq"
-        className="landing-section-frost min-h-[100dvh] py-12 sm:py-16 md:py-20 lg:py-24 px-3 sm:px-4 sm:px-6 scroll-mt-20 sm:scroll-mt-24"
-        aria-labelledby="faq-heading"
-      >
-        <LandingReveal delayMs={40}>
-        <div className="max-w-2xl mx-auto min-w-0">
-          <div className="text-center mb-8 sm:mb-10 md:mb-12 space-y-2 sm:space-y-3 px-1">
-            <p className="label text-stone-600">{t('faq.label')}</p>
-            <h2 id="faq-heading" className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-slate-900 leading-tight [overflow-wrap:anywhere]">
-              {t('faq.title')}
-            </h2>
-            <p className="text-slate-600 text-sm sm:text-base md:text-lg font-medium max-w-lg mx-auto leading-relaxed">
-              {t(landingStoreSuffix ? `faq.subtitleStores${landingStoreSuffix}` : 'faq.subtitleWeb')}
-            </p>
-          </div>
-          <div className="glass rounded-2xl sm:rounded-3xl overflow-hidden divide-y divide-stone-300/40 border border-stone-400/20">
-            {LANDING_FAQ.map((item) => (
-              <details key={item.question} className="group">
-                <summary className="cursor-pointer list-none min-h-[3rem] sm:min-h-0 px-4 sm:px-6 py-4 sm:py-5 font-bold text-slate-900 flex items-start justify-between gap-3 sm:gap-4 text-left select-none touch-manipulation [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent active:bg-stone-100/40">
-                  <span className="leading-snug text-[14px] sm:text-[15px] md:text-base pt-0.5 [overflow-wrap:anywhere]">{item.question}</span>
-                  <span
-                    className="shrink-0 mt-0.5 inline-flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-stone-100/90 text-stone-500 group-open:bg-stone-200/80 group-open:text-stone-800 transition-colors"
-                    aria-hidden
+            <div className={SHELL}>
+              <div className="grid items-start gap-11 lg:grid-cols-12 lg:gap-14">
+                <div className="lg:col-span-7">
+                  <p className="carnet-eyebrow">{t('hero.eyebrow')}</p>
+                  <h1
+                    id="hero-heading"
+                    className="mt-5 font-display text-[clamp(2.15rem,5.6vw+0.5rem,4.15rem)] font-semibold leading-[1.03] tracking-[-0.033em] text-balance text-[var(--text)]"
                   >
-                    <svg
-                      className="h-4 w-4 transition-transform duration-200 group-open:rotate-180"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2.25}
-                      aria-hidden
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </span>
-                </summary>
-                <div className="px-4 sm:px-6 pb-4 sm:pb-5 -mt-1">
-                  <p className="text-slate-600 text-sm md:text-[15px] leading-relaxed border-l-2 border-stone-300/80 pl-3 sm:pl-4 [overflow-wrap:anywhere]">
-                    {item.answer}
+                    {t('hero.title')}
+                  </h1>
+                  <p className="mt-6 max-w-xl text-lg leading-[1.6] text-[var(--muted)] sm:text-xl">
+                    {t('hero.lead')}
                   </p>
-                </div>
-              </details>
-            ))}
-          </div>
-        </div>
-        </LandingReveal>
-      </section>
 
-      <section
-        id="cta"
-        className="section-band-cta min-h-[100dvh] flex flex-col justify-center py-12 sm:py-16 md:py-20 lg:py-24 px-3 sm:px-4 sm:px-6 scroll-mt-20 sm:scroll-mt-24 border-t border-stone-400/25"
-        aria-labelledby="cta-heading"
-      >
-        <LandingReveal delayMs={40}>
-          <div className="max-w-4xl mx-auto min-w-0">
-            <div className="landing-cta-panel px-4 py-8 sm:px-10 sm:py-11 md:px-12 md:py-12 transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 motion-reduce:transition-none">
-              <div className="text-center space-y-2">
-                <p className="label text-stone-600">{t('cta.label')}</p>
-                <h2
-                  id="cta-heading"
-                  className="font-display font-black text-[clamp(1.25rem,3.5vw+0.6rem,1.85rem)] sm:text-3xl md:text-[2.15rem] text-slate-900 leading-tight tracking-tight [overflow-wrap:anywhere] px-0.5"
+                  {storesReady ? (
+                    <div className="mt-9 space-y-5">
+                      <AppStoreButtons className="sm:justify-start" />
+                      <p className="text-sm text-[var(--subtle)]">
+                        {t('hero.preferWeb')}{' '}
+                        <Link
+                          href="/onboarding"
+                          className="font-semibold text-[var(--link-on-bg)] underline underline-offset-4"
+                        >
+                          {t('hero.continueBrowser')}
+                        </Link>
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="mt-9 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-7">
+                      <Link
+                        href="/onboarding"
+                        className="btn btn-cta rounded-lg px-7 py-3.5 text-[15px]"
+                      >
+                        {t('hero.ctaFree')}
+                      </Link>
+                      <a
+                        href="#principe"
+                        className="text-[15px] font-semibold text-[var(--link-on-bg)] underline underline-offset-4 decoration-[color-mix(in_srgb,var(--link-on-bg)_35%,transparent)]"
+                      >
+                        {t('hero.ctaSecondary')}
+                      </a>
+                    </div>
+                  )}
+                  {!storesReady ? (
+                    <p className="mt-5 text-sm text-[var(--subtle)]">{t('hero.webOnly')}</p>
+                  ) : null}
+                </div>
+
+                <aside
+                  id="hero-examples"
+                  className="min-w-0 scroll-mt-28 lg:col-span-5"
+                  aria-label={t('hero.examplesAsideLabel')}
                 >
-                  {t('cta.titleBefore')}{' '}
-                  <span className="text-gradient-pop text-[1.08em] sm:text-[1.12em] md:text-[1.18em] tracking-[-0.03em]">
-                    {t('cta.titleGradient')}
-                  </span>{' '}
-                  {t('cta.titleAfter')}
-                </h2>
-                <p className="text-slate-700 text-sm sm:text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto pt-1 px-0.5">
-                  {storesReady
-                    ? t(
-                        landingStoreSuffix === 'Android'
-                          ? 'cta.storesReadyAndroid'
-                          : landingStoreSuffix === 'Ios'
-                            ? 'cta.storesReadyIos'
-                            : 'cta.storesReady',
-                      )
-                    : t('cta.storesPendingWeb')}
-                </p>
+                  <p className="carnet-eyebrow mb-3">{t('hero.examplesCaption')}</p>
+                  <QuestExamplesSlider quests={EXAMPLE_QUESTS} variant="embedded" nestedInPanel />
+                </aside>
               </div>
 
-              {storesReady ? (
-                <div className="mt-8 md:mt-9 flex flex-col items-stretch gap-6 sm:gap-7">
-                  <AppStoreButtons className="justify-center w-full" />
-                  <div className="flex items-center gap-3 w-full max-w-md mx-auto">
-                    <div className="flex-1 h-px divider-glow opacity-80" aria-hidden />
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-stone-500 shrink-0">
-                      {t('cta.or')}
+              {/* Trois chiffres, en ligne de tableau. Remplace les « features ». */}
+              <dl className="carnet-rule mt-14 grid grid-cols-1 sm:mt-16 sm:grid-cols-3">
+                {FACTS.map((fact) => (
+                  <div
+                    key={fact.label}
+                    className="border-b border-[var(--border-ui)] py-5 sm:border-b-0 sm:border-r sm:py-6 sm:pr-6 sm:last:border-r-0 sm:[&+div]:pl-6"
+                  >
+                    <dd className="font-display text-3xl font-semibold tracking-[-0.02em] text-[var(--text)] carnet-meta sm:text-[2.25rem]">
+                      {fact.value}
+                    </dd>
+                    <dt className="mt-1.5 text-sm leading-snug text-[var(--muted)]">{fact.label}</dt>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </section>
+
+          {/* 01 / 02 / 03 : la numérotation porte la hiérarchie, pas des icônes. */}
+          <section id="principe" className="scroll-mt-24 py-12 sm:py-16" aria-labelledby="principe-heading">
+            <div className={SHELL}>
+              <SectionHeading
+                id="principe-heading"
+                eyebrow={t('principle.eyebrow')}
+                title={t('principle.title')}
+                lead={t(storeSuffix ? `principle.leadStores${storeSuffix}` : 'principle.leadWeb')}
+              />
+              <ol className="mt-12 grid gap-10 sm:mt-14 sm:grid-cols-3 sm:gap-0">
+                {STEPS.map((step, i) => (
+                  <li key={step.title} className="carnet-entry pl-5 sm:pl-6 sm:pr-7 sm:last:pr-0">
+                    <span className="carnet-numeral block text-[3.25rem] sm:text-[3.75rem]" aria-hidden>
+                      {String(i + 1).padStart(2, '0')}
                     </span>
-                    <div className="flex-1 h-px divider-glow opacity-80" aria-hidden />
-                  </div>
-                  <div className="flex justify-center">
-                    <Link
-                      href="/onboarding"
-                      className="group inline-flex items-center justify-center gap-1.5 rounded-xl border border-cyan-400/30 bg-white/65 px-4 py-2.5 text-sm font-semibold text-cyan-950 transition-colors hover:border-cyan-500/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/35 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
-                    >
-                      Continuer sur le web
-                      <ArrowRight
-                        className="h-4 w-4 text-cyan-700/70 transition-transform group-hover:translate-x-px motion-reduce:transition-none"
-                        strokeWidth={2.25}
+                    <h3 className="mt-5 font-display text-xl font-semibold leading-snug tracking-[-0.01em] text-[var(--text)]">
+                      {step.title}
+                    </h3>
+                    <p className="mt-2.5 text-[15px] leading-[1.62] text-[var(--muted)]">{step.desc}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </section>
+
+          <section id="telecharger" className="scroll-mt-24 py-12 sm:py-16" aria-labelledby="usage-heading">
+            <div className={SHELL}>
+              <SectionHeading
+                id="usage-heading"
+                eyebrow={t(storesReady ? 'usage.eyebrowStores' : 'usage.eyebrowWeb')}
+                title={t(storeSuffix ? `usage.titleStores${storeSuffix}` : 'usage.titleWeb')}
+                lead={t(storeSuffix ? `usage.leadStores${storeSuffix}` : 'usage.leadWeb')}
+              />
+              <div className="mt-9 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-8">
+                {storesReady ? <AppStoreButtons /> : null}
+                <Link
+                  href="/onboarding"
+                  className="text-[15px] font-semibold text-[var(--link-on-bg)] underline underline-offset-4 decoration-[color-mix(in_srgb,var(--link-on-bg)_35%,transparent)]"
+                >
+                  {t('usage.webLink')}
+                </Link>
+              </div>
+            </div>
+          </section>
+
+          {/* Retours : citations sérif en entrées de carnet, pas de cartes. */}
+          <section id="temoignages" className="scroll-mt-24 py-12 sm:py-16" aria-labelledby="voices-heading">
+            <div className={SHELL}>
+              <SectionHeading
+                id="voices-heading"
+                eyebrow={t('voices.eyebrow')}
+                title={t('voices.title')}
+                lead={t('voices.lead')}
+              />
+              <div className="mt-12 grid gap-10 sm:mt-14 sm:grid-cols-3 sm:gap-0">
+                {VOICES.map((voice) => (
+                  <figure key={voice.name} className="carnet-entry pl-5 sm:pl-6 sm:pr-7 sm:last:pr-0">
+                    <blockquote className="carnet-quote [overflow-wrap:anywhere]">
+                      {voice.quote}
+                    </blockquote>
+                    <figcaption className="carnet-meta mt-5 text-sm">
+                      <span className="font-semibold text-[var(--text)]">{voice.name}</span>
+                      {', '}
+                      {voice.age} {t('voices.yearsOld')}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section id="faq" className="scroll-mt-24 py-12 sm:py-16" aria-labelledby="faq-heading">
+            <div className={SHELL}>
+              <SectionHeading
+                id="faq-heading"
+                eyebrow={t('faq.eyebrow')}
+                title={t('faq.title')}
+                lead={t(storeSuffix ? `faq.leadStores${storeSuffix}` : 'faq.leadWeb')}
+              />
+              <div className="carnet-faq mt-11 sm:mt-12">
+                {FAQ_ITEMS.map((item) => (
+                  <details key={item.question} className="group">
+                    <summary className="flex cursor-pointer list-none touch-manipulation select-none items-start justify-between gap-5 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-cyan)]">
+                      <span className="font-display text-[17px] font-semibold leading-snug text-[var(--text)] [overflow-wrap:anywhere] sm:text-lg">
+                        {item.question}
+                      </span>
+                      <span
+                        className="relative mt-2.5 h-px w-4 shrink-0 bg-[var(--muted)] sm:w-[1.125rem]"
                         aria-hidden
-                      />
-                    </Link>
-                  </div>
+                      >
+                        <span className="absolute inset-0 bg-[var(--muted)] transition-transform duration-200 group-open:rotate-0 rotate-90" />
+                      </span>
+                    </summary>
+                    <p className="max-w-2xl pb-6 text-[15px] leading-[1.68] text-[var(--muted)] [overflow-wrap:anywhere]">
+                      {item.answer}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Clôture : contraste inversé, pleine largeur. */}
+          <section id="cta" className="carnet-cta scroll-mt-24 py-14 sm:py-20" aria-labelledby="cta-heading">
+            <div className={SHELL}>
+              <p className="carnet-eyebrow">{t('cta.eyebrow')}</p>
+              <div className="mt-4 grid gap-9 lg:grid-cols-12 lg:items-end lg:gap-14">
+                <div className="lg:col-span-7">
+                  <h2
+                    id="cta-heading"
+                    className="font-display text-[clamp(1.9rem,3.6vw+0.9rem,3rem)] font-semibold leading-[1.08] tracking-[-0.025em] text-balance"
+                  >
+                    {t('cta.title')}
+                  </h2>
+                  <p className="mt-4 max-w-xl text-base leading-[1.65] opacity-75 sm:text-lg">
+                    {t(storeSuffix ? `cta.leadStores${storeSuffix}` : 'cta.leadWeb')}
+                  </p>
                 </div>
-              ) : (
-                <div className="mt-8 md:mt-9 flex flex-col items-center gap-5 text-center">
-                  <Link href="/onboarding" className="btn btn-cta btn-lg text-base font-black w-full max-w-sm justify-center">
+                <div className="flex flex-col items-start gap-5 lg:col-span-5 lg:items-end">
+                  <Link
+                    href="/onboarding"
+                    className="btn rounded-lg bg-[var(--bg)] px-7 py-3.5 text-[15px] text-[var(--text)]"
+                  >
                     {t('cta.ctaFree')}
                   </Link>
-                  <a
-                    href="#telecharger"
-                    className="text-sm font-bold text-cyan-900/90 underline-offset-2 hover:underline decoration-orange-300/80"
+                  <Link
+                    href="/generation-quetes"
+                    className="text-[15px] font-semibold underline underline-offset-4 opacity-80 transition-opacity hover:opacity-100"
                   >
-                    {t('cta.appStoresLinkWeb')}
-                  </a>
+                    {t('cta.secondary')}
+                  </Link>
                 </div>
-              )}
+              </div>
             </div>
-          </div>
-        </LandingReveal>
-      </section>
+          </section>
         </main>
 
-      <footer className="landing-footer">
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 sm:px-6 py-10 sm:py-12 md:py-14">
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 sm:gap-10 md:gap-12">
-            <div className="max-w-sm">
-              <div className="flex items-center gap-3">
-                <QuestiaLogo variant="footer" />
-                <p className="font-display font-black text-lg tracking-tight text-[var(--text)]">Questia</p>
+        <footer className="landing-footer">
+          <div className={`${SHELL} py-12 sm:py-14`}>
+            <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between md:gap-12">
+              <div className="max-w-sm">
+                <div className="flex items-center gap-3">
+                  <QuestiaLogo variant="footer" />
+                  <p className="font-display text-lg font-semibold tracking-tight text-[var(--text)]">
+                    Questia
+                  </p>
+                </div>
+                <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">
+                  {t('footer.tagline')}
+                </p>
               </div>
-              <p className="mt-2 text-sm text-[var(--muted)] leading-relaxed">
-                {t('footer.tagline')}
-              </p>
+              <nav
+                className="grid min-w-0 grid-cols-2 gap-x-8 gap-y-2.5 text-sm text-[var(--muted)] sm:grid-cols-3"
+                aria-label={t('footer.navLabel')}
+              >
+                <a href="#principe" className="transition-colors hover:text-[var(--text)]">
+                  {t('footer.how')}
+                </a>
+                <a href="#hero-examples" className="transition-colors hover:text-[var(--text)]">
+                  {t('footer.examples')}
+                </a>
+                <a href="#telecharger" className="transition-colors hover:text-[var(--text)]">
+                  {storesReady ? t('footer.download') : t('footer.downloadWeb')}
+                </a>
+                <a href="#faq" className="transition-colors hover:text-[var(--text)]">
+                  {t('footer.faq')}
+                </a>
+                <Link href="/generation-quetes" className="transition-colors hover:text-[var(--text)]">
+                  {t('footer.questGeneration')}
+                </Link>
+                <Link href="/sign-in" className="transition-colors hover:text-[var(--text)]">
+                  {t('footer.signIn')}
+                </Link>
+                <Link
+                  href="/legal/confidentialite"
+                  className="transition-colors hover:text-[var(--text)]"
+                >
+                  {t('footer.privacy')}
+                </Link>
+                <Link
+                  href="/legal/mentions-legales"
+                  className="transition-colors hover:text-[var(--text)]"
+                >
+                  {t('footer.legal')}
+                </Link>
+                <Link href="/legal/cgu" className="transition-colors hover:text-[var(--text)]">
+                  {t('footer.terms')}
+                </Link>
+                <Link href="/legal/cgv" className="transition-colors hover:text-[var(--text)]">
+                  {t('footer.sales')}
+                </Link>
+                <Link href="/legal/bien-etre" className="transition-colors hover:text-[var(--text)]">
+                  {t('footer.wellbeing')}
+                </Link>
+              </nav>
             </div>
-            <nav
-              className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row md:flex-wrap gap-x-4 gap-y-2.5 md:gap-x-6 md:gap-y-3 text-sm font-semibold text-[var(--muted)] min-w-0"
-              aria-label={t('footer.navLabel')}
-            >
-              {storesReady ? (
-                <>
-                  <a href="#hero-examples" className="hover:text-[var(--text)] transition-colors">
-                    {t('footer.examples')}
-                  </a>
-                  <a href="#how" className="hover:text-[var(--text)] transition-colors">
-                    {t('footer.how')}
-                  </a>
-                </>
-              ) : (
-                <>
-                  <a href="#how" className="hover:text-[var(--text)] transition-colors">
-                    {t('footer.how')}
-                  </a>
-                  <a href="#hero-examples" className="hover:text-[var(--text)] transition-colors">
-                    {t('footer.examples')}
-                  </a>
-                </>
-              )}
-              <a href="#telecharger" className="hover:text-[var(--text)] transition-colors">
-                {storesReady ? t('footer.download') : t('footer.downloadWeb')}
-              </a>
-              <a href="#faq" className="hover:text-[var(--text)] transition-colors">
-                {t('footer.faq')}
-              </a>
-              <Link href="/generation-quetes" className="hover:text-[var(--text)] transition-colors">
-                {t('footer.questGeneration')}
-              </Link>
-              <Link href="/sign-in" className="hover:text-[var(--text)] transition-colors">
-                {t('footer.signIn')}
-              </Link>
-              <Link href="/legal/confidentialite" className="hover:text-[var(--text)] transition-colors">
-                {t('footer.privacy')}
-              </Link>
-              <Link href="/legal/mentions-legales" className="hover:text-[var(--text)] transition-colors">
-                {t('footer.legal')}
-              </Link>
-              <Link href="/legal/cgu" className="hover:text-[var(--text)] transition-colors">
-                {t('footer.terms')}
-              </Link>
-              <Link href="/legal/cgv" className="hover:text-[var(--text)] transition-colors">
-                {t('footer.sales')}
-              </Link>
-              <Link href="/legal/bien-etre" className="hover:text-[var(--text)] transition-colors">
-                {t('footer.wellbeing')}
-              </Link>
-            </nav>
+            <p className="carnet-rule mt-12 pt-7 text-xs text-[var(--subtle)]">
+              {t('footer.copyright', { year: new Date().getFullYear() })}
+            </p>
           </div>
-          <p className="mt-10 pt-8 border-t border-[color-mix(in_srgb,var(--text)_10%,transparent)] text-center text-xs text-[var(--subtle)]">
-            {t('footer.copyright', { year: new Date().getFullYear() })}
-          </p>
-        </div>
-      </footer>
+        </footer>
       </div>
     </div>
   );
