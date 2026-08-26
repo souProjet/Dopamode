@@ -18,7 +18,6 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuth } from '@clerk/expo';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { elevationAndroidSafe } from '../../lib/elevationAndroid';
 import {
   SHOP_CATALOG,
@@ -45,7 +44,7 @@ import { isExpoWebBrowserNativeAvailable, maybeCompleteAuthSession } from '../..
 import * as Linking from 'expo-linking';
 import { trackMobileEvent } from '../../lib/analytics/track';
 import { GlassScrim } from '../../components/GlassScrim';
-import { getModalSheetGlass, getScrimGlass } from '../../lib/themeModalChrome';
+import { GlassSurface } from '../../components/GlassSurface';
 
 import { API_BASE_URL, apiFetch } from '../../lib/api';
 
@@ -112,8 +111,6 @@ function SelectSheet({
   const { palette, themeId } = useAppTheme();
   const insets = useSafeAreaInsets();
   const styles = useMemo(() => createShopStyles(palette, themeId), [palette, themeId]);
-  const sheetGlass = useMemo(() => getModalSheetGlass(themeId), [themeId]);
-  const scrimGlass = useMemo(() => getScrimGlass(themeId), [themeId]);
   return (
     <Modal
       visible={visible}
@@ -124,29 +121,13 @@ function SelectSheet({
     >
       <View style={styles.modalRoot}>
         <GlassScrim
-          overlayColor={palette.overlay}
-          intensity={scrimGlass.intensity}
-          tint={scrimGlass.tint}
           onPress={onClose}
           accessibilityLabel={closeA11y}
         />
         <View pointerEvents="box-none" style={styles.modalSheetWrap}>
           <View style={[styles.modalSheetChrome, styles.modalSheetSelect, { paddingBottom: 28 + insets.bottom }]}>
             <View style={[styles.modalSheetClip, styles.selectSheetSheet]}>
-            {Platform.OS !== 'web' ? (
-              <BlurView
-                intensity={sheetGlass.sheetBlurIntensity}
-                tint={sheetGlass.sheetBlurTint}
-                style={StyleSheet.absoluteFillObject}
-              />
-            ) : null}
-            <View
-              pointerEvents="none"
-              style={[
-                StyleSheet.absoluteFillObject,
-                { backgroundColor: colorWithAlpha(palette.card, sheetGlass.sheetVeilAlpha) },
-              ]}
-            />
+            <GlassSurface role="sheet" pointerEvents="none" style={StyleSheet.absoluteFillObject} />
             <View style={styles.selectSheetHandle} accessibilityRole="none" />
             <Text style={styles.selectSheetTitle}>{title}</Text>
             <ScrollView
@@ -218,8 +199,6 @@ export default function ShopScreen() {
   const styles = useMemo(() => createShopStyles(palette, themeId), [palette, themeId]);
   const insets = useSafeAreaInsets();
   const balanceGradientColors = useMemo(() => shopBalanceGradient(themeId, palette), [themeId, palette]);
-  const shopScrimGlass = useMemo(() => getScrimGlass(themeId), [themeId]);
-  const rechargeSheetGlass = useMemo(() => getModalSheetGlass(themeId), [themeId]);
   const { getToken } = useAuth();
   const getTokenRef = useRef(getToken);
   useEffect(() => {
@@ -1055,29 +1034,13 @@ export default function ShopScreen() {
         >
           <View style={styles.modalRoot}>
             <GlassScrim
-              overlayColor={palette.overlay}
-              intensity={shopScrimGlass.intensity}
-              tint={shopScrimGlass.tint}
               onPress={() => setRechargeModalVisible(false)}
               accessibilityLabel={s.closeA11y}
             />
             <View pointerEvents="box-none" style={styles.modalSheetWrap}>
               <View style={[styles.modalSheetChrome, styles.modalSheetRecharge, { paddingBottom: 16 + insets.bottom }]}>
                 <View style={[styles.modalSheetClip, styles.rechargeModalClip]}>
-                {Platform.OS !== 'web' ? (
-                  <BlurView
-                    intensity={rechargeSheetGlass.sheetBlurIntensity}
-                    tint={rechargeSheetGlass.sheetBlurTint}
-                    style={StyleSheet.absoluteFillObject}
-                  />
-                ) : null}
-                <View
-                  pointerEvents="none"
-                  style={[
-                    StyleSheet.absoluteFillObject,
-                    { backgroundColor: colorWithAlpha(palette.card, rechargeSheetGlass.sheetVeilAlpha) },
-                  ]}
-                />
+                <GlassSurface role="sheet" pointerEvents="none" style={StyleSheet.absoluteFillObject} />
                 {/* — En-tête — */}
                 <View style={styles.rechargeSheetHandle} />
                 <View style={styles.rechargeModalHeaderTop}>

@@ -7,15 +7,13 @@ import {
   ActivityIndicator,
   StyleSheet,
   Switch,
-  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { colorWithAlpha, UiLucideIcon, type ThemePalette } from '@questia/ui';
 import { elevationAndroidSafe } from '../lib/elevationAndroid';
 import { useAppTheme } from '../contexts/AppThemeContext';
 import { GlassScrim } from './GlassScrim';
-import { getModalSheetGlass, getScrimGlass } from '../lib/themeModalChrome';
+import { GlassSurface } from './GlassSurface';
 
 type Option = { id: string; label: string };
 export type RefinementQuestionUi = {
@@ -274,8 +272,6 @@ function RefinementSheet({
 }) {
   const { palette, themeId } = useAppTheme();
   const styles = useMemo(() => makeStyles(palette), [palette]);
-  const sheetGlass = useMemo(() => getModalSheetGlass(themeId), [themeId]);
-  const scrimGlass = useMemo(() => getScrimGlass(themeId), [themeId]);
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [consent, setConsent] = useState(false);
@@ -364,27 +360,10 @@ function RefinementSheet({
   return (
     <Modal visible={visible} animationType="slide" transparent statusBarTranslucent>
       <View style={styles.backdrop}>
-        <GlassScrim
-          overlayColor={palette.overlay}
-          intensity={scrimGlass.intensity}
-          tint={scrimGlass.tint}
-        />
+        <GlassScrim />
         <View style={styles.sheetShadow}>
           <View style={styles.sheetClip}>
-          {Platform.OS !== 'web' ? (
-            <BlurView
-              intensity={sheetGlass.sheetBlurIntensity}
-              tint={sheetGlass.sheetBlurTint}
-              style={StyleSheet.absoluteFillObject}
-            />
-          ) : null}
-          <View
-            pointerEvents="none"
-            style={[
-              StyleSheet.absoluteFillObject,
-              { backgroundColor: colorWithAlpha(palette.card, sheetGlass.sheetVeilAlpha) },
-            ]}
-          />
+          <GlassSurface role="sheet" pointerEvents="none" style={StyleSheet.absoluteFillObject} />
           <LinearGradient
             colors={['#134e4a', '#1c3d38', '#0f7669']}
             start={{ x: 0, y: 0.5 }}

@@ -42,7 +42,6 @@ import { getHomeDashboardStrings } from '../../lib/homeDashboardStrings';
 import { useAppTheme } from '../../contexts/AppThemeContext';
 import { QuestRewardOverlay, type QuestRewardPayload } from '../../components/QuestRewardOverlay';
 import { GlassScrim } from '../../components/GlassScrim';
-import { getScrimGlass } from '../../lib/themeModalChrome';
 import ProfileRefinementSheet, { type RefinementQuestionUi } from '../../components/ProfileRefinementSheet';
 import { QuestHomeLoading } from '../../components/QuestHomeLoading';
 import { QuestSwipeCard } from '../../components/QuestSwipeCard';
@@ -138,7 +137,6 @@ function SafetySheet({ quest, onConfirm, onClose }: {
 }) {
   const { palette, themeId } = useAppTheme();
   const sheet = useMemo(() => buildSafetySheetStyles(palette), [palette]);
-  const scrimGlass = useMemo(() => getScrimGlass(themeId), [themeId]);
   const [checked, setChecked] = useState<Set<number>>(new Set());
   const rules = [
     "Je reste dans des lieux publics et accessibles.",
@@ -154,9 +152,6 @@ function SafetySheet({ quest, onConfirm, onClose }: {
   return (
     <View style={sheet.overlay}>
       <GlassScrim
-        overlayColor={palette.overlay}
-        intensity={scrimGlass.intensity}
-        tint={scrimGlass.tint}
         onPress={onClose}
         accessibilityLabel="Fermer"
       />
@@ -739,7 +734,6 @@ export default function DashboardScreen() {
 
   const { palette, themeId, personality } = useAppTheme();
   const styles = useMemo(() => buildDashboardStyles(palette, themeId), [palette, themeId]);
-  const scrimGlass = useMemo(() => getScrimGlass(themeId), [themeId]);
   const safeInsets = useSafeAreaInsets();
 
   const ownedPacksChips = useMemo(() => {
@@ -1014,11 +1008,7 @@ export default function DashboardScreen() {
         {/* Modal report */}
         <Modal visible={showReportModal} transparent animationType="fade" onRequestClose={() => setShowReportModal(false)}>
           <View style={styles.modalBackdrop}>
-            <GlassScrim
-              overlayColor={palette.overlay}
-              intensity={scrimGlass.intensity}
-              tint={scrimGlass.tint}
-            />
+            <GlassScrim />
             <View style={styles.modalBackdropInner}>
             <View style={styles.modalCard}>
               <Text style={styles.modalTitle}>{reportUi.reportModalTitle}</Text>
@@ -1057,11 +1047,7 @@ export default function DashboardScreen() {
         {/* Modal abandon */}
         <Modal visible={showAbandonModal} transparent animationType="fade" onRequestClose={() => setShowAbandonModal(false)}>
           <View style={styles.modalBackdrop}>
-            <GlassScrim
-              overlayColor={palette.overlay}
-              intensity={scrimGlass.intensity}
-              tint={scrimGlass.tint}
-            />
+            <GlassScrim />
             <View style={styles.modalBackdropInner}>
             <View style={styles.modalCard}>
               <Text style={styles.modalTitle}>{homeUi.abandonCta} ?</Text>
@@ -1082,11 +1068,7 @@ export default function DashboardScreen() {
         {/* Modal reroll confirm */}
         <Modal visible={showRerollConfirm} transparent animationType="fade" onRequestClose={() => setShowRerollConfirm(false)}>
           <View style={styles.modalBackdrop}>
-            <GlassScrim
-              overlayColor={palette.overlay}
-              intensity={scrimGlass.intensity}
-              tint={scrimGlass.tint}
-            />
+            <GlassScrim />
             <View style={styles.modalBackdropInner}>
             <View style={styles.modalCard}>
               <Text style={styles.modalTitle}>{homeUi.rerollConfirmTitle}</Text>

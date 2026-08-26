@@ -16,3 +16,16 @@ jest.mock('expo-blur', () => {
       React.createElement(View, { style, ...rest }, children),
   };
 });
+
+jest.mock('expo-glass-effect', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    GlassView: ({ children, style, ...rest }: { children?: React.ReactNode; style?: object }) =>
+      React.createElement(View, { style, ...rest }, children),
+    GlassContainer: ({ children, style }: { children?: React.ReactNode; style?: object }) =>
+      React.createElement(View, { style }, children),
+    isLiquidGlassAvailable: () => false,
+    isGlassEffectAPIAvailable: () => false,
+  };
+});

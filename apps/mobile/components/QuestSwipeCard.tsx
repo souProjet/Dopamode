@@ -20,12 +20,13 @@ import Animated, {
   Extrapolation,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { questDisplayEmoji, questFamilyLabel, type AppLocale, type PersonalityVector } from '@questia/shared';
 import { colorWithAlpha, questCardFaceGradient, computeAuraCardBlobs, UiLucideIcon, type ThemePalette } from '@questia/ui';
 import { elevationAndroidSafe } from '../lib/elevationAndroid';
 import { hapticSuccess, hapticWarning } from '../lib/haptics';
 import { useQuestCardDeviceTilt } from '../lib/useQuestCardDeviceTilt';
+import { GlassSurface } from './GlassSurface';
+import { useGlassMaterial } from '../lib/glass';
 import { QuestDestinationMapWebView } from './QuestDestinationMapWebView';
 import { QuestRatingJuicyDock } from './QuestRatingJuicyDock';
 
@@ -140,12 +141,16 @@ export function QuestSwipeCard({
 }: Props) {
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const isDarkCard = themeId === 'midnight';
-  /** Dégradé plus transparent + flou natif = glass sobre sur la carte. */
+  const liquidGlass = useGlassMaterial() === 'liquid';
+  /**
+   * Le dégradé teinte la face, il ne la remplit pas : sur verre natif on baisse
+   * l'opacité pour que la réfraction du matériau reste visible sous la carte.
+   */
   const glassFaceColors = useMemo(() => {
     const base = questCardFaceGradient(themeId, p);
-    const a = isDarkCard ? 0.72 : 0.66;
+    const a = liquidGlass ? (isDarkCard ? 0.34 : 0.3) : isDarkCard ? 0.72 : 0.66;
     return base.map((c) => (c.startsWith('#') ? colorWithAlpha(c, a) : c)) as [string, string, string, string];
-  }, [themeId, p, isDarkCard]);
+  }, [themeId, p, isDarkCard, liquidGlass]);
   const auraBlobs = useMemo(
     () => computeAuraCardBlobs(personality, themeId, p, isDarkCard),
     [personality, themeId, p, isDarkCard],
@@ -471,7 +476,7 @@ export function QuestSwipeCard({
         style={[
           styles.cardShell,
           {
-            backgroundColor: p.card,
+            backgroundColor: liquidGlass ? 'transparent' : p.card,
             borderColor: isCompleted
               ? 'rgba(16,185,129,0.5)'
               : isAccepted
@@ -483,14 +488,7 @@ export function QuestSwipeCard({
         ]}
       >
         <View style={styles.cardClip}>
-        {Platform.OS !== 'web' ? (
-          <BlurView
-            pointerEvents="none"
-            intensity={isDarkCard ? 52 : 46}
-            tint={isDarkCard ? 'dark' : 'light'}
-            style={styles.cardFaceGradient}
-          />
-        ) : null}
+        <GlassSurface role="card" pointerEvents="none" style={styles.cardFaceGradient} />
         <LinearGradient
           pointerEvents="none"
           colors={glassFaceColors}

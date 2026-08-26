@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
-import { BlurView } from 'expo-blur';
 import { CommonActions } from '@react-navigation/native';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,6 +7,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAppTheme } from '../contexts/AppThemeContext';
 import { colorWithAlpha } from '@questia/ui';
 import { hapticSelection } from '../lib/haptics';
+import { GlassSurface } from './GlassSurface';
+import { useGlassMaterial } from '../lib/glass';
 
 type IonName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -30,10 +31,16 @@ const FALLBACK_ICONS: { inactive: IonName; active: IonName } = {
 /**
  * Barre d'onglets maison : libellés toujours visibles (sous l'icône),
  * sans dépendre du calcul de hauteur interne de React Navigation.
+ *
+ * Le fond est une surface en verre : Liquid Glass sur iOS 26+, flou ailleurs.
+ * L'onglet actif porte une pastille teintée — sur verre natif le bord du
+ * matériau suffit à détacher la barre, on retire donc le filet et l'ombre.
  */
 export function QuestiaTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const { palette } = useAppTheme();
+  const material = useGlassMaterial();
+  const liquid = material === 'liquid';
   const bottom = Math.max(insets.bottom, Platform.OS === 'android' ? 8 : 6);
 
   return (
@@ -43,40 +50,23 @@ export function QuestiaTabBar({ state, descriptors, navigation }: BottomTabBarPr
         {
           paddingBottom: bottom,
           paddingTop: 8,
-          borderTopWidth: 2,
-          borderTopColor: colorWithAlpha(palette.text, 0.12),
+          borderTopWidth: liquid ? 0 : StyleSheet.hairlineWidth,
+          borderTopColor: palette.divider,
         },
-        Platform.select({
-          ios: {
-            shadowColor: palette.text,
-            shadowOpacity: 0.12,
-            shadowRadius: 14,
-            shadowOffset: { width: 0, height: -5 },
-          },
-          android: { elevation: 14 },
-        }),
+        liquid
+          ? null
+          : Platform.select({
+              ios: {
+                shadowColor: palette.text,
+                shadowOpacity: 0.08,
+                shadowRadius: 12,
+                shadowOffset: { width: 0, height: -4 },
+              },
+              android: { elevation: 12 },
+            }),
       ]}
     >
-      {Platform.OS === 'web' ? (
-        <View
-          pointerEvents="none"
-          style={[StyleSheet.absoluteFillObject, { backgroundColor: colorWithAlpha(palette.surface, 0.94) }]}
-        />
-      ) : (
-        <BlurView
-          pointerEvents="none"
-          intensity={Platform.OS === 'ios' ? 118 : 88}
-          tint="light"
-          style={StyleSheet.absoluteFillObject}
-        />
-      )}
-      <View
-        pointerEvents="none"
-        style={[
-          StyleSheet.absoluteFillObject,
-          { backgroundColor: colorWithAlpha(palette.card, Platform.OS === 'ios' ? 0.34 : 0.52) },
-        ]}
-      />
+      <GlassSurface role="chrome" pointerEvents="none" style={StyleSheet.absoluteFillObject} />
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const focused = state.index === index;
@@ -116,10 +106,18 @@ export function QuestiaTabBar({ state, descriptors, navigation }: BottomTabBarPr
             onLongPress={onLongPress}
             style={({ pressed }) => [styles.tab, pressed && styles.tabPressed]}
           >
-            <View style={styles.iconWrap} importantForAccessibility="no">
+            <View
+              style={[
+                styles.iconWrap,
+                focused && {
+                  backgroundColor: colorWithAlpha(palette.orange, liquid ? 0.16 : 0.13),
+                },
+              ]}
+              importantForAccessibility="no"
+            >
               <Ionicons
                 name={focused ? icons.active : icons.inactive}
-                size={24}
+                size={22}
                 color={iconColor}
               />
             </View>
@@ -145,8 +143,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
     flexDirection: 'row',
-    borderTopWidth: 0,
-    paddingTop: 0,
   },
   tab: {
     flex: 1,
@@ -156,15 +152,18 @@ const styles = StyleSheet.create({
     minHeight: 48,
   },
   tabPressed: { opacity: 0.85 },
+  /** Pastille de l'onglet actif : capsule centrée sur l'icône. */
   iconWrap: {
-    height: 26,
-    marginBottom: 4,
+    height: 30,
+    minWidth: 52,
+    borderRadius: 15,
+    marginBottom: 3,
     alignItems: 'center',
     justifyContent: 'center',
   },
   label: {
     fontSize: 11,
-    fontWeight: '800',
+    fontWeight: '700',
     textAlign: 'center',
     letterSpacing: 0.2,
     ...Platform.select({

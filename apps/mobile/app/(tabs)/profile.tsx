@@ -29,11 +29,10 @@ import {
 } from '@questia/shared';
 import { colorWithAlpha, UiLucideIcon, type ThemePalette } from '@questia/ui';
 import { AuraTabShell } from '../../components/AuraTabShell';
-import { BlurView } from 'expo-blur';
 import { useAppLocale } from '../../contexts/AppLocaleContext';
 import { useAppTheme } from '../../contexts/AppThemeContext';
 import { GlassScrim } from '../../components/GlassScrim';
-import { getModalSheetGlass, getScrimGlass } from '../../lib/themeModalChrome';
+import { GlassSurface } from '../../components/GlassSurface';
 import { hapticLight } from '../../lib/haptics';
 import { getProfileScreenStrings } from '../../lib/profileScreenStrings';
 import { elevationAndroidSafe } from '../../lib/elevationAndroid';
@@ -91,8 +90,6 @@ function AppearanceSelectSheet({
 }) {
   const { palette, themeId } = useAppTheme();
   const insets = useSafeAreaInsets();
-  const sheetGlass = useMemo(() => getModalSheetGlass(themeId), [themeId]);
-  const scrimGlass = useMemo(() => getScrimGlass(themeId), [themeId]);
   return (
     <Modal
       visible={visible}
@@ -103,9 +100,6 @@ function AppearanceSelectSheet({
     >
       <View style={{ flex: 1 }}>
         <GlassScrim
-          overlayColor={palette.overlay}
-          intensity={scrimGlass.intensity}
-          tint={scrimGlass.tint}
           onPress={onClose}
           accessibilityLabel="Fermer"
         />
@@ -125,24 +119,7 @@ function AppearanceSelectSheet({
               overflow: 'hidden',
             }}
           >
-            {Platform.OS !== 'web' ? (
-              <BlurView
-                intensity={sheetGlass.sheetBlurIntensity}
-                tint={sheetGlass.sheetBlurTint}
-                style={StyleSheet.absoluteFillObject}
-              />
-            ) : null}
-            <View
-              pointerEvents="none"
-              style={[
-                StyleSheet.absoluteFillObject,
-                {
-                  backgroundColor: colorWithAlpha(palette.card, sheetGlass.sheetVeilAlpha),
-                  borderTopLeftRadius: 20,
-                  borderTopRightRadius: 20,
-                },
-              ]}
-            />
+            <GlassSurface role="sheet" pointerEvents="none" style={StyleSheet.absoluteFillObject} />
             <View style={{ width: 36, height: 4, backgroundColor: palette.muted, borderRadius: 2, alignSelf: 'center', marginBottom: 14 }} />
             <Text style={{ fontSize: 15, fontWeight: '600', color: palette.text, marginBottom: 12, textAlign: 'center' }}>
               {title}

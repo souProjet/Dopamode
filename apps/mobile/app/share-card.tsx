@@ -37,7 +37,6 @@ import {
   type ThemePalette,
 } from '@questia/ui';
 import { useAppTheme } from '../contexts/AppThemeContext';
-import { getScrimGlass } from '../lib/themeModalChrome';
 import { GlassScrim } from '../components/GlassScrim';
 import { useAppLocale } from '../contexts/AppLocaleContext';
 import { hapticLight, hapticMedium } from '../lib/haptics';
@@ -136,7 +135,6 @@ export default function ShareCardScreen() {
     [themeId, palette],
   );
   const flatChrome = useFlatShareChrome(themeId);
-  const photoSheetScrim = useMemo(() => getScrimGlass(themeId), [themeId]);
   /** Voile sur la prévisualisation carte — lisibilité sur fonds sombres (export). */
   const cardPreviewOverlayPhoto = useMemo(
     () =>
@@ -959,9 +957,6 @@ export default function ShareCardScreen() {
     >
       <View style={styles.photoSheetRoot} accessibilityViewIsModal>
         <GlassScrim
-          overlayColor={palette.overlay}
-          intensity={photoSheetScrim.intensity}
-          tint={photoSheetScrim.tint}
           onPress={() => setPhotoSheetOpen(false)}
           accessibilityLabel="Fermer"
         />

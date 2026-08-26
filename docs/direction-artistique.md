@@ -1,179 +1,186 @@
-# Direction artistique — Questia (web)
+# Direction artistique — Questia (web + mobile)
 
-Ce document décrit la **DA** appliquée au site marketing et aux styles partagés dans `apps/web`. Elle est centrée sur une **identité « jeu d'aventure »** : quêtes IRL, énergie positive, **cyan · orange · vert**, sans aspect corporate froid.
+DA partagée par `apps/web` et `apps/mobile`. Registre **papier chaud** : fonds pierre/crème, encre presque noire, accents terreux (teal profond, brique, ambre). Volontairement peu « template SaaS » : pas de néon, pas de dégradé arc-en-ciel, pas de verre partout.
+
+Source de vérité des couleurs : `:root` et `html[data-theme="…"]` dans `apps/web/src/app/globals.css`, répliqués à l'identique dans `packages/ui/src/themePalettes.ts` (`ThemePalette`). **Tout changement de token doit être fait dans les deux fichiers.**
 
 ---
 
 ## 1. Positionnement visuel
 
-| Axes | Choix |
-|------|--------|
-| **Ton** | Ludique, encourageant, direct — pas culpabilisant |
-| **Métaphore** | Plateau de quête, carte mission, « boss fight » léger |
-| **Rythme** | Sections en bandes, grille diagonale légère, halos colorés |
-| **Contraste** | Textes foncés sur fonds clairs partout (site + app) ; dégradés de titres lisibles (WCAG visé sur les zones marketing) |
-
-Toute l'expérience (landing, auth, app, mobile) suit la **même DA claire** : bleu ciel, cartes blanches / crème, accents cyan · orange · vert — **pas de thème sombre** ni de fonds type « app dark ».
+| Axe | Choix |
+|---|---|
+| Ton | Encourageant, direct, jamais culpabilisant |
+| Métaphore | Carnet de route / carte de mission, pas plateau de jeu clinquant |
+| Rythme | Sections pleine hauteur, bandes de teinte papier, halo d'aura discret |
+| Contraste | Encre `#1c1917` sur papier `#ebe8e0` → ratio confortable partout |
+| Surfaces | **Opaques**. Le flou de fond est réservé aux calques flottants (navbar, modales, drawers) |
 
 ---
 
 ## 2. Palette sémantique
 
-Variables CSS (`:root` dans `globals.css`) :
+Thème clair par défaut (`:root` / `defaultPalette`) :
 
-| Token | Valeur | Usage |
-|-------|--------|--------|
-| `--bg` | `#e8f8ff` | Fond global landing |
-| `--surface` | `#f5fbff` | Surfaces |
-| `--card` | `#ffffff` | Cartes |
-| `--text` | `#13212d` | Texte principal |
-| `--muted` | `#4d7187` | Texte secondaire |
-| `--subtle` | `#8bb9d1` | Scrollbar, détails |
-| `--violet` | `#22d3ee` | Accent cyan (nom historique « violet ») |
-| `--orange` | `#f97316` | CTA chaleur, bordures quest |
-| `--gold` | `#fbbf24` | Highlights |
-| `--green` | `#10b981` | Réussite, extérieur |
+| Token web | `ThemePalette` | Valeur | Usage |
+|---|---|---|---|
+| `--bg` | `bg` | `#ebe8e0` | Fond global |
+| `--surface` | `surface` | `#f2efe8` | Surfaces intermédiaires, footer |
+| `--card` | `card` | `#faf8f4` | Cartes (thémable) |
+| `--card-cream` | `cardCream` | `#fdfaf5` | Panneau **toujours clair** ; texte via `--on-cream` |
+| `--border-ui` | `border` | `rgba(28,25,23,.09)` | Bordure neutre |
+| `--border-cyan` | `borderCyan` | `rgba(19,78,74,.22)` | Bordure accentuée (hero, CTA) |
+| `--text` | `text` | `#1c1917` | Texte principal |
+| `--muted` | `muted` | `#57534e` | Texte secondaire |
+| `--subtle` | `subtle` | `#78716c` | Tertiaire, détails |
+| `--violet` / `--cyan` | `cyan` | `#134e4a` | Accent principal (teal ; `--violet` est un nom historique) |
+| `--orange` | `orange` | `#c2410c` | CTA, brique |
+| `--gold` | `gold` | `#92400e` | Highlights |
+| `--green` | `green` | `#166534` | Réussite, extérieur |
+| `--link-on-bg` | `linkOnBg` | `#115e59` | Liens sur fond aventure |
 
-**Sélection de texte** : fond `rgba(249,115,22,.3)` — rappel de la marque orange.
+Thèmes boutique : `midnight`, `aurora`, `parchment` (`html[data-theme=…]` côté web, `getThemePalette(themeId)` côté mobile). Seul `midnight` est sombre ; `--on-cream*` y reste foncé, d'où un `--card-cream` clair (`#f5f5f4`).
+
+**Sélection de texte** : `color-mix(in srgb, var(--orange) 28%, transparent)`.
 
 ---
 
 ## 3. Typographie
 
-| Rôle | Police | Config |
-|------|--------|--------|
-| **Corps** | **Inter** | `font-sans` → `var(--font-inter)` |
-| **Titres / display** | **Space Grotesk** | `font-display` → `var(--font-space)` avec repli Inter |
+| Rôle | Web | Mobile |
+|---|---|---|
+| Corps | **IBM Plex Sans** — `font-sans` → `var(--font-inter)` | police système |
+| Titres | **IBM Plex Serif** — `font-display` → `var(--font-space)` | police système, graisse forte |
 
-Déclarée dans `layout.tsx` (Google Fonts, `display: swap`).
+Les variables CSS gardent leurs noms historiques (`--font-inter`, `--font-space`) : seules les familles ont changé. Chargées dans `apps/web/src/app/layout.tsx` (`next/font/google`, `display: swap`, `adjustFontFallback: false`).
 
-**Hiérarchie** : titres souvent `font-black`, labels de section en **petites caps** (`label` + `tracking-widest`).
+Labels de section : `.label`, `uppercase` + `tracking-widest`.
 
 ---
 
 ## 4. Fonds & atmosphère
 
-### `.bg-adventure` (landing principal)
+### Calque d'aura (`body::before`)
 
-Fond **bleu très clair** + superposition de :
+Trois ellipses `radial-gradient` pilotées par `--aura-tr` / `--aura-bl` / `--aura-tl`, en `position: fixed`, `z-index: 1`. `AuraOrbsLayer` (`apps/web/src/components/aura/`) remplace ces variables à partir du profil de personnalité.
 
-- Halos **ellipse** cyan (haut), orange (droite), vert (bas gauche)
-- **Grille diagonale** fine cyan (`repeating-linear-gradient`)
-- **Motif pointillé** subtil (32px)
+Les valeurs `:root` sont le **fallback avant personnalité** (landing incluse) : alphas volontairement bas (~0.11 à 0.16) pour que le fond lise « papier », comme sur mobile. L'intensité ne monte que sur `/app`, une fois la personnalité chargée.
 
-Référence : jeu / carte / ciel.
+### Bandes de section
 
-### Bandeaux de section
-
-| Classe | Rôle visuel |
-|--------|-------------|
-| `.section-band-how` | Légère teinte **cyan → vert** (fonctionnement) |
-| `.section-band-social` | **Orange → cyan** (témoignages) |
-| `.section-band-cta` | **Cyan → crème → orange** (transition vers CTA final) |
-
-### Halo animé (hero)
-
-Calque absolu avec `animate-glow-soft` (pulse d'opacité) pour donner de la vie sans surcharger.
+`.section-band-how`, `.section-band-social`, `.section-band-cta`, `.landing-section-frost` : dégradés verticaux de teintes papier (`--surface`, `--card`, `--text` à faible pourcentage), **sans `backdrop-filter`**.
 
 ---
 
-## 5. Cartes « quête » & slider
+## 5. Surfaces & flou
 
-Alignées sur une **famille crème / orange / cyan** :
+Le flou de fond est réservé aux éléments qui **flottent au-dessus** du contenu :
 
-| Classe | Description |
-|--------|-------------|
-| `.quest-board` | Carte type « tableau de quête » (dégradé crème → jaune, bordure orange, ombre « jeu ») |
-| `.quest-slider-embedded` | Slider hero : même ADN, **ombre serrée** (lisibilité du texte, pas de gros blur) |
-| `.landing-cta-panel` | Bloc CTA final : dégradé crème/cyan, bordure orange 2px, ombre + **bande basse** type plateau |
+- navbar (`.navbar-shell`, `.navbar-mobile-drawer`), modales, panneaux d'app, onglets.
 
-Éléments satellites : `.quest-glow`, `.quest-glow-orange`, `.quest-sticker` (pastille type autocollant).
+Les surfaces de contenu sont **opaques**, comme les `Card` du mobile :
+
+| Classe | Rendu |
+|---|---|
+| `.landing-hero-panel` | `var(--card)`, bordure `--border-cyan`, ombre 1px |
+| `.landing-cta-panel` | idem, `border-radius: 20px` |
+| `.landing-glass-card` | `var(--card)`, bordure `--border-ui-strong`, ombre 1px |
+| `.landing-footer` | `var(--surface)` |
+
+Le nom `.landing-glass-card` est conservé pour ne pas casser les usages ; le rendu n'est plus vitré.
+
+### Verre natif (mobile)
+
+Même règle qu'au web : le verre habille le **chrome**, jamais le contenu. Les cartes restent en papier opaque.
+
+Un seul composant touche au natif, `apps/mobile/components/GlassSurface.tsx`, et il choisit son matériau à l'exécution :
+
+| Matériau | Quand | Rendu |
+|---|---|---|
+| `liquid` | iOS 26+, module natif présent | `GlassView` d'`expo-glass-effect` (réfraction et spéculaire système) |
+| `blur` | iOS < 26, Android | `BlurView` d'`expo-blur` + voile teinté |
+| `solid` | web, ou « Réduire la transparence » activé | aplat opaque, aucune transparence |
+
+Quatre rôles, définis dans `apps/mobile/lib/glass.ts` (`getGlassTokens`) :
+
+| Rôle | Surface | Style de verre |
+|---|---|---|
+| `chrome` | barre d'onglets | `regular`, teinte `surface` faible |
+| `sheet` | feuilles modales (sélecteurs, recharge) | `regular`, teinte `card` |
+| `scrim` | voile plein écran derrière une modale | `regular`, teinte `overlay` |
+| `card` | face de la carte de quête | `clear`, teinte `card` |
+
+Règles :
+
+- `colorScheme` est **explicite**, dérivé du thème (`themeUsesLightStatusBar`), jamais `auto` : l'app a son propre sélecteur de thème et `app.json` force `userInterfaceStyle: "dark"`.
+- Aucun voile par-dessus le verre natif : il a déjà sa matière. Le voile n'existe que sur le chemin `blur`.
+- `isInteractive` est réservé aux surfaces qui suivent le doigt, pas au chrome fixe.
+- Le verre natif exige un build de développement (Xcode 26, iOS 26). Hors de là, `isLiquidGlassAvailable()` est faux et le rendu retombe sur le flou : c'est le rendu de référence, pas un mode dégradé.
 
 ---
 
 ## 6. Textes en dégradé
 
-Tous utilisent `background-clip: text` (préfixes WebKit conservés).
+`background-clip: text`, préfixes WebKit conservés.
 
-| Classe | Contexte | Notes |
-|--------|----------|--------|
-| `.text-gradient` | Fonds **clairs** (landing, app) | Teal / vert / brun — bon contraste |
-| `.text-gradient-pop` | Accroches **hero + CTA** landing | Dégradé **cyan → teal → vert → orange** + `drop-shadow` multiples (relief + glow) |
-| `.text-gradient-on-dark` | *Alias historique* | Même dégradé que `.text-gradient` — le nom est conservé pour compatibilité, **sans** fond sombre |
-| `.text-warm` | Optionnel | Orange / vert (moins utilisé sur la landing actuelle) |
+| Classe | Dégradé |
+|---|---|
+| `.text-gradient` | encre `#1c1917` → `#44403c` (quasi monochrome) |
+| `.text-gradient-pop` | accroches hero / CTA |
+| `.text-gradient-on-dark` | alias historique de `.text-gradient` |
 
 ---
 
 ## 7. Boutons
 
 | Classe | Style |
-|--------|--------|
+|---|---|
 | `.btn` | Base : flex, bold, `rounded-2xl`, transitions |
-| `.btn-primary` | Dégradé cyan, ombre froide |
-| `.btn-cta` | Dégradé **orange → or**, ombre chaude — action principale marketing |
-| `.btn-ghost` | Blanc semi-transparent, bordure slate légère |
+| `.btn-primary` | Aplat `var(--violet)` (teal), bordure assombrie 1px, **sans ombre** |
+| `.btn-cta` | Aplat `var(--orange)`, bordure assombrie 1px, **sans ombre** |
+| `.btn-ghost` | Fond clair semi-transparent, bordure neutre |
 
-Survol : légère **élévation** (`translateY`) + ombre renforcée.
-
----
-
-## 8. Labels & badges
-
-- **`.label`** : micro-titre de section — `uppercase`, `tracking-widest`, `text-orange-800` (couleur adaptable par section : `text-emerald-900`, `text-cyan-900`, etc.).
-- **Pills** (phases / état) : `.pill-calibration` (vert), `.pill-expansion` (cyan), `.pill-rupture` (orange).
-- **`.streak-badge`** : série / flamme — ambre.
+Aplats et non dégradés : c'est ce qui distingue le plus la DA d'un rendu générique.
 
 ---
 
-## 9. Cartes génériques
+## 8. Labels, badges, séparateurs
 
-- **`.card`** : fond blanc dégradé léger, bordure sombre soft, `rounded-2xl`.
-- **`.card-hover`** : au survol, bordure cyan, fond plus lumineux, `-translate-y-0.5` / `-translate-y-1` selon contexte.
-
----
-
-## 10. Séparateurs
-
-- **`.divider`** : ligne fine neutre.
-- **`.divider-glow`** : ligne **dégradée cyan** (effet « lumière » au centre) — utilisé autour du « ou » entre stores et lien web.
+- `.label` : micro-titre `uppercase` / `tracking-widest`.
+- Pills : `.pill-calibration` (vert), `.pill-expansion` (teal), `.pill-rupture` (brique).
+- `.streak-badge` : série / flamme, ambre.
+- `.divider` : ligne fine neutre ; `.divider-glow` : ligne dégradée centrée.
 
 ---
 
-## 11. Animations (Tailwind)
+## 9. Animations
 
-Définies dans `tailwind.config.ts` :
+`tailwind.config.ts` : `animate-fade-up`, `animate-float`, `animate-glow-soft`.
+`LandingReveal` : apparition au scroll (opacity + translate), respecte `prefers-reduced-motion`.
 
-| Nom | Effet |
-|-----|--------|
-| `animate-fade-up` | Entrée douce (opacité + translation) |
-| `animate-float` / `animate-float-delayed` | Flottement décoratif (hero) |
-| `animate-glow-soft` | Pulsation d'opacité (halo) |
-
-Composant **`LandingReveal`** : apparition au **scroll** (opacity + translate), respect de `prefers-reduced-motion`.
+Un bloc `@media (prefers-reduced-transparency: reduce)` neutralise les `backdrop-filter` restants.
 
 ---
 
-## 12. Bonnes pratiques
+## 10. Bonnes pratiques
 
-1. **Ne pas** appliquer `transform: scale()` sur des blocs de texte marketing (flou des polices) — préférer taille explicite ou typo.
-2. **Ombres** des cartes quête : plutôt **serrées** ; les très larges `blur` autour des badges store ou du slider donnent un aspect « flou » indésirable.
-3. **Cohérence** : CTA final et slider hero partagent la **même famille** (crème, orange, cyan).
-4. **Accessibilité** : prévoir `motion-reduce` là où des animations CSS sont ajoutées ; focus visible sur les contrôles (FAQ `summary`, liens, boutons).
+1. Pas de `transform: scale()` sur du texte marketing (flou des glyphes).
+2. Ombres serrées (1 à 2px). Les grands `blur` donnent un rendu décollé.
+3. Un token ajouté dans `globals.css` doit l'être aussi dans `themePalettes.ts`, pour les 4 thèmes.
+4. `--card-cream` = panneau toujours clair (texte `--on-cream`). Pour une surface thémable, utiliser `--card`.
+5. `motion-reduce` et focus visible sur tout contrôle interactif.
 
 ---
 
-## 13. Fichiers de référence
+## 11. Fichiers de référence
 
 | Fichier | Contenu |
-|---------|---------|
-| `apps/web/src/app/globals.css` | Tokens, composants, dégradés, sections |
+|---|---|
+| `apps/web/src/app/globals.css` | Tokens, thèmes, composants |
+| `packages/ui/src/themePalettes.ts` | Mêmes tokens pour le mobile |
+| `packages/ui/src/theme.ts` | Espacements, rayons, typo mobile |
 | `apps/web/tailwind.config.ts` | Fonts, animations, keyframes |
-| `apps/web/src/app/layout.tsx` | Chargement Inter + Space Grotesk |
-| `apps/web/src/components/Navbar.tsx` | Barre fixe, verre / bordure cyan |
-| `apps/web/src/components/AppStoreButtons.tsx` | Badges stores (taille alignée, `drop-shadow` sur images) |
-| `apps/web/src/components/QuestExamplesSlider.tsx` | Cartes exemples mission |
-| `apps/web/src/components/LandingReveal.tsx` | Animation d'entrée au scroll |
-
----
-
-*Document généré à partir du code du dépôt — à tenir à jour lors de changements de DA.*
+| `apps/web/src/app/layout.tsx` | Chargement IBM Plex Sans / Serif |
+| `apps/web/src/components/aura/AuraOrbsLayer.tsx` | Pilotage des variables `--aura-*` |
+| `apps/mobile/lib/glass.ts` | Matériau disponible + tokens de verre par rôle |
+| `apps/mobile/components/GlassSurface.tsx` | Surface en verre (natif / flou / opaque) |

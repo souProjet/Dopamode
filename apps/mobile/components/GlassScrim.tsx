@@ -1,68 +1,33 @@
 import React from 'react';
-import {
-  Platform,
-  Pressable,
-  StyleSheet,
-  View,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
-import { BlurView } from 'expo-blur';
-
-type Tint = 'light' | 'dark' | 'default';
+import { Pressable, StyleSheet } from 'react-native';
+import { GlassSurface } from './GlassSurface';
 
 export type GlassScrimProps = {
-  /** Voile par-dessus le flou (ex. palette.overlay ou rgba). */
-  overlayColor: string;
-  intensity?: number;
-  tint?: Tint;
   onPress?: () => void;
   accessibilityLabel?: string;
-  style?: StyleProp<ViewStyle>;
 };
 
 /**
- * Fond type glassmorphisme (flou natif iOS/Android via expo-blur + voile).
- * Sur web Expo, repli : voile seul.
+ * Voile plein écran derrière une modale : verre natif iOS 26+, sinon flou + voile.
+ * Teinte et épaisseur viennent du thème (`getGlassTokens(..., 'scrim')`).
  */
-export function GlassScrim({
-  overlayColor,
-  intensity = 58,
-  tint = 'dark',
-  onPress,
-  accessibilityLabel,
-  style,
-}: GlassScrimProps) {
-  const blur =
-    Platform.OS === 'web' ? null : (
-      <BlurView intensity={intensity} tint={tint} style={StyleSheet.absoluteFillObject} />
-    );
-
-  const veil = (
-    <View
-      pointerEvents="none"
-      style={[StyleSheet.absoluteFillObject, { backgroundColor: overlayColor }]}
-    />
+export function GlassScrim({ onPress, accessibilityLabel }: GlassScrimProps) {
+  const surface = (
+    <GlassSurface role="scrim" style={StyleSheet.absoluteFillObject} pointerEvents="none" />
   );
 
   if (onPress) {
     return (
       <Pressable
-        style={[StyleSheet.absoluteFillObject, style]}
+        style={StyleSheet.absoluteFillObject}
         onPress={onPress}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
       >
-        {blur}
-        {veil}
+        {surface}
       </Pressable>
     );
   }
 
-  return (
-    <View style={[StyleSheet.absoluteFillObject, style]}>
-      {blur}
-      {veil}
-    </View>
-  );
+  return surface;
 }
