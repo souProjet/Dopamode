@@ -1,5 +1,6 @@
 import createMiddleware from 'next-intl/middleware';
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import type { ClerkMiddlewareAuth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { routing } from './i18n/routing';
 
@@ -24,6 +25,13 @@ function stripLocale(pathname: string): string {
   return pathname;
 }
 
+/** Clerk absent : on refuse les routes protégées au lieu de les servir sans contrôle. */
+function authUnavailable() {
+  return new NextResponse('Authentification indisponible : Clerk non configuré.', {
+    status: 503,
+  });
+}
+
 function isPublicPagePath(pathname: string): boolean {
   const p = stripLocale(pathname);
   if (p === '/') return true;
@@ -37,7 +45,18 @@ function isPublicPagePath(pathname: string): boolean {
   return false;
 }
 
-export default clerkMiddleware(async (auth, req) => {
+/**
+ * Clerk non configuré (pas de clés) → `clerkMiddleware` passe en mode « keyless »
+ * et le middleware n'est jamais exécuté : next-intl ne réécrit plus `/` vers
+ * `/fr` (localePrefix `as-needed`) et la home renvoie 404. On exécute donc la
+ * même logique sans Clerk : la locale marche, l'auth est simplement inopérante
+ * (aucune session possible sans clés).
+ */
+const hasClerkKeys = Boolean(
+  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY,
+);
+
+async function handleRequest(auth: ClerkMiddlewareAuth | null, req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
   /** Universal Links / App Links : fichiers publics, sans auth ni locale */
@@ -52,6 +71,7 @@ export default clerkMiddleware(async (auth, req) => {
 
   if (pathname.startsWith('/api')) {
     if (!isPublicApiRoute(req)) {
+      if (!auth) return authUnavailable();
       await auth.protect();
     }
     return NextResponse.next();
@@ -82,7 +102,7 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(url);
   }
 
-  const { userId } = await auth();
+  const userId = auth ? (await auth()).userId : null;
 
   if (userId && (pathname === '/' || pathname === '/en')) {
     const url = req.nextUrl.clone();
@@ -91,11 +111,29 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   if (!isPublicPagePath(pathname)) {
+    if (!auth) return authUnavailable();
     await auth.protect();
   }
 
   return intlResponse;
-});
+}
+
+if (!hasClerkKeys) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY / CLERK_SECRET_KEY absentes : ' +
+        'démarrage refusé en production (auth désactivée).',
+    );
+  }
+  console.warn(
+    '[middleware] NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY / CLERK_SECRET_KEY absentes : ' +
+      'pages publiques et i18n OK, routes authentifiées (/app, /api privées) en 503.',
+  );
+}
+
+export default hasClerkKeys
+  ? clerkMiddleware((auth, req) => handleRequest(auth, req))
+  : (req: NextRequest) => handleRequest(null, req);
 
 export const config = {
   matcher: [
