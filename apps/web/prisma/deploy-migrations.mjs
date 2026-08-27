@@ -18,13 +18,23 @@
  */
 import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
+const prismaCli = require.resolve('prisma/build/index.js');
 const webRoot = dirname(dirname(fileURLToPath(import.meta.url)));
+const migrationsDir = join(webRoot, 'prisma', 'migrations');
 const reportPath = join(webRoot, 'public', '_deploy-check.html');
+
+/**
+ * La base de production a été créée par `db push`, sans table d'historique :
+ * `migrate deploy` refuse alors de travailler (P3005). Les migrations jusqu'à
+ * cette borne y sont déjà présentes sous forme de schéma, on les enregistre
+ * comme appliquées au lieu de les rejouer. Ce qui suit est réellement exécuté.
+ */
+const BASELINE_THROUGH = '20260505120000_quest_log_rating';
 
 /** Ne jamais recracher une chaîne de connexion dans un fichier servi publiquement. */
 function redact(text) {
@@ -37,6 +47,31 @@ function redact(text) {
 function report(lines) {
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, `${redact(lines.join('\n'))}\n`);
+}
+
+function prisma(...args) {
+  return execFileSync(process.execPath, [prismaCli, ...args], {
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+}
+
+function describe(e) {
+  return [e.stdout, e.stderr, e.message].filter(Boolean).join('\n');
+}
+
+/** Enregistre l'historique manquant, puis relance le déploiement. */
+function baseline() {
+  const already = readdirSync(migrationsDir, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name)
+    .sort()
+    .filter((name) => name <= BASELINE_THROUGH);
+
+  for (const name of already) {
+    console.log(prisma('migrate', 'resolve', '--applied', name));
+  }
+  return prisma('migrate', 'deploy');
 }
 
 const pooled =
@@ -67,15 +102,21 @@ process.env.DATABASE_URL = pooled;
 process.env.DIRECT_DATABASE_URL = direct;
 
 try {
-  const out = execFileSync(
-    process.execPath,
-    [require.resolve('prisma/build/index.js'), 'migrate', 'deploy'],
-    { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
-  );
-  console.log(out);
+  console.log(prisma('migrate', 'deploy'));
   rmSync(reportPath, { force: true });
 } catch (e) {
-  const detail = [e.stdout, e.stderr, e.message].filter(Boolean).join('\n');
-  console.error(detail);
-  report(['migrate: failed', `variables vues: ${dbEnvNames}`, '---', detail]);
+  const detail = describe(e);
+  if (!detail.includes('P3005')) {
+    console.error(detail);
+    report(['migrate: failed', `variables vues: ${dbEnvNames}`, '---', detail]);
+  } else {
+    try {
+      console.log(baseline());
+      rmSync(reportPath, { force: true });
+    } catch (e2) {
+      const retry = describe(e2);
+      console.error(retry);
+      report(['migrate: failed after baseline', '---', retry]);
+    }
+  }
 }
