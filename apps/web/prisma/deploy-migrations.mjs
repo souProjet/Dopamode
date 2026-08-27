@@ -74,6 +74,24 @@ function baseline() {
   return prisma('migrate', 'deploy');
 }
 
+/**
+ * Une migration tombée en cours de route reste inscrite comme échouée et bloque
+ * tout déploiement ultérieur (P3009). Postgres exécute chaque fichier dans une
+ * transaction : l'échec n'a rien laissé derrière lui, on peut la déclarer
+ * annulée et la rejouer telle qu'elle est maintenant.
+ */
+function rollBackFailed(detail) {
+  const failed = [...detail.matchAll(/The `([^`]+)` migration started at[^\n]*failed/g)].map(
+    (m) => m[1],
+  );
+  if (failed.length === 0) return null;
+
+  for (const name of failed) {
+    console.log(prisma('migrate', 'resolve', '--rolled-back', name));
+  }
+  return prisma('migrate', 'deploy');
+}
+
 const pooled =
   process.env.DATABASE_URL ?? process.env.POSTGRES_PRISMA_URL ?? process.env.POSTGRES_URL;
 
@@ -102,21 +120,19 @@ process.env.DATABASE_URL = pooled;
 process.env.DIRECT_DATABASE_URL = direct;
 
 try {
-  console.log(prisma('migrate', 'deploy'));
+  let out;
+  try {
+    out = prisma('migrate', 'deploy');
+  } catch (e) {
+    const detail = describe(e);
+    if (detail.includes('P3005')) out = baseline();
+    else if (detail.includes('P3009')) out = rollBackFailed(detail);
+    if (out == null) throw e;
+  }
+  console.log(out);
   rmSync(reportPath, { force: true });
 } catch (e) {
   const detail = describe(e);
-  if (!detail.includes('P3005')) {
-    console.error(detail);
-    report(['migrate: failed', `variables vues: ${dbEnvNames}`, '---', detail]);
-  } else {
-    try {
-      console.log(baseline());
-      rmSync(reportPath, { force: true });
-    } catch (e2) {
-      const retry = describe(e2);
-      console.error(retry);
-      report(['migrate: failed after baseline', '---', retry]);
-    }
-  }
+  console.error(detail);
+  report(['migrate: failed', `variables vues: ${dbEnvNames}`, '---', detail]);
 }
