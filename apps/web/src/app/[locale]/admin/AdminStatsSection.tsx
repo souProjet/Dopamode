@@ -32,16 +32,16 @@ const STATUT_LEGENDE: Record<string, string> = {
 
 /** Palette plus riche, lisible sur fond clair */
 const STATUT_COULEUR: Record<string, string> = {
-  pending: '#94a3b8',
-  accepted: '#0ea5e9',
-  completed: '#10b981',
-  rejected: '#f43f5e',
-  replaced: '#8b5cf6',
+  pending: '#78716c',
+  accepted: '#134e4a',
+  completed: '#166534',
+  rejected: '#b91c1c',
+  replaced: '#92400e',
   abandoned: '#c2410c',
 };
 
-const CHART_GRID = 'rgba(15, 23, 42, 0.06)';
-const AXIS_TICK = { fill: '#64748b', fontSize: 11, fontWeight: 600 as const };
+const CHART_GRID = 'rgba(28, 25, 23, 0.08)';
+const AXIS_TICK = { fill: '#78716c', fontSize: 11, fontWeight: 500 as const };
 
 function formatEur(cents: number) {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(cents / 100);
@@ -57,18 +57,18 @@ function ChartTooltip({ active, payload, label }: TooltipProps<number, string>) 
   const dateRow = payload[0]?.payload as { date?: string } | undefined;
   const title = (dateRow?.date as string | undefined) ?? label ?? '';
   return (
-    <div className="max-w-xs rounded-2xl border border-emerald-200/90 bg-white/95 px-4 py-3 shadow-[0_12px_40px_-8px_rgba(15,23,42,0.18)] backdrop-blur-md">
+    <div className="max-w-xs rounded-2xl border border-[var(--border-ui-strong)] bg-[color-mix(in_srgb,var(--card)_92%,transparent)] px-4 py-3 shadow-[0_2px_8px_-2px_color-mix(in_srgb,var(--text)_14%,transparent)] backdrop-blur-md">
       {title ? (
-        <p className="border-b border-slate-100 pb-2 font-mono text-[11px] font-bold text-slate-500">{title}</p>
+        <p className="border-b border-[var(--border-ui)] pb-2 font-mono text-[11px] font-semibold text-[var(--subtle)]">{title}</p>
       ) : null}
       <ul className="mt-2 space-y-1.5">
         {payload.map((p) => (
           <li key={String(p.dataKey ?? p.name)} className="flex items-center justify-between gap-4 text-sm">
-            <span className="flex min-w-0 items-center gap-2 font-semibold text-slate-700">
+            <span className="flex min-w-0 items-center gap-2 text-[var(--text)]">
               <span className="h-2.5 w-2.5 shrink-0 rounded-full shadow-sm" style={{ background: p.color }} />
               <span className="truncate">{p.name}</span>
             </span>
-            <span className="shrink-0 font-mono font-bold tabular-nums text-slate-900">
+            <span className="shrink-0 font-mono font-semibold tabular-nums text-[var(--text)]">
               {typeof p.value === 'number' ? p.value.toLocaleString('fr-FR') : p.value}
             </span>
           </li>
@@ -95,19 +95,19 @@ function ChartTooltipShop({
   const v = payload[0]?.value;
   const n = typeof v === 'number' ? v : 0;
   return (
-    <div className="rounded-2xl border border-emerald-200/90 bg-white/95 px-4 py-3 shadow-[0_12px_40px_-8px_rgba(15,23,42,0.18)] backdrop-blur-md">
-      {title ? <p className="font-mono text-[11px] font-bold text-slate-500">{title}</p> : null}
+    <div className="rounded-2xl border border-[var(--border-ui-strong)] bg-[color-mix(in_srgb,var(--card)_92%,transparent)] px-4 py-3 shadow-[0_2px_8px_-2px_color-mix(in_srgb,var(--text)_14%,transparent)] backdrop-blur-md">
+      {title ? <p className="font-mono text-[11px] font-semibold text-[var(--subtle)]">{title}</p> : null}
       {mode === 'eur' ? (
         <>
-          <p className="mt-1 font-display text-lg font-black text-emerald-800">{formatEur(n * 100)}</p>
-          <p className="text-xs font-semibold text-slate-500">Argent réel encaissé (Stripe, jour)</p>
+          <p className="mt-1 font-display text-lg font-bold text-[var(--green)]">{formatEur(n * 100)}</p>
+          <p className="text-xs text-[var(--subtle)]">Argent réel encaissé (Stripe, jour)</p>
         </>
       ) : (
         <>
-          <p className="mt-1 font-display text-lg font-black text-amber-900">
-            {Math.round(n).toLocaleString('fr-FR')} <span className="text-sm font-bold text-amber-800/90">QC</span>
+          <p className="mt-1 font-display text-lg font-bold text-[var(--gold)]">
+            {Math.round(n).toLocaleString('fr-FR')} <span className="text-sm font-semibold text-[var(--gold)]">QC</span>
           </p>
-          <p className="text-xs font-semibold text-slate-500">Dépenses en Quest Coins (jour)</p>
+          <p className="text-xs text-[var(--subtle)]">Dépenses en Quest Coins (jour)</p>
         </>
       )}
     </div>
@@ -130,21 +130,20 @@ function ChartShell({
 }) {
   return (
     <div
-      className={`group relative overflow-hidden rounded-2xl border border-white/70 bg-gradient-to-br from-white/95 via-slate-50/40 to-emerald-50/20 p-1 shadow-[0_16px_48px_-20px_rgba(15,23,42,0.12)] ring-1 ring-slate-200/60 ${className}`}
+      className={`rounded-2xl border border-[var(--border-ui)] bg-[var(--card)] p-1 shadow-[0_1px_2px_color-mix(in_srgb,var(--text)_6%,transparent)] ${className}`}
     >
-      <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-emerald-300/15 to-cyan-300/10 blur-2xl transition-opacity group-hover:opacity-100" />
       <div className="relative rounded-[0.9rem] bg-white/80 p-5 backdrop-blur-sm sm:p-6">
         <div className="mb-4 flex flex-wrap items-start gap-3 sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-start gap-3">
             <span
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-100 to-cyan-100 shadow-inner ring-1 ring-emerald-200/60"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[var(--border-cyan)] bg-[color-mix(in_srgb,var(--green)_10%,var(--card))]"
               aria-hidden
             >
-              <Icon name={icon} size="lg" className="text-emerald-800" />
+              <Icon name={icon} size="lg" className="text-[var(--green)]" />
             </span>
             <div className="min-w-0">
-              <h3 className="font-display text-lg font-black leading-tight text-[var(--on-cream)]">{title}</h3>
-              <p className="mt-1 text-sm font-semibold leading-snug text-[var(--on-cream-muted)]">{subtitle}</p>
+              <h3 className="font-display text-lg font-bold leading-tight text-[var(--text)]">{title}</h3>
+              <p className="mt-1 text-sm font-semibold leading-snug text-[var(--muted)]">{subtitle}</p>
             </div>
           </div>
         </div>
@@ -165,21 +164,20 @@ function KpiMini({
   sub: string;
   tone: 'emerald' | 'cyan' | 'violet' | 'amber';
 }) {
+  /* Aplat teinté, une couleur par ton. Branches littérales pour le JIT Tailwind. */
   const bg =
     tone === 'emerald'
-      ? 'from-emerald-500/15 to-teal-500/10 border-emerald-200/70'
+      ? 'border-[color:color-mix(in_srgb,var(--green)_28%,var(--border-ui))] bg-[color-mix(in_srgb,var(--green)_8%,var(--card))]'
       : tone === 'cyan'
-        ? 'from-cyan-500/15 to-sky-500/10 border-cyan-200/70'
+        ? 'border-[var(--border-cyan)] bg-[color-mix(in_srgb,var(--violet)_8%,var(--card))]'
         : tone === 'violet'
-          ? 'from-violet-500/15 to-fuchsia-500/10 border-violet-200/70'
-          : 'from-amber-500/15 to-orange-500/10 border-amber-200/70';
+          ? 'border-[color:color-mix(in_srgb,var(--gold)_28%,var(--border-ui))] bg-[color-mix(in_srgb,var(--gold)_8%,var(--card))]'
+          : 'border-[color:color-mix(in_srgb,var(--orange)_28%,var(--border-ui))] bg-[color-mix(in_srgb,var(--orange)_8%,var(--card))]';
   return (
-    <div
-      className={`relative overflow-hidden rounded-2xl border bg-gradient-to-br px-4 py-3 shadow-sm ${bg}`}
-    >
-      <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-600/90">{label}</p>
-      <p className="mt-1 font-display text-2xl font-black tabular-nums tracking-tight text-slate-900">{value}</p>
-      <p className="mt-0.5 text-xs font-semibold text-slate-600/85">{sub}</p>
+    <div className={`rounded-2xl border px-4 py-3 ${bg}`}>
+      <p className="carnet-eyebrow">{label}</p>
+      <p className="mt-1 font-display text-2xl font-bold tabular-nums tracking-tight text-[var(--text)]">{value}</p>
+      <p className="mt-0.5 text-xs text-[var(--muted)]">{sub}</p>
     </div>
   );
 }
@@ -266,28 +264,26 @@ export default function AdminStatsSection() {
   );
 
   return (
-    <section className="relative overflow-hidden rounded-[1.75rem] border-2 border-emerald-300/50 bg-gradient-to-br from-emerald-50/50 via-white to-cyan-50/40 p-6 shadow-[0_16px_48px_-20px_rgba(16,185,129,0.2)] sm:p-8">
-      <div className="pointer-events-none absolute -left-20 top-0 h-72 w-72 rounded-full bg-gradient-to-br from-emerald-300/25 to-transparent blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 right-0 h-64 w-64 rounded-full bg-gradient-to-tl from-cyan-300/20 to-transparent blur-3xl" />
+    <section className="rounded-[1.75rem] border border-[color:color-mix(in_srgb,var(--green)_28%,var(--border-ui))] bg-[var(--card)] p-6 shadow-[0_1px_2px_color-mix(in_srgb,var(--text)_6%,transparent)] sm:p-8">
 
       <div className="relative mb-8">
-        <p className="inline-flex items-center gap-2 rounded-full border border-emerald-200/80 bg-white/90 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-900/80 shadow-sm">
-          <Icon name="BarChart3" size="sm" className="text-emerald-700" aria-hidden />
+        <p className="carnet-eyebrow inline-flex items-center gap-2">
+          <Icon name="BarChart3" size="sm" className="text-[var(--green)]" aria-hidden />
           Séries temporelles
         </p>
-        <h2 className="font-display mt-3 text-xl font-black tracking-tight text-[var(--on-cream)] sm:text-2xl">
+        <h2 className="font-display mt-2 text-xl font-bold tracking-tight text-[var(--text)] sm:text-2xl">
           ② · Graphiques &amp; tendances
         </h2>
-        <p className="mt-2 max-w-2xl text-sm font-semibold leading-relaxed text-[var(--on-cream-muted)]">
+        <p className="mt-2 max-w-2xl text-sm font-semibold leading-relaxed text-[var(--muted)]">
           Inscriptions, quêtes par statut, boutique et tendances — période en UTC.
         </p>
 
-        <div className="mt-6 rounded-2xl border border-emerald-200/80 bg-white/90 p-4 shadow-sm sm:p-5">
+        <div className="mt-6 rounded-2xl border border-[var(--border-ui-strong)] bg-[var(--surface)] p-4 sm:p-5">
           <div className="flex flex-col gap-5">
             <div>
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-emerald-900/75">Plage</p>
+              <p className="carnet-eyebrow">Plage</p>
               <div className="mt-2 -mx-1 overflow-x-auto px-1 pb-0.5 [scrollbar-width:thin]">
-                <div className="flex w-max max-w-none flex-nowrap gap-1 rounded-2xl border border-emerald-200/80 bg-emerald-50/40 p-1 sm:w-full sm:max-w-full">
+                <div className="flex w-max max-w-none flex-nowrap gap-1 rounded-2xl border border-[var(--border-ui-strong)] bg-[var(--card)] p-1 sm:w-full sm:max-w-full">
                   {[7, 30, 90, 365].map((d) => (
                     <button
                       key={d}
@@ -297,10 +293,10 @@ export default function AdminStatsSection() {
                         setRangeMode('preset');
                         setPresetDays(d);
                       }}
-                      className={`shrink-0 whitespace-nowrap rounded-xl px-3 py-2 text-xs font-black transition-all sm:min-w-0 sm:flex-1 sm:px-2 sm:text-[11px] md:px-3 ${
+                      className={`shrink-0 whitespace-nowrap rounded-xl px-3 py-2 text-xs font-bold transition-all sm:min-w-0 sm:flex-1 sm:px-2 sm:text-[11px] md:px-3 ${
                         rangeMode === 'preset' && presetDays === d
-                          ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-600/25'
-                          : 'text-[var(--muted)] hover:bg-white/90'
+                          ? 'bg-[var(--green)] text-[var(--card)]'
+                          : 'text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--text)]'
                       }`}
                     >
                       {d === 365 ? '1 an' : `${d} j.`}
@@ -310,21 +306,21 @@ export default function AdminStatsSection() {
               </div>
             </div>
 
-            <div className="border-t border-emerald-100/90 pt-4">
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-emerald-900/75">Dates au choix</p>
+            <div className="border-t border-[var(--border-ui)] pt-4">
+              <p className="carnet-eyebrow">Dates au choix</p>
               <div className="mt-2 flex flex-wrap items-center gap-2 sm:gap-3">
                 <input
                   type="date"
-                  className="min-w-0 flex-1 rounded-xl border-2 border-emerald-200/80 bg-white px-3 py-2 text-sm font-semibold text-[var(--text)] shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 sm:max-w-[11rem]"
+                  className="min-w-0 flex-1 rounded-xl border border-[var(--border-ui-strong)] bg-[var(--input-bg)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--violet)] focus:outline-none focus:ring-1 focus:ring-[var(--violet)] sm:max-w-[11rem]"
                   value={customFrom}
                   onChange={(e) => setCustomFrom(e.target.value)}
                 />
-                <span className="shrink-0 text-emerald-600/80" aria-hidden>
+                <span className="shrink-0 text-[var(--subtle)]" aria-hidden>
                   →
                 </span>
                 <input
                   type="date"
-                  className="min-w-0 flex-1 rounded-xl border-2 border-emerald-200/80 bg-white px-3 py-2 text-sm font-semibold text-[var(--text)] shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 sm:max-w-[11rem]"
+                  className="min-w-0 flex-1 rounded-xl border border-[var(--border-ui-strong)] bg-[var(--input-bg)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--violet)] focus:outline-none focus:ring-1 focus:ring-[var(--violet)] sm:max-w-[11rem]"
                   value={customTo}
                   onChange={(e) => setCustomTo(e.target.value)}
                 />
@@ -332,14 +328,14 @@ export default function AdminStatsSection() {
                   type="button"
                   disabled={loading || !customFrom || !customTo || customFrom > customTo}
                   onClick={() => setRangeMode('custom')}
-                  className="btn btn-primary btn-sm shrink-0 font-black shadow-md"
+                  className="btn btn-primary btn-sm shrink-0"
                 >
                   Appliquer
                 </button>
                 {rangeMode === 'custom' ? (
                   <button
                     type="button"
-                    className="btn btn-ghost btn-sm shrink-0 font-black"
+                    className="btn btn-ghost btn-sm shrink-0"
                     onClick={() => setRangeMode('preset')}
                   >
                     Plages rapides
@@ -348,16 +344,16 @@ export default function AdminStatsSection() {
               </div>
             </div>
 
-            <div className="border-t border-emerald-100/90 pt-4">
+            <div className="border-t border-[var(--border-ui)] pt-4">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div className="min-w-0">
-                  <p className="text-[11px] font-black uppercase tracking-[0.12em] text-slate-600">Indicateurs boutique</p>
-                  <p className="mt-0.5 text-[11px] font-semibold leading-snug text-[var(--on-cream-muted)] sm:text-xs">
+                  <p className="carnet-eyebrow">Indicateurs boutique</p>
+                  <p className="mt-0.5 text-[11px] font-semibold leading-snug text-[var(--muted)] sm:text-xs">
                     € encaissements réels (Stripe) · QC dépensés sur les achats en coins.
                   </p>
                 </div>
                 <div
-                  className="flex shrink-0 flex-nowrap gap-1 rounded-2xl border border-slate-200/90 bg-slate-50/80 p-1"
+                  className="flex shrink-0 flex-nowrap gap-1 rounded-2xl border border-[var(--border-ui-strong)] bg-[var(--card)] p-1"
                   role="group"
                   aria-label="Unité des montants boutique"
                 >
@@ -365,10 +361,10 @@ export default function AdminStatsSection() {
                     type="button"
                     disabled={loading}
                     onClick={() => setShopMode('eur')}
-                    className={`shrink-0 whitespace-nowrap rounded-xl px-3 py-2 text-xs font-black transition-all ${
+                    className={`shrink-0 whitespace-nowrap rounded-xl px-3 py-2 text-xs font-bold transition-all ${
                       shopMode === 'eur'
-                        ? 'bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-sm'
-                        : 'text-[var(--muted)] hover:bg-white/90'
+                        ? 'bg-[var(--green)] text-[var(--card)]'
+                        : 'text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--text)]'
                     }`}
                   >
                     € EUR
@@ -377,10 +373,10 @@ export default function AdminStatsSection() {
                     type="button"
                     disabled={loading}
                     onClick={() => setShopMode('qc')}
-                    className={`shrink-0 whitespace-nowrap rounded-xl px-3 py-2 text-xs font-black transition-all ${
+                    className={`shrink-0 whitespace-nowrap rounded-xl px-3 py-2 text-xs font-bold transition-all ${
                       shopMode === 'qc'
-                        ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-sm'
-                        : 'text-[var(--muted)] hover:bg-white/90'
+                        ? 'bg-[var(--gold)] text-[var(--card)]'
+                        : 'text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--text)]'
                     }`}
                   >
                     QC
@@ -393,16 +389,15 @@ export default function AdminStatsSection() {
       </div>
 
       {err ? (
-        <p className="relative mb-6 rounded-2xl border border-red-200 bg-red-50/95 px-4 py-3 text-sm font-bold text-red-900 shadow-inner">
+        <p className="mb-6 rounded-2xl border border-[var(--red)] bg-[color-mix(in_srgb,var(--red)_7%,var(--card))] px-4 py-3 text-sm font-semibold text-[var(--red)]">
           {err}
         </p>
       ) : null}
 
       {loading && !stats ? (
-        <div className="relative flex min-h-[220px] flex-col items-center justify-center gap-4 rounded-2xl border border-emerald-100 bg-white/60 py-16">
+        <div className="flex min-h-[220px] flex-col items-center justify-center gap-4 rounded-2xl border border-[var(--border-ui)] bg-[var(--surface)] py-16">
           <div className="relative h-12 w-12">
-            <div className="absolute inset-0 animate-ping rounded-full bg-emerald-400/25" />
-            <div className="absolute inset-1 animate-spin rounded-full border-2 border-emerald-200 border-t-emerald-600" />
+            <div className="absolute inset-1 animate-spin rounded-full border-2 border-[var(--border-ui-strong)] border-t-[var(--green)]" />
           </div>
           <p className="text-sm font-bold text-[var(--muted)]">Chargement des graphiques…</p>
         </div>
@@ -410,14 +405,14 @@ export default function AdminStatsSection() {
 
       {stats && kpiSums ? (
         <div className="relative space-y-8">
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-gradient-to-r from-slate-50/90 to-white px-4 py-3 sm:px-5">
-            <p className="text-sm font-bold text-[var(--on-cream)]">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--border-ui)] bg-[var(--surface)] px-4 py-3 sm:px-5">
+            <p className="text-sm font-semibold text-[var(--text)]">
               <span className="text-[var(--muted)]">Période :</span>{' '}
-              <time dateTime={stats.from} className="font-mono text-emerald-800">
+              <time dateTime={stats.from} className="font-mono text-[var(--green)]">
                 {new Date(stats.from + 'T12:00:00Z').toLocaleDateString('fr-FR')}
               </time>
               <span className="mx-2 text-[var(--muted)]">—</span>
-              <time dateTime={stats.to} className="font-mono text-emerald-800">
+              <time dateTime={stats.to} className="font-mono text-[var(--green)]">
                 {new Date(stats.to + 'T12:00:00Z').toLocaleDateString('fr-FR')}
               </time>
               <span className="ml-2 text-xs font-semibold text-[var(--muted)]">
@@ -467,12 +462,12 @@ export default function AdminStatsSection() {
                 <ComposedChart data={chartRows} margin={{ top: 12, right: 12, left: 4, bottom: 4 }}>
                   <defs>
                     <linearGradient id={gradBarIns} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#34d399" />
-                      <stop offset="100%" stopColor="#10b981" />
+                      <stop offset="0%" stopColor="#2f7d4f" />
+                      <stop offset="100%" stopColor="#166534" />
                     </linearGradient>
                     <linearGradient id={gradLineStroke} x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#0f766e" />
-                      <stop offset="100%" stopColor="#14b8a6" />
+                      <stop offset="0%" stopColor="#134e4a" />
+                      <stop offset="100%" stopColor="#2a7d75" />
                     </linearGradient>
                   </defs>
                   <CartesianGrid stroke={CHART_GRID} strokeDasharray="4 8" vertical={false} />
@@ -504,7 +499,7 @@ export default function AdminStatsSection() {
                   <Tooltip content={<ChartTooltip />} />
                   <Legend
                     wrapperStyle={{ paddingTop: 16 }}
-                    formatter={(value) => <span className="text-sm font-semibold text-slate-700">{value}</span>}
+                    formatter={(value) => <span className="text-sm text-[var(--text)]">{value}</span>}
                   />
                   <Bar
                     yAxisId="left"
@@ -522,7 +517,7 @@ export default function AdminStatsSection() {
                     stroke={`url(#${gradLineStroke})`}
                     strokeWidth={3}
                     dot={false}
-                    activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
+                    activeDot={{ r: 5, strokeWidth: 2, stroke: '#faf8f4' }}
                   />
                 </ComposedChart>
               </ResponsiveContainer>
@@ -552,7 +547,7 @@ export default function AdminStatsSection() {
                       <Tooltip content={<ChartTooltip />} />
                       <Legend
                         wrapperStyle={{ paddingTop: 12 }}
-                        formatter={(value) => <span className="text-xs font-semibold text-slate-700">{value}</span>}
+                        formatter={(value) => <span className="text-xs text-[var(--text)]">{value}</span>}
                       />
                       {QUEST_STATUSES.map((st, idx) => (
                         <Bar
@@ -592,15 +587,15 @@ export default function AdminStatsSection() {
                           animationDuration={900}
                         >
                           {pieData.map((entry) => (
-                            <Cell key={entry.key} fill={STATUT_COULEUR[entry.key]} stroke="#fff" strokeWidth={2} />
+                            <Cell key={entry.key} fill={STATUT_COULEUR[entry.key]} stroke="#faf8f4" strokeWidth={2} />
                           ))}
                         </Pie>
                         <Tooltip
                           content={({ active, payload }) =>
                             active && payload?.[0] ? (
-                              <div className="rounded-xl border border-slate-200 bg-white/95 px-3 py-2 shadow-lg">
-                                <p className="font-bold text-slate-800">{payload[0].name}</p>
-                                <p className="font-mono text-lg font-black text-slate-900">
+                              <div className="rounded-xl border border-[var(--border-ui-strong)] bg-[var(--card)] px-3 py-2 shadow-[0_2px_8px_-2px_color-mix(in_srgb,var(--text)_14%,transparent)]">
+                                <p className="font-semibold text-[var(--text)]">{payload[0].name}</p>
+                                <p className="font-mono text-lg font-bold text-[var(--text)]">
                                   {(payload[0].value as number).toLocaleString('fr-FR')}
                                 </p>
                               </div>
@@ -618,7 +613,7 @@ export default function AdminStatsSection() {
                     {totalsPie.map((t) => (
                       <span
                         key={t.key}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/90 bg-white/90 px-2.5 py-1 text-[11px] font-bold text-slate-800 shadow-sm"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border-ui-strong)] bg-[var(--card)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text)]"
                         style={{ borderColor: STATUT_COULEUR[t.key] }}
                       >
                         <span className="h-2 w-2 rounded-full" style={{ background: STATUT_COULEUR[t.key] }} />
@@ -642,8 +637,8 @@ export default function AdminStatsSection() {
           >
             <div className="mb-4 flex flex-wrap items-baseline gap-3">
               <span
-                className={`font-display text-3xl font-black tracking-tight ${
-                  stats.shopMode === 'eur' ? 'text-emerald-800' : 'text-amber-900'
+                className={`font-display text-3xl font-bold tracking-tight ${
+                  stats.shopMode === 'eur' ? 'text-[var(--green)]' : 'text-[var(--gold)]'
                 }`}
               >
                 {stats.shopMode === 'eur'
@@ -661,15 +656,15 @@ export default function AdminStatsSection() {
                     <linearGradient id={gradCa} x1="0" y1="0" x2="0" y2="1">
                       <stop
                         offset="0%"
-                        stopColor={stats.shopMode === 'eur' ? '#10b981' : '#f59e0b'}
+                        stopColor={stats.shopMode === 'eur' ? '#166534' : '#92400e'}
                         stopOpacity={0.55}
                       />
                       <stop
                         offset="55%"
-                        stopColor={stats.shopMode === 'eur' ? '#34d399' : '#fbbf24'}
+                        stopColor={stats.shopMode === 'eur' ? '#2f7d4f' : '#b8791f'}
                         stopOpacity={0.12}
                       />
-                      <stop offset="100%" stopColor="#ecfdf5" stopOpacity={0} />
+                      <stop offset="100%" stopColor="#faf8f4" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid stroke={CHART_GRID} strokeDasharray="4 8" vertical={false} />
@@ -703,7 +698,7 @@ export default function AdminStatsSection() {
                     type="monotone"
                     dataKey="shopSeries"
                     name={stats.shopMode === 'eur' ? 'Encaissement du jour (€)' : 'QC dépensés (jour)'}
-                    stroke={stats.shopMode === 'eur' ? '#059669' : '#d97706'}
+                    stroke={stats.shopMode === 'eur' ? '#166534' : '#92400e'}
                     strokeWidth={2.5}
                     fill={`url(#${gradCa})`}
                     fillOpacity={1}
@@ -713,15 +708,15 @@ export default function AdminStatsSection() {
             </div>
           </ChartShell>
 
-          <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-gradient-to-br from-white via-slate-50/30 to-emerald-50/20 shadow-[0_12px_40px_-20px_rgba(15,23,42,0.1)]">
-            <div className="border-b border-slate-200/70 bg-white/90 px-5 py-4 sm:px-6">
+          <div className="overflow-hidden rounded-2xl border border-[var(--border-ui)] bg-[var(--card)] shadow-[0_1px_2px_color-mix(in_srgb,var(--text)_6%,transparent)]">
+            <div className="border-b border-[var(--border-ui)] bg-[var(--surface)] px-5 py-4 sm:px-6">
               <div className="flex items-center gap-3">
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-100 to-fuchsia-100 shadow-inner ring-1 ring-violet-200/50">
-                  <Icon name="Tag" size="md" className="text-violet-800" aria-hidden />
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--border-cyan)] bg-[color-mix(in_srgb,var(--violet)_10%,var(--card))]">
+                  <Icon name="Tag" size="md" className="text-[var(--violet)]" aria-hidden />
                 </span>
                 <div>
-                  <h3 className="font-display text-lg font-black text-[var(--on-cream)]">Détail par article (SKU)</h3>
-                  <p className="text-sm font-semibold text-[var(--on-cream-muted)]">
+                  <h3 className="font-display text-lg font-bold text-[var(--text)]">Détail par article (SKU)</h3>
+                  <p className="text-sm font-semibold text-[var(--muted)]">
                     {stats.shopMode === 'eur'
                       ? 'Montants TTC encaissés en euros (Stripe) sur la période.'
                       : 'Quest Coins dépensés par article sur la période.'}
@@ -732,17 +727,17 @@ export default function AdminStatsSection() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[520px] text-left text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200/80 bg-slate-50/90">
-                    <th className="px-5 py-3.5 text-[11px] font-black uppercase tracking-[0.12em] text-slate-600">
+                  <tr className="border-b border-[var(--border-ui-strong)] bg-[var(--surface)]">
+                    <th className="px-5 py-3.5 carnet-eyebrow">
                       Référence
                     </th>
-                    <th className="px-5 py-3.5 text-[11px] font-black uppercase tracking-[0.12em] text-slate-600">
+                    <th className="px-5 py-3.5 carnet-eyebrow">
                       Libellé
                     </th>
-                    <th className="px-5 py-3.5 text-right text-[11px] font-black uppercase tracking-[0.12em] text-slate-600">
+                    <th className="px-5 py-3.5 text-right carnet-eyebrow">
                       Transactions
                     </th>
-                    <th className="px-5 py-3.5 text-right text-[11px] font-black uppercase tracking-[0.12em] text-slate-600">
+                    <th className="px-5 py-3.5 text-right carnet-eyebrow">
                       {stats.shopMode === 'eur' ? 'Montant TTC' : 'QC dépensés'}
                     </th>
                   </tr>
@@ -758,14 +753,14 @@ export default function AdminStatsSection() {
                     stats.shopBySku.map((r, i) => (
                       <tr
                         key={`${r.sku}-${r.label}-${i}`}
-                        className="border-b border-slate-100/90 transition-colors hover:bg-emerald-50/40"
+                        className="border-b border-[var(--border-ui)] transition-colors hover:bg-[var(--surface)]"
                       >
-                        <td className="px-5 py-3 font-mono text-xs font-bold text-slate-800">{r.sku}</td>
-                        <td className="px-5 py-3 font-semibold text-slate-800">{r.label}</td>
-                        <td className="px-5 py-3 text-right font-mono text-sm font-bold tabular-nums text-slate-900">
+                        <td className="px-5 py-3 font-mono text-xs font-semibold text-[var(--text)]">{r.sku}</td>
+                        <td className="px-5 py-3 text-[var(--text)]">{r.label}</td>
+                        <td className="px-5 py-3 text-right font-mono text-sm font-semibold tabular-nums text-[var(--text)]">
                           {r.count}
                         </td>
-                        <td className="px-5 py-3 text-right font-mono text-sm font-black tabular-nums text-emerald-800">
+                        <td className="px-5 py-3 text-right font-mono text-sm font-semibold tabular-nums text-[var(--green)]">
                           {stats.shopMode === 'eur' ? formatEur(r.amount) : `${r.amount.toLocaleString('fr-FR')} QC`}
                         </td>
                       </tr>

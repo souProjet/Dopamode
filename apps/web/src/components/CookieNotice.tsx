@@ -26,7 +26,7 @@ export function CookieNotice() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-[100] border-t border-[var(--border-ui)] bg-[var(--card)]/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] shadow-[0_-8px_32px_color-mix(in_srgb,var(--text)_10%,transparent)] backdrop-blur-md sm:px-6"
+      className="fixed bottom-0 left-0 right-0 z-[100] border-t border-[var(--border-ui-strong)] bg-[var(--card)]/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] backdrop-blur-md sm:px-6"
       role="dialog"
       aria-labelledby="cookie-notice-title"
       aria-live="polite"
@@ -34,7 +34,7 @@ export function CookieNotice() {
       <div className="mx-auto flex max-w-4xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         <p id="cookie-notice-title" className="min-w-0 text-sm leading-relaxed text-[var(--muted)]">
           {t('text')}{' '}
-          <Link href="/legal/confidentialite#cookies" className="font-semibold text-[var(--orange)] hover:underline">
+          <Link href="/legal/confidentialite#cookies" className="font-medium text-[var(--link-on-bg)] underline decoration-[color:color-mix(in_srgb,var(--link-on-bg)_35%,transparent)] underline-offset-[0.2em] transition-colors duration-200 hover:text-[var(--text)]">
             {t('learnMore')}
           </Link>
         </p>
@@ -45,7 +45,7 @@ export function CookieNotice() {
               writeMarketingConsent({ analytics: false, ads: false });
               setVisible(false);
             }}
-            className="rounded-lg border border-[var(--border-ui)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold text-[var(--text)] transition hover:bg-[color:color-mix(in_srgb,var(--card)_88%,var(--surface))]"
+            className="rounded-lg border border-[var(--border-ui-strong)] px-4 py-2 text-sm font-medium text-[var(--text)] transition-colors duration-200 hover:bg-[var(--surface)]"
           >
             {t('refuse')}
           </button>
@@ -55,7 +55,7 @@ export function CookieNotice() {
               writeMarketingConsent({ analytics: true, ads: true });
               setVisible(false);
             }}
-            className="rounded-lg bg-[var(--orange)] px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:brightness-105"
+            className="rounded-lg bg-[var(--orange)] px-4 py-2 text-sm font-semibold text-white transition duration-200 hover:brightness-110"
           >
             {t('accept')}
           </button>

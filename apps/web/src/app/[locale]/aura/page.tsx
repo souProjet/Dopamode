@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { AuraProfilePage } from '@/components/aura/AuraProfilePage';
+import { Navbar } from '@/components/Navbar';
+import { SiteFooter } from '@/components/SiteFooter';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -26,5 +28,13 @@ export default async function AuraPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const isEn = locale === 'en';
-  return <AuraProfilePage locale={isEn ? 'en' : 'fr'} />;
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Navbar />
+      <main id="main-content" tabIndex={-1} className="flex-1 pt-[4.75rem] outline-none sm:pt-24">
+        <AuraProfilePage locale={isEn ? 'en' : 'fr'} />
+      </main>
+      <SiteFooter />
+    </div>
+  );
 }

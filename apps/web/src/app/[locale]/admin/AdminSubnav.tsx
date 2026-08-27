@@ -2,11 +2,12 @@
 
 import { Link, usePathname } from '@/i18n/navigation';
 
+/** Onglet : filet 1px, aplat, l'encre porte l'état actif. */
 const tabClass = (active: boolean) =>
-  `rounded-2xl border-2 px-4 py-2.5 text-sm font-black transition sm:px-5 ${
+  `rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors duration-200 sm:px-5 ${
     active
-      ? 'border-cyan-400/90 bg-gradient-to-br from-cyan-50 to-white text-[var(--on-cream)] shadow-[0_4px_16px_-4px_rgba(34,211,238,0.35)]'
-      : 'border-transparent bg-white/60 text-[var(--muted)] hover:border-cyan-200/80 hover:bg-white/95'
+      ? 'border-[var(--violet)] bg-[var(--card)] text-[var(--text)]'
+      : 'border-[var(--border-ui)] bg-transparent text-[var(--muted)] hover:border-[var(--border-cyan)] hover:bg-[var(--surface)] hover:text-[var(--text)]'
   }`;
 
 export function AdminSubnav() {

@@ -112,17 +112,16 @@ function VoteButton({
   const reduce = useReducedMotion();
   const Icon = kind === 'up' ? ThumbsUp : ThumbsDown;
 
-  const activeRing =
+  /*
+   * Pouce actif : l'aplat et l'encre portent l'état, pas une lueur néon.
+   * Classes écrites en entier (le JIT Tailwind ne lit pas les littéraux construits).
+   */
+  const activeBg =
     kind === 'up'
-      ? 'shadow-[0_0_0_3px_rgba(16,185,129,0.22),0_4px_20px_rgba(16,185,129,0.18)]'
-      : 'shadow-[0_0_0_3px_rgba(255,90,90,0.2),0_4px_20px_rgba(249,115,22,0.15)]';
-
-
-  const activeBg = kind === 'up' ? 'bg-emerald-500/18' : 'bg-gradient-to-br from-orange-500/20 to-rose-500/22';
-
-  const iconIdle = kind === 'up' ? 'text-slate-400' : 'text-slate-400';
-  const iconActive =
-    kind === 'up' ? 'text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.55)]' : 'text-[#ff6b4a] drop-shadow-[0_0_10px_rgba(255,120,90,0.45)]';
+      ? 'border-[var(--green)] bg-[color-mix(in_srgb,var(--green)_12%,transparent)]'
+      : 'border-[var(--orange)] bg-[color-mix(in_srgb,var(--orange)_12%,transparent)]';
+  const iconIdle = 'text-[var(--subtle)]';
+  const iconActive = kind === 'up' ? 'text-[var(--green)]' : 'text-[var(--orange)]';
 
   return (
     <motion.button
@@ -145,11 +144,8 @@ function VoteButton({
       className={[
         'relative inline-flex h-12 w-12 items-center justify-center rounded-2xl border transition-colors duration-200',
         active
-          ? `border-white/10 ${activeRing} ${activeBg}`
-          : [
-              'border-[var(--border-ui)]/35 bg-[var(--bg)]/60 hover:border-[var(--border-ui)]/55',
-              kind === 'up' ? 'hover:bg-emerald-500/10' : 'hover:bg-orange-500/10',
-            ].join(' '),
+          ? activeBg
+          : 'border-[var(--border-ui-strong)] bg-[var(--card)] hover:border-[var(--border-cyan)] hover:bg-[var(--surface)]',
         dimmed ? 'opacity-[0.38] saturate-[0.65]' : 'opacity-100',
         busy ? 'pointer-events-none opacity-60' : '',
       ].join(' ')}

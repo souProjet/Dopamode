@@ -4,69 +4,92 @@ import { useState, useEffect } from 'react';
 import { AnalyticsEvent } from '@/lib/analytics/events';
 import { trackAnalyticsEvent } from '@/lib/analytics/track';
 import { Link, useRouter } from '@/i18n/navigation';
-import { Icon } from '@/components/Icons';
 import { QuestiaLogo } from '@/components/QuestiaLogo';
 import type { ExplorerAxis, RiskAxis, SociabilityLevel } from '@questia/shared';
 
 // ── Questions ─────────────────────────────────────────────────────────────────
 
 const Q1_OPTIONS = [
-  {
-    id: 'homebody' as ExplorerAxis,
-    icon: 'Home' as const,
-    title: 'Je reste au chaud.',
-    desc: 'Coco, série, zéro galère.',
-  },
-  {
-    id: 'explorer' as ExplorerAxis,
-    icon: 'Globe' as const,
-    title: 'Je pars explorer.',
-    desc: "Nouveaux spots, imprévus, j'adore.",
-  },
+  { id: 'homebody' as ExplorerAxis, title: 'Je reste au chaud.', desc: 'Coco, série, zéro galère.' },
+  { id: 'explorer' as ExplorerAxis, title: 'Je pars explorer.', desc: "Nouveaux spots, imprévus, j'adore." },
 ];
 
 const Q2_OPTIONS = [
-  {
-    id: 'cautious' as RiskAxis,
-    icon: 'ClipboardList' as const,
-    title: 'Je prépare, je planifie.',
-    desc: 'Quand ça se passe comme prévu : top.',
-  },
-  {
-    id: 'risktaker' as RiskAxis,
-    icon: 'Dices' as const,
-    title: "J'improvise, je fonce.",
-    desc: 'Plan foiré = souvent le meilleur moment.',
-  },
+  { id: 'cautious' as RiskAxis, title: 'Je prépare, je planifie.', desc: 'Quand ça se passe comme prévu : top.' },
+  { id: 'risktaker' as RiskAxis, title: "J'improvise, je fonce.", desc: 'Plan foiré = souvent le meilleur moment.' },
 ];
 
 const Q3_OPTIONS = [
-  {
-    id: 'solitary' as SociabilityLevel,
-    icon: 'Moon' as const,
-    title: 'Plutôt solo.',
-    desc: 'Mon énergie, je la garde pour moi.',
-  },
-  {
-    id: 'balanced' as SociabilityLevel,
-    icon: 'Users' as const,
-    title: 'Ça dépend.',
-    desc: 'Un mélange des deux, selon le moment.',
-  },
-  {
-    id: 'social' as SociabilityLevel,
-    icon: 'MessageCircle' as const,
-    title: 'Très sociable.',
-    desc: 'Parler, échanger, ça me booste.',
-  },
+  { id: 'solitary' as SociabilityLevel, title: 'Plutôt solo.', desc: 'Mon énergie, je la garde pour moi.' },
+  { id: 'balanced' as SociabilityLevel, title: 'Ça dépend.', desc: 'Un mélange des deux, selon le moment.' },
+  { id: 'social' as SociabilityLevel, title: 'Très sociable.', desc: 'Parler, échanger, ça me booste.' },
 ];
 
-const PROFILE_RESULTS: Record<string, { icon: string; label: string; desc: string }> = {
-  explorer_risktaker: { icon: 'Zap', label: "L'Aventurier", desc: 'Quêtes nerveuses, souvent dehors.' },
-  explorer_cautious: { icon: 'Compass', label: "L'Explorateur cool", desc: 'Belles sorties, zéro chaos.' },
-  homebody_risktaker: { icon: 'Drama', label: 'Le Fou du salon', desc: 'Surprise… mais chez toi.' },
-  homebody_cautious: { icon: 'Leaf', label: 'Le Zen', desc: 'Doucement, sûrement.' },
+const PROFILE_RESULTS: Record<string, { label: string; desc: string }> = {
+  explorer_risktaker: { label: "L'Aventurier", desc: 'Quêtes nerveuses, souvent dehors.' },
+  explorer_cautious: { label: "L'Explorateur cool", desc: 'Belles sorties, zéro chaos.' },
+  homebody_risktaker: { label: 'Le Fou du salon', desc: 'Surprise… mais chez toi.' },
+  homebody_cautious: { label: 'Le Zen', desc: 'Doucement, sûrement.' },
 };
+
+// ── Primitives « carnet » ─────────────────────────────────────────────────────
+
+/** Lien discret sous une liste de choix (revenir, passer). */
+const QUIET_LINK =
+  'text-sm font-medium text-[var(--link-on-bg)] underline decoration-[color:color-mix(in_srgb,var(--link-on-bg)_35%,transparent)] underline-offset-[0.2em] transition-colors duration-200 hover:text-[var(--text)]';
+
+function StepHeading({ index, eyebrow, title, lead }: { index: number; eyebrow: string; title: string; lead: string }) {
+  return (
+    <>
+      <p className="carnet-eyebrow">
+        {String(index).padStart(2, '0')} / 03 · {eyebrow}
+      </p>
+      <h1 className="mt-4 text-balance font-display text-[clamp(1.75rem,3vw+1rem,2.35rem)] font-semibold leading-[1.1] tracking-[-0.025em] text-[var(--text)]">
+        {title}
+      </h1>
+      <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted)]">{lead}</p>
+    </>
+  );
+}
+
+/**
+ * Liste de choix en registre imprimé : lettre sérif en marge, filets 1px, aucun
+ * aplat coloré. La rangée entière est cliquable ; le survol pose un aplat neutre.
+ */
+function ChoiceList<T extends string>({
+  options,
+  onSelect,
+}: {
+  options: readonly { id: T; title: string; desc: string }[];
+  onSelect: (id: T) => void;
+}) {
+  return (
+    <div className="carnet-rule -mx-3 mt-9">
+      {options.map((o, idx) => (
+        <button
+          key={o.id}
+          type="button"
+          onClick={() => onSelect(o.id)}
+          className="group flex w-full items-start gap-5 border-b border-[var(--border-ui)] px-3 py-6 text-left transition-colors duration-200 hover:bg-[var(--surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:color-mix(in_srgb,var(--violet)_45%,transparent)]"
+        >
+          <span className="carnet-numeral shrink-0 pt-0.5 text-[1.8rem]" aria-hidden>
+            {String.fromCharCode(65 + idx)}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-medium text-[var(--text)]">{o.title}</span>
+            <span className="mt-1.5 block text-sm leading-relaxed text-[var(--muted)]">{o.desc}</span>
+          </span>
+          <span
+            className="shrink-0 self-center text-[var(--subtle)] transition-transform duration-200 group-hover:translate-x-1"
+            aria-hidden
+          >
+            →
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+}
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -132,289 +155,163 @@ export default function OnboardingPage() {
     }, 50);
   };
 
+  /** Lignes de synthèse du récap : numérotées comme des entrées de carnet. */
+  const recapLines = [
+    explorer === 'explorer' ? 'Tu aimes explorer et bouger.' : 'Tu aimes ta routine et ton espace.',
+    risk === 'risktaker' ? "Tu fonces dans l'inconnu." : 'Tu préfères ce qui est rassurant.',
+    ...(sociability
+      ? [
+          sociability === 'solitary'
+            ? 'Tu recharges mieux en solo.'
+            : sociability === 'social'
+              ? 'Tu te nourris du contact.'
+              : 'Tu alternes solo et social.',
+        ]
+      : []),
+  ];
+
   return (
-    <div className="min-h-screen bg-adventure flex items-center justify-center px-4 py-16 relative">
-
-      {/* Ambient */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full opacity-12"
-          style={{ background: 'radial-gradient(ellipse,rgba(34,211,238,0.35),transparent 70%)' }} />
-        <div className="absolute top-[12%] right-[9%] w-[260px] h-[220px] rounded-full opacity-15"
-          style={{ background: 'radial-gradient(ellipse,#c2410c,transparent 70%)' }} />
-        <div className="absolute bottom-[10%] left-[8%] w-[260px] h-[220px] rounded-full opacity-15"
-          style={{ background: 'radial-gradient(ellipse,#134e4a,transparent 70%)' }} />
-        <div className="absolute top-20 left-[12%] flex items-center justify-center opacity-10 animate-float select-none">
-          <Icon name="Map" className="h-10 w-10 text-cyan-900/40" />
-        </div>
-        <div className="absolute bottom-16 right-[10%] flex items-center justify-center opacity-10 animate-float select-none">
-          <Icon name="Dices" className="h-9 w-9 text-orange-900/40" />
-        </div>
-      </div>
-
-      <main id="main-content" tabIndex={-1} className="relative w-full max-w-md outline-none">
-
-        {/* Logo */}
-        <div className="mb-10 flex flex-col items-center gap-3">
-          <QuestiaLogo variant="onboarding" priority />
-          <span className="font-display font-black text-2xl tracking-tight text-[var(--text)]">QUESTIA</span>
-          {step < 3 && (
-            <span className="inline-flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--link-on-bg)]">
-              <Icon name="Dices" size="sm" className="text-[var(--link-on-bg)]" aria-hidden />
-              3 choix — des quêtes à ta sauce
-            </span>
-          )}
+    <div className="flex min-h-screen flex-col">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-[38rem] flex-1 px-5 py-10 outline-none sm:px-8 sm:py-14"
+      >
+        {/* En-tête : marque à gauche, position dans le tunnel à droite */}
+        <div className="flex items-center justify-between gap-4">
+          <Link href="/" className="inline-flex items-center gap-2.5 transition-opacity duration-200 hover:opacity-70">
+            <QuestiaLogo variant="footer" priority />
+            <span className="font-display text-lg font-semibold tracking-[-0.02em] text-[var(--text)]">Questia</span>
+          </Link>
+          <span className="carnet-eyebrow">{step < 3 ? `Étape ${step + 1} sur 3` : 'Résultat'}</span>
         </div>
 
-        {/* Progress — 1 barre par question, pleine = répondue */}
-        <div className="flex items-center gap-2.5 mb-10">
-          {[0, 1, 2].map((i) => {
-            const filled = step > i;
-            return (
-              <div
-                key={i}
-                className="flex-1 h-2 rounded-full overflow-hidden"
-                style={{ backgroundColor: 'rgba(15,23,42,0.1)' }}
-              >
-                <div
-                  className="h-full rounded-full transition-[width] duration-500 ease-out"
-                  style={{
-                    width: filled ? '100%' : '0%',
-                    background: 'linear-gradient(90deg, #134e4a, #166534, #c2410c)',
-                  }}
-                />
-              </div>
-            );
-          })}
+        {/* Progression : trois filets, pleins pour les étapes validées */}
+        <div
+          className="mt-7 flex gap-3"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={3}
+          aria-valuenow={Math.min(step, 3)}
+          aria-label="Progression du questionnaire"
+        >
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="h-[2px] flex-1 transition-colors duration-500 ease-out"
+              style={{
+                backgroundColor:
+                  step > i
+                    ? 'var(--violet)'
+                    : step === i
+                      ? 'color-mix(in srgb, var(--violet) 40%, transparent)'
+                      : 'var(--border-ui-strong)',
+              }}
+            />
+          ))}
         </div>
 
-        {/* ── Step 0 ── */}
+        {/* ── Étape 0 ── */}
         {step === 0 && (
-          <div className="motion-safe:animate-onboarding-step motion-reduce:animate-none">
-            <div className="mb-8 text-center">
-              <p className="label mb-3">1 / 3 — Ton rythme</p>
-              <h1 className="font-display font-black text-3xl text-[var(--text)] leading-tight">
-                Dimanche libre,<br />
-                <span className="text-gradient">tu fais quoi ?</span>
-              </h1>
-              <p className="mt-3 flex items-center justify-center gap-1.5 text-sm text-[var(--text)]/70">
-                <Icon name="Sparkles" size="sm" className="text-amber-600/90 shrink-0" aria-hidden />
-                Le clic qui te ressemble
-              </p>
-            </div>
-            <div className="space-y-3">
-              {Q1_OPTIONS.map((o, idx) => (
-                <button
-                  key={o.id}
-                  type="button"
-                  onClick={() => handleQ1(o.id)}
-                  className="w-full text-left card card-hover rounded-2xl p-5 flex items-start gap-4 group transition-[transform,box-shadow,border-color,background] duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-600/45 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]"
-                >
-                  <div className="flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center"
-                    style={{
-                      color: idx === 0 ? '#b45309' : '#0e7490',
-                      background: idx === 0 ? 'rgba(251,191,36,.2)' : 'rgba(34,211,238,.18)',
-                      border: idx === 0 ? '1px solid rgba(217,119,6,.4)' : '1px solid rgba(14,116,144,.35)',
-                    }}><Icon name={o.icon} size="xl" /></div>
-                  <div>
-                    <p className="font-bold text-[var(--text)] mb-1 group-hover:text-cyan-900 transition-colors duration-200">{o.title}</p>
-                    <p className="text-sm text-[var(--text)]/75 leading-relaxed">{o.desc}</p>
-                  </div>
-                </button>
-              ))}
-            </div>
+          <div className="mt-12 motion-safe:animate-onboarding-step motion-reduce:animate-none">
+            <StepHeading index={1} eyebrow="Ton rythme" title="Dimanche libre, tu fais quoi ?" lead="Trois questions courtes, la dernière est optionnelle. Elles décident du ton de tes quêtes." />
+            <ChoiceList options={Q1_OPTIONS} onSelect={handleQ1} />
           </div>
         )}
 
-        {/* ── Step 1 ── */}
+        {/* ── Étape 1 ── */}
         {step === 1 && (
-          <div className="motion-safe:animate-onboarding-step motion-reduce:animate-none">
-            <div className="mb-8 text-center">
-              <p className="label mb-3">2 / 3 — L&apos;imprévu</p>
-              <h1 className="font-display font-black text-3xl text-[var(--text)] leading-tight">
-                Plan foiré,<br />
-                <span className="text-gradient">tu réagis comment ?</span>
-              </h1>
-              <p className="mt-3 flex items-center justify-center gap-1.5 text-sm text-[var(--text)]/70">
-                <Icon name="Target" size="sm" className="text-cyan-800/90 shrink-0" aria-hidden />
-                Dernier clic
-              </p>
-            </div>
-            <div className="space-y-3">
-              {Q2_OPTIONS.map((o, idx) => (
-                <button
-                  key={o.id}
-                  type="button"
-                  onClick={() => handleQ2(o.id)}
-                  className="w-full text-left card card-hover rounded-2xl p-5 flex items-start gap-4 group transition-[transform,box-shadow,border-color,background] duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-600/45 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]"
-                >
-                  <div className="flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center"
-                    style={{
-                      color: idx === 0 ? '#0e7490' : '#c2410c',
-                      background: idx === 0 ? 'rgba(34,211,238,.2)' : 'rgba(249,115,22,.18)',
-                      border: idx === 0 ? '1px solid rgba(14,116,144,.38)' : '1px solid rgba(194,65,12,.38)',
-                    }}><Icon name={o.icon} size="xl" /></div>
-                  <div>
-                    <p className="font-bold text-[var(--text)] mb-1 group-hover:text-cyan-900 transition-colors duration-200">{o.title}</p>
-                    <p className="text-sm text-[var(--text)]/75 leading-relaxed">{o.desc}</p>
-                  </div>
-                </button>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={() => setStep(0)}
-              className="w-full text-center text-sm font-semibold text-[var(--link-on-bg)] hover:text-[var(--text)] underline decoration-[color:color-mix(in_srgb,var(--link-on-bg)_35%,transparent)] underline-offset-[0.2em] transition-colors duration-200 mt-5"
-            >
+          <div className="mt-12 motion-safe:animate-onboarding-step motion-reduce:animate-none">
+            <StepHeading index={2} eyebrow="L'imprévu" title="Plan foiré, tu réagis comment ?" lead="Ce qui arrive quand rien ne se passe comme prévu." />
+            <ChoiceList options={Q2_OPTIONS} onSelect={handleQ2} />
+            <button type="button" onClick={() => setStep(0)} className={`${QUIET_LINK} mt-7`}>
               ← Revenir
             </button>
           </div>
         )}
 
-        {/* ── Step 2: Sociabilité (optionnelle) ── */}
+        {/* ── Étape 2 : sociabilité (optionnelle) ── */}
         {step === 2 && (
-          <div className="motion-safe:animate-onboarding-step motion-reduce:animate-none">
-            <div className="mb-8 text-center">
-              <p className="label mb-3">3 / 3 — Ton énergie sociale</p>
-              <h1 className="font-display font-black text-3xl text-[var(--text)] leading-tight">
-                En soirée,<br />
-                <span className="text-gradient">t&apos;es comment ?</span>
-              </h1>
-              <p className="text-sm text-[var(--text)]/70 mt-3">Optionnel — passe si tu veux</p>
+          <div className="mt-12 motion-safe:animate-onboarding-step motion-reduce:animate-none">
+            <StepHeading index={3} eyebrow="Ton énergie sociale" title="En soirée, t'es comment ?" lead="Optionnel : passe cette question si tu préfères." />
+            <ChoiceList options={Q3_OPTIONS} onSelect={handleQ3} />
+            <div className="mt-7 flex items-center gap-6">
+              <button type="button" onClick={skipQ3} className={QUIET_LINK}>
+                Passer →
+              </button>
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="text-sm font-medium text-[var(--subtle)] transition-colors duration-200 hover:text-[var(--text)]"
+              >
+                ← Revenir
+              </button>
             </div>
-            <div className="space-y-3">
-              {Q3_OPTIONS.map((o, idx) => (
-                <button
-                  key={o.id}
-                  type="button"
-                  onClick={() => handleQ3(o.id)}
-                  className="w-full text-left card card-hover rounded-2xl p-5 flex items-start gap-4 group transition-[transform,box-shadow,border-color,background] duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-600/45 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]"
-                >
-                  <div className="flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center"
-                    style={{
-                      color: idx === 0 ? '#6b21a8' : idx === 1 ? '#0e7490' : '#c2410c',
-                      background: idx === 0 ? 'rgba(147,51,234,.18)' : idx === 1 ? 'rgba(34,211,238,.18)' : 'rgba(249,115,22,.18)',
-                      border: idx === 0 ? '1px solid rgba(107,33,168,.38)' : idx === 1 ? '1px solid rgba(14,116,144,.38)' : '1px solid rgba(194,65,12,.38)',
-                    }}><Icon name={o.icon} size="xl" /></div>
-                  <div>
-                    <p className="font-bold text-[var(--text)] mb-1 group-hover:text-cyan-900 transition-colors duration-200">{o.title}</p>
-                    <p className="text-sm text-[var(--text)]/75 leading-relaxed">{o.desc}</p>
-                  </div>
-                </button>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={skipQ3}
-              className="w-full text-center text-sm font-semibold text-[var(--link-on-bg)] hover:text-[var(--text)] underline decoration-[color:color-mix(in_srgb,var(--link-on-bg)_35%,transparent)] underline-offset-[0.2em] transition-colors duration-200 mt-5"
-            >
-              Passer →
-            </button>
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              className="w-full text-center text-sm font-semibold text-[var(--text)]/50 hover:text-[var(--text)] transition-colors duration-200 mt-2"
-            >
-              ← Revenir
-            </button>
           </div>
         )}
 
-        {/* ── Step 3: Recap ── */}
+        {/* ── Étape 3 : récapitulatif ── */}
         {step === 3 && profile && (
           <div
-            className="motion-safe:animate-onboarding-step motion-reduce:animate-none text-center"
+            className="mt-12 motion-safe:animate-onboarding-step motion-reduce:animate-none"
             role="region"
             aria-label="Ton profil Questia"
           >
-            <p className="label mb-2 inline-flex items-center justify-center gap-1.5">
-              <Icon name="Check" size="sm" className="text-emerald-700 shrink-0" aria-hidden />
-              C&apos;est tout
-            </p>
-            <h2 className="font-display font-black text-2xl sm:text-3xl text-[var(--text)] mb-2 leading-tight">
-              Ton profil en un clin d&apos;œil
-            </h2>
-            <div className="flex justify-center mb-4"><Icon name={profile.icon as 'Zap' | 'Compass' | 'Drama' | 'Leaf'} size="2xl" className="text-cyan-800 w-16 h-16" /></div>
-            <p className="text-xs font-bold uppercase tracking-wider text-[var(--link-on-bg)] mb-2">Ta vibe</p>
-            <h3 className="font-display font-black text-2xl text-[var(--text)] mb-2">
+            <p className="carnet-eyebrow">Profil établi</p>
+            <h1 className="mt-4 text-balance font-display text-[clamp(1.9rem,3.4vw+1rem,2.6rem)] font-semibold leading-[1.08] tracking-[-0.025em] text-[var(--text)]">
               {profile.label}
-            </h3>
-            <p className="text-[var(--text)]/80 mb-5 leading-snug font-medium">{profile.desc}</p>
+            </h1>
+            <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted)]">{profile.desc}</p>
 
-            <p className="text-left text-xs font-bold uppercase tracking-wider text-[var(--text)]/55 mb-2 pl-0.5">
-              Ton duo
-            </p>
-            <div className="rounded-2xl p-5 mb-6 text-left space-y-3 border border-dashed border-[color:color-mix(in_srgb,var(--cyan)_40%,var(--border-ui))] bg-[color:color-mix(in_srgb,var(--card)_88%,rgba(224,242,254,.5))]">
-              <div className="flex items-center gap-3">
-                <Icon name={explorer === 'explorer' ? 'Globe' : 'Home'} size="lg" className="text-cyan-800 flex-shrink-0" />
-                <span className="text-sm text-[var(--text)]/85 leading-snug">
-                  {explorer === 'explorer' ? 'Tu aimes explorer et bouger' : 'Tu aimes ta routine et ton espace'}
-                </span>
-              </div>
-              <div className="divider" />
-              <div className="flex items-center gap-3">
-                <Icon name={risk === 'risktaker' ? 'Dices' : 'ClipboardList'} size="lg" className="text-orange-800 flex-shrink-0" />
-                <span className="text-sm text-[var(--text)]/85 leading-snug">
-                  {risk === 'risktaker' ? 'Tu fonces dans l\'inconnu' : 'Tu préfères ce qui est rassurant'}
-                </span>
-              </div>
-              {sociability && (
-                <>
-                  <div className="divider" />
-                  <div className="flex items-center gap-3">
-                    <Icon
-                      name={sociability === 'solitary' ? 'Moon' : sociability === 'social' ? 'MessageCircle' : 'Users'}
-                      size="lg"
-                      className="text-purple-800 flex-shrink-0"
-                    />
-                    <span className="text-sm text-[var(--text)]/85 leading-snug">
-                      {sociability === 'solitary'
-                        ? 'Tu recharges mieux en solo'
-                        : sociability === 'social'
-                          ? 'Tu te nourris du contact'
-                          : 'Tu alternes solo et social'}
+            <section className="carnet-rule mt-11 pt-7">
+              <p className="carnet-eyebrow">Ce qu&apos;on retient</p>
+              <ul className="mt-6">
+                {recapLines.map((line, i) => (
+                  <li
+                    key={line}
+                    className="flex items-baseline gap-5 border-b border-[var(--border-ui)] py-4 first:border-t"
+                  >
+                    <span className="carnet-numeral shrink-0 text-[1.4rem]" aria-hidden>
+                      {String(i + 1).padStart(2, '0')}
                     </span>
-                  </div>
-                </>
-              )}
-            </div>
+                    <span className="text-[15px] leading-relaxed text-[var(--text)]">{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
 
-            <div className="rounded-2xl px-4 py-3 mb-5 border border-[color:color-mix(in_srgb,var(--cyan)_28%,var(--border-ui))] border-l-[3px] border-l-cyan-700/75 bg-[color:color-mix(in_srgb,var(--card)_70%,rgba(224,242,254,.95))] shadow-[inset_0_1px_0_rgba(255,255,255,.65)]">
-              <p className="text-sm text-[var(--text)] leading-snug">
-                Chaque matin : des quêtes calées sur ce profil.
-              </p>
-            </div>
-
-            <button type="button" onClick={handleFinish} disabled={saving}
-              className="btn btn-cta btn-lg w-full text-base transition-[transform,opacity,box-shadow] duration-200 ease-out hover:brightness-[1.03] active:scale-[0.99] disabled:opacity-60 disabled:hover:brightness-100 disabled:active:scale-100">
-              {saving ? (
-                <span className="flex items-center gap-2 justify-center">
-                  <span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                  Patience…
-                </span>
-              ) : (
-                <span className="flex items-center justify-center gap-2">
-                  <Icon name="Rocket" size="sm" className="text-white shrink-0" aria-hidden />
-                  Créer mon compte
-                </span>
-              )}
-            </button>
+            <p className="mt-9 border-l-2 border-[var(--gold)] pl-4 text-[15px] leading-relaxed text-[var(--muted)]">
+              Chaque matin, des quêtes calées sur ce profil. Il reste modifiable à tout moment.
+            </p>
 
             <button
               type="button"
-              onClick={() => setStep(2)}
-              className="w-full text-center text-sm font-semibold text-[var(--link-on-bg)] hover:text-[var(--text)] underline decoration-[color:color-mix(in_srgb,var(--link-on-bg)_35%,transparent)] underline-offset-[0.2em] transition-colors duration-200 mt-4"
+              onClick={handleFinish}
+              disabled={saving}
+              className="btn btn-cta mt-9 w-full rounded-lg px-7 py-3.5 text-[15px] disabled:opacity-60"
             >
+              {saving ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Patience…
+                </span>
+              ) : (
+                'Créer mon compte'
+              )}
+            </button>
+
+            <button type="button" onClick={() => setStep(2)} className={`${QUIET_LINK} mt-6`}>
               ← Modifier mes réponses
             </button>
           </div>
         )}
 
         {/* Lien connexion — toujours visible */}
-        <p className="text-center text-sm text-[var(--text)]/70 mt-10">
+        <p className="mt-10 text-sm text-[var(--muted)]">
           Déjà un compte ?{' '}
           <Link
             href="/sign-in"
-            className="font-bold text-[var(--link-on-bg)] hover:text-[var(--text)] underline decoration-[color:color-mix(in_srgb,var(--link-on-bg)_35%,transparent)] underline-offset-[0.2em] transition-colors duration-200"
+            className="font-medium text-[var(--link-on-bg)] underline decoration-[color:color-mix(in_srgb,var(--link-on-bg)_35%,transparent)] underline-offset-[0.2em] transition-colors duration-200 hover:text-[var(--text)]"
           >
             Se connecter
           </Link>

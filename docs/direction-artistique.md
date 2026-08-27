@@ -39,7 +39,7 @@ Thème clair par défaut (`:root` / `defaultPalette`) :
 | `--green` | `green` | `#166534` | Réussite, extérieur |
 | `--link-on-bg` | `linkOnBg` | `#115e59` | Liens sur fond aventure |
 
-Thèmes boutique : `midnight`, `aurora`, `parchment` (`html[data-theme=…]` côté web, `getThemePalette(themeId)` côté mobile). Seul `midnight` est sombre ; `--on-cream*` y reste foncé, d'où un `--card-cream` clair (`#f5f5f4`).
+Thèmes boutique : `midnight`, `aurora`, `parchment` (`html[data-theme=…]` côté web, `getThemePalette(themeId)` côté mobile). Seul `midnight` est sombre. Toute surface rendue sous `/app/*` doit lire `--text` / `--muted` / `--subtle`, jamais une encre fixe : ces trois tokens sont redéfinis par thème.
 
 **Sélection de texte** : `color-mix(in srgb, var(--orange) 28%, transparent)`.
 
@@ -167,7 +167,7 @@ Un bloc `@media (prefers-reduced-transparency: reduce)` neutralise les `backdrop
 1. Pas de `transform: scale()` sur du texte marketing (flou des glyphes).
 2. Ombres serrées (1 à 2px). Les grands `blur` donnent un rendu décollé.
 3. Un token ajouté dans `globals.css` doit l'être aussi dans `themePalettes.ts`, pour les 4 thèmes.
-4. `--card-cream` = panneau toujours clair (texte `--on-cream`). Pour une surface thémable, utiliser `--card`.
+4. `--card-cream` = panneau toujours clair. Réservé au mobile (`ThemePalette.cardCream`) ; côté web, utiliser `--card` et l'encre `--text`.
 5. `motion-reduce` et focus visible sur tout contrôle interactif.
 
 ---

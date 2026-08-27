@@ -26,6 +26,15 @@ describe('catalog', () => {
     const skus = SHOP_CATALOG.map((e) => e.sku);
     expect(new Set(skus).size).toBe(skus.length);
   });
+  it('ne vend plus de relances : elles sont offertes et montent avec le niveau', () => {
+    expect(SHOP_CATALOG.some((e) => e.kind === 'reroll_pack')).toBe(false);
+    expect(SHOP_CATALOG.some((e) => (e.grants.bonusRerolls ?? 0) > 0)).toBe(false);
+  });
+  it('les packs de quêtes restent atteignables en jouant', () => {
+    const packs = SHOP_CATALOG.filter((e) => e.kind === 'quest_pack');
+    expect(packs.length).toBeGreaterThan(0);
+    for (const p of packs) expect(p.priceCoins).toBeLessThanOrEqual(500);
+  });
   it('getShopItem et getThemeIds', () => {
     expect(getShopItem('nope')).toBeUndefined();
     expect(getShopItem(SHOP_CATALOG[0]!.sku)).toBeDefined();
@@ -35,7 +44,26 @@ describe('catalog', () => {
 });
 
 describe('bundleOwnership', () => {
-  const bundle = SHOP_CATALOG.find((c) => c.kind === 'bundle')!;
+  // Le catalogue ne vend plus ni bundle ni relances : on garde des entrées
+  // synthétiques pour couvrir les `kind` encore supportés par les helpers.
+  const bundle: ShopCatalogEntry = {
+    sku: 'test_bundle_unit',
+    kind: 'bundle',
+    name: 'Bundle test',
+    description: '',
+    priceCoins: 100,
+    icon: 'Compass',
+    grants: { titles: ['scout'], xpBonusCharges: 2 },
+  };
+  const rerollPack: ShopCatalogEntry = {
+    sku: 'test_reroll_unit',
+    kind: 'reroll_pack',
+    name: 'Relances test',
+    description: '',
+    priceCoins: 100,
+    icon: 'Dices',
+    grants: { bonusRerolls: 3 },
+  };
   it('hasAllPermanentBundleGrants false si non bundle', () => {
     const nonBundle = SHOP_CATALOG.find((c) => c.kind === 'xp_booster')!;
     expect(hasAllPermanentBundleGrants(nonBundle, [], [])).toBe(false);
@@ -59,9 +87,8 @@ describe('bundleOwnership', () => {
     expect(s.has('b')).toBe(false);
   });
   it('catalogItemFullyOwned — reroll et xp toujours false', () => {
-    const rr = SHOP_CATALOG.find((c) => c.kind === 'reroll_pack')!;
     const xp = SHOP_CATALOG.find((c) => c.kind === 'xp_booster')!;
-    expect(catalogItemFullyOwned(rr, {}, new Set())).toBe(false);
+    expect(catalogItemFullyOwned(rerollPack, {}, new Set())).toBe(false);
     expect(catalogItemFullyOwned(xp, {}, new Set())).toBe(false);
   });
   it('catalogItemFullyOwned — bundle avec achat coin', () => {

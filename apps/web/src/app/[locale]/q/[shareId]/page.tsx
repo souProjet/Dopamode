@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { questDisplayEmoji } from '@questia/shared';
 import { Icon } from '@/components/Icons';
+import { QuestiaLogo } from '@/components/QuestiaLogo';
 import { prisma } from '@/lib/db';
 import { alternatesForLocalePath, canonicalUrlFor } from '@/lib/seo/alternates';
 
@@ -81,50 +82,57 @@ export default async function SharedQuestPage({
   const questIcon = questDisplayEmoji(log.generatedEmoji);
 
   return (
-    <main className="min-h-screen bg-adventure px-4 py-16 sm:px-6">
-      <div className="mx-auto max-w-xl rounded-3xl border border-orange-200/60 bg-white/95 p-6 shadow-[0_24px_50px_-20px_rgba(15,23,42,0.35)] sm:p-8">
-        <p className="mb-2 text-center text-xs font-black uppercase tracking-[0.22em] text-slate-500">
-          {isEn ? 'Shared Quest' : 'Quête partagée'}
-        </p>
-        <h1 className="flex flex-wrap items-center justify-center gap-2 text-center font-display text-2xl font-black text-slate-900 sm:text-3xl">
-          <Icon name={questIcon} size="lg" className="shrink-0 text-orange-700" aria-hidden />
-          <span>{log.generatedTitle}</span>
-        </h1>
-        <p className="mt-2 text-center text-sm font-semibold text-slate-500">
-          {new Date(`${log.questDate}T12:00:00.000Z`).toLocaleDateString(
-            isEn ? 'en-GB' : 'fr-FR',
-          )}{' '}
-          · {log.generatedDuration}
-        </p>
+    <div className="flex min-h-screen flex-col">
+      <main className="mx-auto w-full max-w-[38rem] flex-1 px-5 py-10 sm:px-8 sm:py-14">
+        {/* En-tête : marque à gauche, nature de la page à droite */}
+        <div className="flex items-center justify-between gap-4">
+          <Link
+            href={isEn ? '/en' : '/'}
+            className="inline-flex items-center gap-2.5 transition-opacity duration-200 hover:opacity-70"
+          >
+            <QuestiaLogo variant="footer" />
+            <span className="font-display text-lg font-semibold tracking-[-0.02em] text-[var(--text)]">Questia</span>
+          </Link>
+          <span className="carnet-eyebrow">{isEn ? 'Shared quest' : 'Quête partagée'}</span>
+        </div>
 
-        <section className="mt-6 rounded-2xl border border-cyan-200/65 bg-cyan-50/35 p-4 sm:p-5">
-          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-cyan-800">
-            {isEn ? 'Mission' : 'Mission'}
+        <header className="carnet-rule mt-10 pt-9">
+          <h1 className="flex flex-wrap items-baseline gap-3 text-balance font-display text-[clamp(1.9rem,3.4vw+1rem,2.6rem)] font-semibold leading-[1.08] tracking-[-0.025em] text-[var(--text)]">
+            <Icon name={questIcon} size="lg" className="shrink-0 self-center text-[var(--muted)]" aria-hidden />
+            <span>{log.generatedTitle}</span>
+          </h1>
+          <p className="carnet-meta mt-4 text-sm">
+            {new Date(`${log.questDate}T12:00:00.000Z`).toLocaleDateString(isEn ? 'en-GB' : 'fr-FR')} ·{' '}
+            {log.generatedDuration}
           </p>
-          <p className="mt-2 font-display text-lg font-black leading-snug text-slate-900 sm:text-xl">
+        </header>
+
+        <section className="carnet-rule mt-11 pt-7">
+          <p className="carnet-eyebrow">Mission</p>
+          <p className="mt-4 font-display text-[1.35rem] font-semibold leading-snug tracking-[-0.015em] text-[var(--text)]">
             {log.generatedMission}
           </p>
         </section>
 
-        <blockquote className="mt-5 rounded-2xl border border-orange-200/65 bg-orange-50/55 px-4 py-3 text-sm italic leading-relaxed text-slate-700">
+        <blockquote className="carnet-quote mt-9 border-l-2 border-[var(--gold)] pl-5">
           « {log.generatedHook} »
         </blockquote>
 
-        <div className="mt-7 flex flex-col gap-3">
+        <div className="carnet-rule mt-12 flex flex-col gap-4 pt-8 sm:flex-row sm:items-center">
           <Link
             href={isEn ? '/en/app' : '/app'}
-            className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 px-5 py-3 text-sm font-black text-white shadow-[0_12px_30px_-10px_rgba(249,115,22,0.6)]"
+            className="btn btn-cta rounded-lg px-7 py-3.5 text-[15px]"
           >
             {isEn ? 'Open Questia' : 'Ouvrir Questia'}
           </Link>
           <Link
             href={isEn ? '/en' : '/'}
-            className="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-bold text-slate-600 hover:bg-slate-100"
+            className="text-sm font-medium text-[var(--link-on-bg)] underline decoration-[color:color-mix(in_srgb,var(--link-on-bg)_35%,transparent)] underline-offset-[0.2em] transition-colors duration-200 hover:text-[var(--text)]"
           >
             {isEn ? 'Back to website' : 'Retour au site'}
           </Link>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

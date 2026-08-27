@@ -3,6 +3,7 @@ import { Link } from '@/i18n/navigation';
 import { legalPublisher } from '@/config/legal';
 import { siteUrl } from '@/config/marketing';
 import { IncompleteNotice } from '@/components/legal/LegalLayout';
+import { SiteFooter } from '@/components/SiteFooter';
 
 export const metadata: Metadata = {
   title: 'Politique de confidentialité',
@@ -13,43 +14,47 @@ export const metadata: Metadata = {
 
 export default function ConfidentialitePage() {
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="max-w-3xl mx-auto px-4 py-16 sm:py-20">
-        <p className="text-sm font-semibold text-slate-500 mb-2">
-          <Link href="/" className="text-orange-600 hover:underline">
+    <div className="flex min-h-screen flex-col">
+      <div className="mx-auto w-full max-w-6xl flex-1 px-5 py-12 sm:px-8 sm:py-16">
+        <div className="max-w-[46rem]">
+        <p className="carnet-eyebrow">
+          <Link href="/" className="transition-colors hover:text-[var(--text)]">
             ← Accueil
           </Link>
         </p>
-        <h1 className="font-display text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-2">
+        <h1 className="mt-4 font-display text-[clamp(1.9rem,3.4vw+1rem,2.75rem)] font-semibold leading-[1.08] tracking-[-0.025em] text-balance text-[var(--text)]">
           Politique de confidentialité
         </h1>
-        <p className="text-sm text-slate-600 mb-10">
+        <p className="carnet-rule mt-8 pt-4 text-xs text-[var(--subtle)]">
           Dernière mise à jour : {new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}
           {' · '}
           Site :{' '}
-          <a href={siteUrl} className="text-orange-600 hover:underline">
+          <a
+            href={siteUrl}
+            className="text-[var(--link-on-bg)] underline decoration-[color:color-mix(in_srgb,var(--link-on-bg)_35%,transparent)] underline-offset-[0.2em] transition-colors duration-200 hover:text-[var(--text)]"
+          >
             {siteUrl}
           </a>
         </p>
 
         {!legalPublisher.companyName || !legalPublisher.contactEmail ? <IncompleteNotice /> : null}
 
-        <div className="prose prose-slate max-w-none space-y-10 text-slate-800">
+        <div className="legal-prose mt-12">
           <section>
-            <h2 className="text-xl font-black text-slate-900 mt-0">1. Responsable du traitement</h2>
+            <h2>1. Responsable du traitement</h2>
             <p>
               Le responsable du traitement des données personnelles collectées dans le cadre de Questia est l'éditeur du
               service, tel qu'identifié dans les{' '}
-              <Link href="/legal/mentions-legales" className="font-semibold text-orange-600 hover:underline">
+              <Link href="/legal/mentions-legales">
                 mentions légales
               </Link>
               .
             </p>
-            <ul className="list-none space-y-2 pl-0 text-slate-800">
+            <ul>
               <li>
                 <strong>Dénomination :</strong>{' '}
                 {legalPublisher.companyName ?? (
-                  <span className="rounded bg-amber-100 px-1.5 py-0.5 text-amber-950">
+                  <span>
                     [À compléter : NEXT_PUBLIC_LEGAL_COMPANY_NAME]
                   </span>
                 )}
@@ -59,27 +64,27 @@ export default function ConfidentialitePage() {
                 {legalPublisher.address ? (
                   <span className="whitespace-pre-line">{legalPublisher.address}</span>
                 ) : (
-                  <span className="text-amber-800">[À compléter : NEXT_PUBLIC_LEGAL_ADDRESS]</span>
+                  <span className="text-[var(--muted)]">[À compléter : NEXT_PUBLIC_LEGAL_ADDRESS]</span>
                 )}
               </li>
               <li>
                 <strong>Contact (données personnelles) :</strong>{' '}
                 {legalPublisher.contactEmail ? (
-                  <a href={`mailto:${legalPublisher.contactEmail}`} className="font-semibold text-orange-600 hover:underline">
+                  <a href={`mailto:${legalPublisher.contactEmail}`}>
                     {legalPublisher.contactEmail}
                   </a>
                 ) : (
-                  <span className="text-amber-800">[À compléter : NEXT_PUBLIC_LEGAL_CONTACT_EMAIL]</span>
+                  <span className="text-[var(--muted)]">[À compléter : NEXT_PUBLIC_LEGAL_CONTACT_EMAIL]</span>
                 )}
               </li>
               <li>
                 <strong>Délégué à la protection des données (DPO) :</strong>{' '}
                 {legalPublisher.dpoEmail ? (
-                  <a href={`mailto:${legalPublisher.dpoEmail}`} className="font-semibold text-orange-600 hover:underline">
+                  <a href={`mailto:${legalPublisher.dpoEmail}`}>
                     {legalPublisher.dpoEmail}
                   </a>
                 ) : (
-                  <span className="text-slate-600">
+                  <span>
                     Non désigné — pour toute demande relative à tes données, utilise le contact ci-dessus.
                   </span>
                 )}
@@ -88,7 +93,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">2. Données collectées</h2>
+            <h2>2. Données collectées</h2>
             <p>Nous traitons notamment :</p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
@@ -140,7 +145,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">3. Finalités et bases légales</h2>
+            <h2>3. Finalités et bases légales</h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>
                 <strong>Exécution du contrat</strong> : fournir les quêtes, la progression, la boutique et le compte.
@@ -162,7 +167,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">4. Contenu généré par intelligence artificielle et profilage</h2>
+            <h2>4. Contenu généré par intelligence artificielle et profilage</h2>
             <p>
               Certaines missions et textes affichés sont <strong>produits par des modèles d'IA</strong> (OpenAI API)
               à partir de ton profil, de ton historique de quêtes et du contexte du jour (météo, lieu). Ce contenu est
@@ -176,7 +181,7 @@ export default function ConfidentialitePage() {
               intensité préférée, affinités). Cette analyse influence les missions proposées. Elle ne produit{' '}
               <strong>pas de décision juridique ou significative</strong> te concernant ; elle sert uniquement à
               personnaliser l'expérience de jeu. Tu peux consulter le détail du fonctionnement sur la page{' '}
-              <Link href="/generation-quetes" className="text-orange-600 font-semibold hover:underline">
+              <Link href="/generation-quetes">
                 Comment sont générées tes quêtes
               </Link>
               . En vertu de l'article 21 du RGPD, tu as le droit de{' '}
@@ -198,7 +203,7 @@ export default function ConfidentialitePage() {
             </p>
             <p>
               Pour le cadre d'usage (ludique, non médical) : voir aussi la page{' '}
-              <Link href="/legal/bien-etre" className="text-orange-600 font-semibold hover:underline">
+              <Link href="/legal/bien-etre">
                 Bien-être et limites
               </Link>
               .
@@ -206,7 +211,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">5. Sous-traitants et transferts hors UE</h2>
+            <h2>5. Sous-traitants et transferts hors UE</h2>
             <p>
               Nous faisons appel à des sous-traitants pour opérer le service. Les prestataires situés hors de l'Espace
               économique européen (EEE) sont encadrés par des garanties appropriées au sens de l'article 46 du RGPD
@@ -215,14 +220,14 @@ export default function ConfidentialitePage() {
             <div className="overflow-x-auto mt-4">
               <table className="min-w-full text-sm border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-200">
-                    <th className="text-left py-2 pr-4 font-bold text-slate-900">Prestataire</th>
-                    <th className="text-left py-2 pr-4 font-bold text-slate-900">Rôle</th>
-                    <th className="text-left py-2 pr-4 font-bold text-slate-900">Pays</th>
-                    <th className="text-left py-2 font-bold text-slate-900">Garanties</th>
+                  <tr>
+                    <th>Prestataire</th>
+                    <th>Rôle</th>
+                    <th>Pays</th>
+                    <th>Garanties</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody>
                   <tr>
                     <td className="py-2 pr-4 font-semibold">OpenAI LLC</td>
                     <td className="py-2 pr-4">Génération des quêtes et textes (API)</td>
@@ -275,7 +280,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">6. Durée de conservation</h2>
+            <h2>6. Durée de conservation</h2>
             <p>Les données sont conservées selon les durées suivantes :</p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
@@ -309,7 +314,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">7. Tes droits (RGPD)</h2>
+            <h2>7. Tes droits (RGPD)</h2>
             <p>Tu disposes notamment des droits suivants : accès, rectification, effacement, limitation, opposition,
               portabilité, et retrait du consentement lorsqu'il sert de base. Tu peux introduire une réclamation auprès de
               l'autorité de protection des données (en France : la CNIL).</p>
@@ -326,7 +331,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section id="cookies">
-            <h2 className="text-xl font-black text-slate-900">8. Cookies et traceurs</h2>
+            <h2>8. Cookies et traceurs</h2>
             <p>
               Le site utilise des cookies ou stockages locaux. Un bandeau t'est présenté lors de ta première visite pour
               recueillir ton choix sur les traceurs non essentiels. Conformément à l'article 82 de la loi Informatique
@@ -336,14 +341,14 @@ export default function ConfidentialitePage() {
             <div className="overflow-x-auto mt-4">
               <table className="min-w-full text-sm border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-200">
-                    <th className="text-left py-2 pr-4 font-bold text-slate-900">Catégorie</th>
-                    <th className="text-left py-2 pr-4 font-bold text-slate-900">Finalité</th>
-                    <th className="text-left py-2 pr-4 font-bold text-slate-900">Base légale</th>
-                    <th className="text-left py-2 font-bold text-slate-900">Exemples</th>
+                  <tr>
+                    <th>Catégorie</th>
+                    <th>Finalité</th>
+                    <th>Base légale</th>
+                    <th>Exemples</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody>
                   <tr>
                     <td className="py-2 pr-4 font-semibold">Essentiels</td>
                     <td className="py-2 pr-4">Session, authentification, préférences de langue, sécurité</td>
@@ -372,7 +377,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">9. Mineurs</h2>
+            <h2>9. Mineurs</h2>
             <p>
               L'accès au service est soumis aux conditions d'âge suivantes, conformément à la réglementation applicable :
             </p>
@@ -397,40 +402,42 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">10. Modifications</h2>
+            <h2>10. Modifications</h2>
             <p>
               Cette politique peut être mise à jour. La date en tête de page indique la dernière révision. En cas de
               changement majeur, nous pourrons t'en informer par un message dans l'app ou par e-mail.
             </p>
           </section>
 
-          <section className="border-t border-slate-200 pt-8">
-            <h2 className="text-xl font-black text-slate-900">Documents associés</h2>
+          <section className="carnet-rule pt-8">
+            <h2>Documents associés</h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <Link href="/legal/mentions-legales" className="font-semibold text-orange-600 hover:underline">
+                <Link href="/legal/mentions-legales">
                   Mentions légales
                 </Link>
               </li>
               <li>
-                <Link href="/legal/cgu" className="font-semibold text-orange-600 hover:underline">
+                <Link href="/legal/cgu">
                   Conditions générales d'utilisation
                 </Link>
               </li>
               <li>
-                <Link href="/legal/cgv" className="font-semibold text-orange-600 hover:underline">
+                <Link href="/legal/cgv">
                   Conditions générales de vente
                 </Link>
               </li>
               <li>
-                <Link href="/legal/bien-etre" className="font-semibold text-orange-600 hover:underline">
+                <Link href="/legal/bien-etre">
                   Bien-être et limites d'usage
                 </Link>
               </li>
             </ul>
           </section>
         </div>
+        </div>
       </div>
+      <SiteFooter />
     </div>
   );
 }

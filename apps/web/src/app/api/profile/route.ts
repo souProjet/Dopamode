@@ -9,6 +9,7 @@ import {
   getThemeIds,
   effectiveOwnedThemes,
   TITLE_IDS,
+  isTitleEquippable,
   parseQuestPackProgress,
 } from '@questia/shared';
 import type { ExplorerAxis, RiskAxis, SociabilityLevel } from '@questia/shared';
@@ -39,7 +40,9 @@ function shopPayload(profile: {
 }) {
   const ownedTitles = parseStringArray(profile.ownedTitleIds);
   let equipped = profile.equippedTitleId ?? null;
-  if (equipped && !ownedTitles.includes(equipped)) equipped = null;
+  // Les titres `free` ne sont jamais stockés dans `ownedTitleIds` : sans ce test
+  // ils étaient silencieusement retirés au rechargement.
+  if (equipped && !isTitleEquippable(equipped, ownedTitles)) equipped = null;
   return {
     coinBalance: profile.coinBalance ?? 0,
     rerollsRemaining: profile.rerollsRemaining,
@@ -135,6 +138,15 @@ export async function PATCH(request: NextRequest) {
       const tid = String(body.equippedTitleId).trim();
       if (!allowedTitleIds.has(tid)) {
         return NextResponse.json({ error: 'Titre inconnu' }, { status: 400 });
+      }
+      const ownedTitleIds = parseStringArray(
+        (profile as { ownedTitleIds?: unknown }).ownedTitleIds,
+      );
+      if (!isTitleEquippable(tid, ownedTitleIds)) {
+        return NextResponse.json(
+          { error: "Tu n'as pas encore débloqué ce titre." },
+          { status: 400 },
+        );
       }
       data.equippedTitleId = tid;
     }

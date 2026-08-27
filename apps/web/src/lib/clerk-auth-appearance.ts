@@ -1,5 +1,9 @@
 /**
- * Thème Clerk aligné sur la DA Questia — panneau blanc, CTA orange→or, accents cyan.
+ * Thème Clerk aligné sur la DA « carnet de route » : encre pierre, accents teal,
+ * une seule action orange. Valeurs concrètes plutôt que tokens CSS — Clerk parse
+ * ces couleurs en JS pour dériver ses nuances, `var(--x)` casserait le calcul.
+ * Les pages d'authentification restent toujours en thème clair (les thèmes
+ * boutique ne s'appliquent que sous `/app`).
  * Complété par `.auth-clerk-root` dans globals.css pour les classes internes Clerk.
  */
 export const clerkAuthAppearance = {
@@ -9,13 +13,13 @@ export const clerkAuthAppearance = {
   },
   variables: {
     colorPrimary: '#c2410c',
-    colorBackground: '#ffffff',
-    colorText: '#0f172a',
-    colorTextSecondary: '#64748b',
-    colorInputBackground: '#f8fafc',
-    colorInputText: '#0f172a',
-    colorDanger: '#dc2626',
-    borderRadius: '14px',
+    colorBackground: 'transparent',
+    colorText: '#1c1917',
+    colorTextSecondary: '#57534e',
+    colorInputBackground: '#faf8f4',
+    colorInputText: '#1c1917',
+    colorDanger: '#b91c1c',
+    borderRadius: '0.5rem',
     spacingUnit: '12px',
     fontFamily: 'var(--font-inter), ui-sans-serif, system-ui, sans-serif',
     fontSize: '0.9375rem',
@@ -30,28 +34,27 @@ export const clerkAuthAppearance = {
     headerSubtitle: 'hidden',
     socialButtonsRoot: '!mt-0 !pt-0 gap-3 !relative !overflow-hidden',
     socialButtonsBlockButton:
-      '!w-full !justify-center !border !border-slate-200 !bg-slate-50 !text-slate-800 !rounded-2xl !font-bold hover:!bg-cyan-50 hover:!border-cyan-300/60 transition-all duration-200',
+      '!w-full !justify-center !rounded-lg !border !border-[var(--border-ui-strong)] !bg-[var(--card)] !text-[var(--text)] !font-medium !shadow-none hover:!border-[var(--border-cyan)] hover:!bg-[var(--surface)] transition-colors duration-200',
     formButtonPrimary:
-      '!w-full !bg-orange-500 !text-white !font-extrabold !rounded-[0.875rem] !shadow-[0_4px_14px_rgba(249,115,22,0.28)] hover:!bg-orange-600 !border-0 !normal-case',
+      '!w-full !rounded-lg !border-0 !bg-[var(--orange)] !text-white !font-semibold !normal-case !shadow-none hover:!brightness-110',
     formFieldInput:
-      '!rounded-xl !border !border-slate-200 !bg-slate-50 !text-slate-900 placeholder:!text-slate-400 focus:!border-cyan-400 focus:!ring-2 focus:!ring-cyan-200/50',
-    formFieldLabel: '!text-slate-500 !font-semibold !text-sm',
-    formFieldSuccessText: '!text-emerald-700',
-    formFieldErrorText: '!text-red-600 !text-sm',
+      '!rounded-lg !border !border-[var(--border-ui-strong)] !bg-[var(--card)] !text-[var(--text)] !shadow-none placeholder:!text-[var(--subtle)] focus:!border-[var(--violet)] focus:!ring-1 focus:!ring-[var(--violet)]',
+    formFieldLabel: '!text-[var(--muted)] !font-medium !text-sm',
+    formFieldSuccessText: '!text-[var(--green)]',
+    formFieldErrorText: '!text-[var(--red)] !text-sm',
     footer: '!bg-transparent !border-0 !shadow-none !p-0 !mt-2',
-    footerActionLink:
-      '!text-cyan-700 !font-bold hover:!text-orange-600 !no-underline hover:!underline',
+    footerActionLink: '!text-[var(--link-on-bg)] !font-medium !underline !underline-offset-[0.2em]',
     dividerRow: '!gap-3',
-    dividerLine: '!bg-slate-200 !h-px',
-    dividerText: '!text-slate-400 !text-[11px] !font-bold !uppercase !tracking-widest',
-    identityPreview: '!rounded-2xl !border !border-slate-200 !bg-slate-50',
-    identityPreviewText: '!text-slate-900',
-    identityPreviewEditButton: '!text-cyan-700 !font-semibold',
-    otpCodeFieldInput: '!rounded-xl !border-slate-200 !bg-slate-50',
-    formResendCodeLink: '!text-cyan-700 !font-semibold hover:!text-orange-600',
-    alertText: '!text-red-800',
-    formFieldHintText: '!text-slate-400',
+    dividerLine: '!bg-[var(--border-ui)] !h-px',
+    dividerText: '!text-[var(--subtle)] !text-[11px] !font-bold !uppercase !tracking-[0.2em]',
+    identityPreview: '!rounded-lg !border !border-[var(--border-ui)] !bg-[var(--card)] !shadow-none',
+    identityPreviewText: '!text-[var(--text)]',
+    identityPreviewEditButton: '!text-[var(--link-on-bg)] !font-medium',
+    otpCodeFieldInput: '!rounded-lg !border-[var(--border-ui-strong)] !bg-[var(--card)]',
+    formResendCodeLink: '!text-[var(--link-on-bg)] !font-medium',
+    alertText: '!text-[var(--red)]',
+    formFieldHintText: '!text-[var(--subtle)]',
     alternativeMethodsBlockButton:
-      '!rounded-xl !border !border-slate-200 !bg-slate-50 !font-semibold',
+      '!rounded-lg !border !border-[var(--border-ui)] !bg-[var(--card)] !font-medium !shadow-none',
   },
 } as const;

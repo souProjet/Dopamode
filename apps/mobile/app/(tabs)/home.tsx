@@ -36,7 +36,14 @@ import {
   type ThemePalette,
 } from '@questia/ui';
 import type { PersonalityVector } from '@questia/shared';
-import type { EscalationPhase, DisplayBadge, XpBreakdown } from '@questia/shared';
+import type {
+  CapProgressView,
+  CompletionCoinGain,
+  DisplayBadge,
+  EscalationPhase,
+  LevelReward,
+  XpBreakdown,
+} from '@questia/shared';
 import { useAppLocale } from '../../contexts/AppLocaleContext';
 import { getHomeDashboardStrings } from '../../lib/homeDashboardStrings';
 import { useAppTheme } from '../../contexts/AppThemeContext';
@@ -106,6 +113,8 @@ interface DailyQuest {
     consentNotice?: string;
   };
   ownedQuestPackIds?: string[];
+  /** Cap en cours — l'objectif long qui oriente la quête du jour. */
+  cap?: CapProgressView | null;
 }
 
 function cloneDailyQuestSnapshot(q: DailyQuest): DailyQuest {
@@ -486,6 +495,9 @@ export default function DashboardScreen() {
       }
       const data = await res.json() as Partial<DailyQuest> & {
         xpGain?: { gained: number; breakdown: XpBreakdown; newTotal: number; previousTotal: number };
+        coinGain?: CompletionCoinGain;
+        levelRewards?: LevelReward[];
+        titlesUnlocked?: string[];
         badgesUnlocked?: DisplayBadge[];
         progression?: ProgressionPayload;
       };
@@ -509,6 +521,9 @@ export default function DashboardScreen() {
         hapticSuccess();
         setReward({
           xpGain: data.xpGain,
+          coinGain: data.coinGain ?? null,
+          levelRewards: data.levelRewards ?? [],
+          titlesUnlocked: data.titlesUnlocked ?? [],
           badgesUnlocked: data.badgesUnlocked ?? [],
         });
         setShowReward(true);
@@ -901,6 +916,53 @@ export default function DashboardScreen() {
           </Pressable>
         </View>
 
+        {quest?.cap ? (
+          <Pressable
+            onPress={() => router.push('/cap' as never)}
+            style={({ pressed }) => [styles.capStrip, pressed && { opacity: 0.88 }]}
+            accessibilityRole="button"
+            accessibilityLabel={homeUi.capOpenA11y(quest.cap.label)}
+          >
+            <UiLucideIcon name={quest.cap.icon} size={20} color={palette.orange} strokeWidth={2.2} />
+            <View style={styles.capStripBody}>
+              <View style={styles.capStripTitleRow}>
+                <Text style={styles.capStripLabel} numberOfLines={1}>
+                  {quest.cap.label}
+                </Text>
+                <Text style={styles.capStripStep}>
+                  {quest.cap.milestoneIndex + 1}/{quest.cap.milestoneCount}
+                </Text>
+              </View>
+              <View style={styles.capStripTrack}>
+                <View style={[styles.capStripFill, { width: `${quest.cap.overallPercent}%` }]} />
+              </View>
+              <Text style={styles.capStripMilestone} numberOfLines={1}>
+                {quest.cap.milestoneTitle}
+              </Text>
+            </View>
+            {quest.cap.milestoneQuestNext ? (
+              <View style={styles.capStripChip}>
+                <Text style={styles.capStripChipText} numberOfLines={1}>
+                  {homeUi.capMilestoneQuestChip}
+                </Text>
+              </View>
+            ) : null}
+          </Pressable>
+        ) : quest ? (
+          <Pressable
+            onPress={() => router.push('/cap' as never)}
+            style={({ pressed }) => [styles.capInvite, pressed && { opacity: 0.88 }]}
+            accessibilityRole="button"
+            accessibilityLabel={homeUi.capInvite}
+          >
+            <UiLucideIcon name="Compass" size={16} color={palette.orange} strokeWidth={2.2} />
+            <Text style={styles.capInviteLabel} numberOfLines={1}>
+              {homeUi.capInvite}
+            </Text>
+            <Text style={styles.capInviteCta}>{homeUi.capInviteCta}</Text>
+          </Pressable>
+        ) : null}
+
         {ownedPacksChips.length > 0 ? (
           <View
             style={styles.ownedPacksRow}
@@ -1287,6 +1349,64 @@ function buildDashboardStyles(p: ThemePalette, themeId: string) {
       alignItems: 'center',
     },
     modalBtnAbandonText: { fontWeight: '900', color: p.text },
+    /** Bandeau Cap : l'objectif long qui oriente la quête du jour. */
+    capStrip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      marginBottom: 8,
+      marginHorizontal: 20,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      borderRadius: 18,
+      borderWidth: 1.5,
+      borderColor: colorWithAlpha(p.orange, isThemed ? 0.45 : 0.32),
+      backgroundColor: colorWithAlpha(p.orange, isThemed ? 0.12 : 0.07),
+    },
+    capStripBody: { flex: 1, minWidth: 0 },
+    capStripTitleRow: { flexDirection: 'row', alignItems: 'baseline', gap: 8 },
+    capStripLabel: { flexShrink: 1, fontSize: 12.5, fontWeight: '900', color: p.text },
+    capStripStep: { fontSize: 10, fontWeight: '800', color: p.muted },
+    capStripTrack: {
+      marginTop: 6,
+      height: 5,
+      borderRadius: 5,
+      overflow: 'hidden',
+      backgroundColor: p.trackMuted,
+    },
+    capStripFill: { height: '100%', borderRadius: 5, backgroundColor: p.orange },
+    capStripMilestone: { marginTop: 4, fontSize: 11, fontWeight: '700', color: p.muted },
+    capStripChip: {
+      maxWidth: 92,
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: colorWithAlpha(p.gold, 0.45),
+      backgroundColor: colorWithAlpha(p.gold, 0.14),
+    },
+    capStripChipText: { fontSize: 9.5, fontWeight: '900', color: p.text },
+    capInvite: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      marginBottom: 8,
+      marginHorizontal: 20,
+      paddingVertical: 9,
+      paddingHorizontal: 12,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderStyle: 'dashed',
+      borderColor: colorWithAlpha(p.orange, isThemed ? 0.4 : 0.28),
+    },
+    capInviteLabel: { flex: 1, minWidth: 0, fontSize: 12, fontWeight: '800', color: p.text },
+    capInviteCta: {
+      fontSize: 9.5,
+      fontWeight: '900',
+      letterSpacing: 0.8,
+      textTransform: 'uppercase',
+      color: p.orange,
+    },
     /** Une ligne : libellé fixe + scroll horizontal (petits écrans). */
     ownedPacksRow: {
       flexDirection: 'row',

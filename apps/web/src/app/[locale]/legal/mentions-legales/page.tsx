@@ -21,24 +21,24 @@ export default function MentionsLegalesPage() {
       {needsCompletion ? <IncompleteNotice /> : null}
 
       <section>
-        <h2 className="text-xl font-black text-slate-900">1. Éditeur du site et de l'application</h2>
+        <h2>1. Éditeur du site et de l'application</h2>
         <ul className="mt-3 list-none space-y-2 pl-0">
           <li>
             <strong>Raison sociale ou dénomination :</strong>{' '}
             {p.companyName ?? (
-              <span className="rounded bg-amber-100 px-1.5 py-0.5 text-amber-950">[À compléter : NEXT_PUBLIC_LEGAL_COMPANY_NAME]</span>
+              <span>[À compléter : NEXT_PUBLIC_LEGAL_COMPANY_NAME]</span>
             )}
           </li>
           <li>
             <strong>Forme juridique :</strong>{' '}
-            {p.legalForm ?? <span className="text-amber-800">[À compléter : NEXT_PUBLIC_LEGAL_FORM]</span>}
+            {p.legalForm ?? <span className="text-[var(--muted)]">[À compléter : NEXT_PUBLIC_LEGAL_FORM]</span>}
           </li>
           <li>
             <strong>Siège social / adresse :</strong>{' '}
             {p.address ? (
               <span className="whitespace-pre-line">{p.address}</span>
             ) : (
-              <span className="text-amber-800">[À compléter : NEXT_PUBLIC_LEGAL_ADDRESS]</span>
+              <span className="text-[var(--muted)]">[À compléter : NEXT_PUBLIC_LEGAL_ADDRESS]</span>
             )}
           </li>
           {p.siret ? (
@@ -48,7 +48,7 @@ export default function MentionsLegalesPage() {
           ) : (
             <li>
               <strong>Immatriculation :</strong>{' '}
-              <span className="text-amber-800">[À compléter si applicable : NEXT_PUBLIC_LEGAL_SIRET / NEXT_PUBLIC_LEGAL_RCS]</span>
+              <span className="text-[var(--muted)]">[À compléter si applicable : NEXT_PUBLIC_LEGAL_SIRET / NEXT_PUBLIC_LEGAL_RCS]</span>
             </li>
           )}
           {p.rcs ? (
@@ -64,35 +64,35 @@ export default function MentionsLegalesPage() {
           <li>
             <strong>Contact :</strong>{' '}
             {p.contactEmail ? (
-              <a href={`mailto:${p.contactEmail}`} className="font-semibold text-orange-600 hover:underline">
+              <a href={`mailto:${p.contactEmail}`}>
                 {p.contactEmail}
               </a>
             ) : (
-              <span className="text-amber-800">[À compléter : NEXT_PUBLIC_LEGAL_CONTACT_EMAIL]</span>
+              <span className="text-[var(--muted)]">[À compléter : NEXT_PUBLIC_LEGAL_CONTACT_EMAIL]</span>
             )}
           </li>
           <li>
             <strong>Directeur de la publication :</strong>{' '}
             {p.publicationDirector ?? (
-              <span className="text-amber-800">[À compléter : NEXT_PUBLIC_LEGAL_DIRECTOR]</span>
+              <span className="text-[var(--muted)]">[À compléter : NEXT_PUBLIC_LEGAL_DIRECTOR]</span>
             )}
           </li>
         </ul>
       </section>
 
       <section>
-        <h2 className="text-xl font-black text-slate-900">2. Hébergement</h2>
+        <h2>2. Hébergement</h2>
         <p>
           Le site et l'API sont hébergés par <strong>{hostingProvider.name}</strong>, {hostingProvider.address}. Site web
           du prestataire :{' '}
-          <a href={hostingProvider.website} className="font-semibold text-orange-600 hover:underline" target="_blank" rel="noopener noreferrer">
+          <a href={hostingProvider.website} target="_blank" rel="noopener noreferrer">
             {hostingProvider.website}
           </a>
         </p>
       </section>
 
       <section>
-        <h2 className="text-xl font-black text-slate-900">3. Propriété intellectuelle</h2>
+        <h2>3. Propriété intellectuelle</h2>
         <p>
           L'ensemble des éléments du site et de l'application Questia (textes, graphismes, logo, structure, base de données
           produite par l'éditeur, etc.) sont protégés par le droit de la propriété intellectuelle. Toute reproduction ou
@@ -101,25 +101,25 @@ export default function MentionsLegalesPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-black text-slate-900">4. Liens utiles</h2>
+        <h2>4. Liens utiles</h2>
         <ul className="list-disc pl-5 space-y-2">
           <li>
-            <Link href="/legal/confidentialite" className="font-semibold text-orange-600 hover:underline">
+            <Link href="/legal/confidentialite">
               Politique de confidentialité
             </Link>
           </li>
           <li>
-            <Link href="/legal/cgu" className="font-semibold text-orange-600 hover:underline">
+            <Link href="/legal/cgu">
               Conditions générales d'utilisation
             </Link>
           </li>
           <li>
-            <Link href="/legal/cgv" className="font-semibold text-orange-600 hover:underline">
+            <Link href="/legal/cgv">
               Conditions générales de vente
             </Link>
           </li>
           <li>
-            <Link href="/legal/bien-etre" className="font-semibold text-orange-600 hover:underline">
+            <Link href="/legal/bien-etre">
               Bien-être et limites d'usage
             </Link>
           </li>

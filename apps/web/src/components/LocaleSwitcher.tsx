@@ -5,42 +5,25 @@ import { Link, usePathname } from '@/i18n/navigation';
 
 /**
  * Bascule FR / EN (préfixe `/en` pour l'anglais, FR sans préfixe).
- * Cibles tactiles ≥ 40px, adapté header + tiroir mobile.
+ * Deux mots séparés d'un filet : l'encre porte l'état actif, pas un aplat.
  */
 export function LocaleSwitcher() {
   const locale = useLocale();
   const pathname = usePathname();
   const t = useTranslations('HomePage.localeSwitcher');
 
-  const linkBase =
-    'flex min-h-[40px] min-w-[3rem] sm:min-h-9 sm:min-w-11 flex-1 items-center justify-center rounded-full px-3 py-2 text-sm font-black transition-colors touch-manipulation active:scale-[0.98] motion-reduce:transform-none';
+  const linkClass = (active: boolean) =>
+    `inline-flex min-h-[2.25rem] items-center px-1.5 text-sm transition-colors duration-200 ${
+      active ? 'font-medium text-[var(--text)]' : 'text-[var(--subtle)] hover:text-[var(--text)]'
+    }`;
 
   return (
-    <div
-      className="inline-flex w-full max-w-[11rem] sm:max-w-none shrink-0 items-stretch gap-0.5 rounded-full border border-[var(--border-ui-strong)] bg-[var(--card)]/95 p-0.5 text-[var(--muted)] shadow-sm backdrop-blur-sm sm:gap-1 sm:px-0.5 sm:py-0.5"
-      role="navigation"
-      aria-label={t('label')}
-    >
-      <Link
-        href={pathname}
-        locale="fr"
-        className={`${linkBase} ${
-          locale === 'fr'
-            ? 'bg-cyan-100/95 text-cyan-950 shadow-sm'
-            : 'text-[var(--muted)] hover:bg-white/60 hover:text-[var(--text)]'
-        }`}
-      >
+    <div className="inline-flex shrink-0 items-center gap-1" role="navigation" aria-label={t('label')}>
+      <Link href={pathname} locale="fr" className={linkClass(locale === 'fr')} aria-current={locale === 'fr'}>
         {t('fr')}
       </Link>
-      <Link
-        href={pathname}
-        locale="en"
-        className={`${linkBase} ${
-          locale === 'en'
-            ? 'bg-cyan-100/95 text-cyan-950 shadow-sm'
-            : 'text-[var(--muted)] hover:bg-white/60 hover:text-[var(--text)]'
-        }`}
-      >
+      <span className="h-3 w-px bg-[var(--border-ui-strong)]" aria-hidden />
+      <Link href={pathname} locale="en" className={linkClass(locale === 'en')} aria-current={locale === 'en'}>
         {t('en')}
       </Link>
     </div>

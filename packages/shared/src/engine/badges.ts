@@ -67,6 +67,10 @@ export interface BadgeDefinition {
   /** Nom d'icône Lucide (PascalCase) pour l'affichage UI */
   placeholderIcon: string;
   category: BadgeCategory;
+  /** Quest Coins versés au déblocage — un insigne doit payer, sinon ce n'est qu'un autocollant. */
+  rewardCoins: number;
+  /** Titre de prestige débloqué en même temps (id de `shop/titles.ts`) */
+  rewardTitleId?: string;
 }
 
 /**
@@ -80,6 +84,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Atteindre au moins le jour 3 de ton parcours.',
     placeholderIcon: 'Leaf',
     category: 'phase',
+    rewardCoins: 30,
   },
   {
     id: 'phase_expansion',
@@ -87,6 +92,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Entrer en phase Expansion (jour 4+).',
     placeholderIcon: 'Compass',
     category: 'phase',
+    rewardCoins: 50,
   },
   {
     id: 'phase_rupture',
@@ -94,6 +100,8 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Entrer en phase Rupture (jour 11+).',
     placeholderIcon: 'Zap',
     category: 'phase',
+    rewardCoins: 120,
+    rewardTitleId: 'ligne_franchie',
   },
   {
     id: 'parcours_jour_21',
@@ -101,6 +109,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Atteindre le jour 21 de parcours.',
     placeholderIcon: 'Calendar',
     category: 'milestone',
+    rewardCoins: 100,
   },
   {
     id: 'parcours_jour_30',
@@ -108,6 +117,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Atteindre le jour 30 de parcours.',
     placeholderIcon: 'CalendarDays',
     category: 'milestone',
+    rewardCoins: 150,
   },
   {
     id: 'parcours_jour_60',
@@ -115,6 +125,8 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Atteindre le jour 60 de parcours.',
     placeholderIcon: 'Tent',
     category: 'milestone',
+    rewardCoins: 350,
+    rewardTitleId: 'saison_habitee',
   },
   // ── Séries ────────────────────────────────────────────────────────────────
   {
@@ -123,6 +135,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Atteindre une série de 3 jours.',
     placeholderIcon: 'Sparkles',
     category: 'serie',
+    rewardCoins: 40,
   },
   {
     id: 'serie_7',
@@ -130,6 +143,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Atteindre une série de 7 jours.',
     placeholderIcon: 'Flame',
     category: 'serie',
+    rewardCoins: 80,
   },
   {
     id: 'serie_14',
@@ -137,6 +151,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Atteindre une série de 14 jours.',
     placeholderIcon: 'Star',
     category: 'serie',
+    rewardCoins: 150,
   },
   {
     id: 'serie_30',
@@ -144,6 +159,8 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Atteindre une série de 30 jours.',
     placeholderIcon: 'Medal',
     category: 'serie',
+    rewardCoins: 300,
+    rewardTitleId: 'metronome',
   },
   {
     id: 'serie_60',
@@ -151,6 +168,8 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Atteindre une série de 60 jours.',
     placeholderIcon: 'Wrench',
     category: 'serie',
+    rewardCoins: 600,
+    rewardTitleId: 'inebranlable',
   },
   // ── Volume (quêtes validées) ─────────────────────────────────────────────
   {
@@ -159,6 +178,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Valider ta première quête.',
     placeholderIcon: 'Award',
     category: 'volume',
+    rewardCoins: 25,
   },
   {
     id: 'cinq_quetes',
@@ -166,6 +186,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Valider 5 quêtes au total.',
     placeholderIcon: 'Hash',
     category: 'volume',
+    rewardCoins: 40,
   },
   {
     id: 'dix_quetes',
@@ -173,6 +194,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Valider 10 quêtes au total.',
     placeholderIcon: 'ListOrdered',
     category: 'volume',
+    rewardCoins: 60,
   },
   {
     id: 'quinze_quetes',
@@ -180,6 +202,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Valider 15 quêtes au total.',
     placeholderIcon: 'Paperclip',
     category: 'volume',
+    rewardCoins: 80,
   },
   {
     id: 'vingt_cinq_quetes',
@@ -187,6 +210,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Valider 25 quêtes au total.',
     placeholderIcon: 'Gem',
     category: 'volume',
+    rewardCoins: 120,
   },
   {
     id: 'cinquante_quetes',
@@ -194,6 +218,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Valider 50 quêtes au total.',
     placeholderIcon: 'Target',
     category: 'volume',
+    rewardCoins: 200,
   },
   {
     id: 'cent_quetes',
@@ -201,6 +226,8 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Valider 100 quêtes au total.',
     placeholderIcon: 'Trophy',
     category: 'volume',
+    rewardCoins: 400,
+    rewardTitleId: 'cent_fois',
   },
   // ── Extérieur ─────────────────────────────────────────────────────────────
   {
@@ -209,6 +236,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Valider ta première quête extérieure.',
     placeholderIcon: 'Sprout',
     category: 'exploration',
+    rewardCoins: 25,
   },
   {
     id: 'exterieur_5',
@@ -216,6 +244,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Valider 5 quêtes extérieures.',
     placeholderIcon: 'CloudSun',
     category: 'exploration',
+    rewardCoins: 50,
   },
   {
     id: 'exterieur_10',
@@ -223,6 +252,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Valider 10 quêtes extérieures.',
     placeholderIcon: 'Map',
     category: 'exploration',
+    rewardCoins: 80,
   },
   {
     id: 'exterieur_25',
@@ -230,6 +260,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Valider 25 quêtes extérieures.',
     placeholderIcon: 'Mountain',
     category: 'exploration',
+    rewardCoins: 150,
   },
   {
     id: 'exterieur_50',
@@ -237,6 +268,8 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Valider 50 quêtes extérieures.',
     placeholderIcon: 'Globe',
     category: 'exploration',
+    rewardCoins: 300,
+    rewardTitleId: 'plein_vent',
   },
   // ── Quadrants (profil + volume) ──────────────────────────────────────────
   {
@@ -245,6 +278,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Profil Explorateur·rice + Preneur·se de risque et 15 quêtes validées.',
     placeholderIcon: 'Dices',
     category: 'style',
+    rewardCoins: 60,
   },
   {
     id: 'quadrant_explorer_prudent',
@@ -252,6 +286,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Profil Explorateur·rice + Prudence et 15 quêtes validées.',
     placeholderIcon: 'Brain',
     category: 'style',
+    rewardCoins: 60,
   },
   {
     id: 'quadrant_homebody_prudent',
@@ -259,6 +294,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Profil Casanier·ière + Prudence et 15 quêtes validées.',
     placeholderIcon: 'Home',
     category: 'style',
+    rewardCoins: 60,
   },
   {
     id: 'quadrant_homebody_risktaker',
@@ -266,6 +302,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     criteria: 'Profil Casanier·ière + Audace et 15 quêtes validées.',
     placeholderIcon: 'Drama',
     category: 'style',
+    rewardCoins: 60,
   },
 ];
 
@@ -407,6 +444,8 @@ export interface DisplayBadge {
   criteria: string;
   placeholderIcon: string;
   category: BadgeCategory;
+  rewardCoins: number;
+  rewardTitleId?: string;
 }
 
 /** Normalise le JSON stocké en base et enrichit les titres / critères pour l'UI. */
@@ -429,6 +468,8 @@ export function displayEarnedBadges(raw: unknown, locale: AppLocale = 'fr'): Dis
       criteria: def ? text.criteria : '',
       placeholderIcon: def?.placeholderIcon ?? 'Medal',
       category: def?.category ?? 'progression',
+      rewardCoins: def?.rewardCoins ?? 0,
+      ...(def?.rewardTitleId ? { rewardTitleId: def.rewardTitleId } : {}),
     };
   });
 }
@@ -441,6 +482,8 @@ export interface BadgeCatalogEntry {
   category: BadgeCategory;
   unlocked: boolean;
   unlockedAt?: string;
+  rewardCoins: number;
+  rewardTitleId?: string;
 }
 
 function parseEarnedDates(raw: unknown): Map<string, string> {
@@ -469,8 +512,26 @@ export function getBadgeCatalogForUi(earnedRaw: unknown, locale: AppLocale = 'fr
       category: def.category,
       unlocked: dates.has(def.id),
       unlockedAt: dates.get(def.id),
+      rewardCoins: def.rewardCoins,
+      ...(def.rewardTitleId ? { rewardTitleId: def.rewardTitleId } : {}),
     };
   });
+}
+
+/** Somme des récompenses portées par une liste d'insignes (ids inconnus ignorés). */
+export function aggregateBadgeRewards(badgeIds: string[]): {
+  coins: number;
+  titleIds: string[];
+} {
+  let coins = 0;
+  const titleIds: string[] = [];
+  for (const id of badgeIds) {
+    const def = byId.get(id as BadgeId);
+    if (!def) continue;
+    coins += def.rewardCoins;
+    if (def.rewardTitleId) titleIds.push(def.rewardTitleId);
+  }
+  return { coins, titleIds };
 }
 
 export interface BadgeEvaluationStats {

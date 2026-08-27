@@ -2,7 +2,6 @@
 
 import { Link, usePathname } from '@/i18n/navigation';
 import { useEffect, useState } from 'react';
-import { LayoutDashboard } from 'lucide-react';
 
 /** Accès console admin (GET /api/profile → role). */
 export function AdminNavLink({ variant = 'toolbar' }: { variant?: 'toolbar' | 'drawer' }) {
@@ -24,18 +23,12 @@ export function AdminNavLink({ variant = 'toolbar' }: { variant?: 'toolbar' | 'd
 
   if (!show || pathname?.startsWith('/admin')) return null;
 
-  const toolbarClass = variant === 'toolbar' ? 'hidden md:inline-flex' : 'inline-flex w-full min-w-0 justify-center rounded-xl py-3.5 shadow-md';
+  const placement =
+    variant === 'toolbar' ? 'hidden md:inline-flex' : 'mt-5 inline-flex w-full min-w-0 justify-center py-2.5';
 
   return (
-    <Link
-      href="/admin"
-      className={`admin-console-link ${toolbarClass}`}
-      title="Console d'administration"
-    >
-      <span>Console</span>
-      <span className="admin-console-link__icon inline-flex" aria-hidden>
-        <LayoutDashboard className="h-4 w-4" strokeWidth={2.25} />
-      </span>
+    <Link href="/admin" className={`admin-console-link ${placement}`} title="Console d'administration">
+      Console
     </Link>
   );
 }

@@ -3,11 +3,16 @@
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { useTranslations } from 'next-intl';
 import {
+  coinBreakdownRowsFr,
   levelFromTotalXp,
+  levelRewardSummaryFr,
+  TITLES_REGISTRY,
   XP_PER_LEVEL,
   xpBarSegmentsFromTotals,
   xpBreakdownRowsFr,
+  type CompletionCoinGain,
   type DisplayBadge,
+  type LevelReward,
   type XpBreakdown,
 } from '@questia/shared';
 import { Icon } from '@/components/Icons';
@@ -21,6 +26,9 @@ type Props = {
     newTotal: number;
     previousTotal: number;
   };
+  coinGain?: CompletionCoinGain | null;
+  levelRewards?: LevelReward[];
+  titlesUnlocked?: string[];
   badgesUnlocked: DisplayBadge[];
   onContinue: () => void;
 };
@@ -61,12 +69,33 @@ export function QuestXpCelebration({
   open,
   onOpenChange,
   xpGain,
+  coinGain,
+  levelRewards,
+  titlesUnlocked,
   badgesUnlocked,
   onContinue,
 }: Props) {
   const t = useTranslations('AppQuest');
   const reducedMotion = usePrefersReducedMotion();
   const breakdownRows = useMemo(() => xpBreakdownRowsFr(xpGain.breakdown), [xpGain.breakdown]);
+  const coinRows = useMemo(
+    () =>
+      coinGain
+        ? coinBreakdownRowsFr(coinGain.breakdown, {
+            fromBadges: coinGain.fromBadges,
+            fromLevels: coinGain.fromLevels,
+          })
+        : [],
+    [coinGain],
+  );
+  const paidLevels = useMemo(
+    () => (levelRewards ?? []).filter((r) => r.coins > 0 || r.titleId != null || r.dailyRerolls != null),
+    [levelRewards],
+  );
+  const newTitles = useMemo(
+    () => (titlesUnlocked ?? []).map((id) => TITLES_REGISTRY[id]).filter((d) => d != null),
+    [titlesUnlocked],
+  );
 
   const levelInfo = useMemo(() => {
     const before = levelFromTotalXp(xpGain.previousTotal);
@@ -148,13 +177,13 @@ export function QuestXpCelebration({
       {/* Impact plein écran (style « boss vaincu ») */}
       {!reducedMotion ? (
         <div
-          className="pointer-events-none absolute inset-0 z-[56] bg-gradient-to-b from-amber-200/50 via-cyan-200/35 to-violet-400/25 motion-safe:animate-quest-victory-screen-flash motion-reduce:hidden"
+          className="pointer-events-none absolute inset-0 z-[56] bg-[color-mix(in_srgb,var(--gold)_28%,transparent)] motion-safe:animate-quest-victory-screen-flash motion-reduce:hidden"
           aria-hidden
         />
       ) : null}
       <div className="motion-safe:animate-quest-modal-shake motion-reduce:animate-none relative z-[60] flex w-full max-w-md justify-center">
         <div
-          className="relative isolate w-full overflow-hidden rounded-3xl border-2 border-orange-300/50 bg-gradient-to-br from-amber-50 via-white to-cyan-50 shadow-[0_24px_80px_-12px_rgba(249,115,22,.42),0_0_0_1px_rgba(255,255,255,0.5)_inset] motion-safe:animate-quest-modal-pop motion-reduce:animate-none"
+          className="relative isolate w-full overflow-hidden rounded-3xl border border-[var(--border-ui-strong)] bg-[var(--card)] shadow-[0_2px_8px_-2px_color-mix(in_srgb,var(--text)_14%,transparent)] motion-safe:animate-quest-modal-pop motion-reduce:animate-none"
           role="dialog"
           aria-modal="true"
           aria-labelledby="xp-celebration-title"
@@ -162,20 +191,11 @@ export function QuestXpCelebration({
         {/* Anneaux d'impact */}
         {!reducedMotion ? (
           <div className="pointer-events-none absolute left-1/2 top-[36%] z-0 h-48 w-48 -translate-x-1/2 -translate-y-1/2 motion-reduce:hidden" aria-hidden>
-            <div className="absolute inset-0 rounded-full border-4 border-amber-400/50 motion-safe:animate-quest-ring-pulse motion-reduce:hidden [animation-delay:0ms]" />
-            <div className="absolute inset-0 rounded-full border-2 border-cyan-400/40 motion-safe:animate-quest-ring-pulse motion-reduce:hidden [animation-delay:120ms]" />
-            <div className="absolute inset-[-12px] rounded-full border border-orange-300/30 motion-safe:animate-quest-ring-pulse motion-reduce:hidden [animation-delay:220ms]" />
+            <div className="absolute inset-0 rounded-full border-2 border-[var(--gold)]/45 motion-safe:animate-quest-ring-pulse motion-reduce:hidden [animation-delay:0ms]" />
+            <div className="absolute inset-0 rounded-full border border-[var(--violet)]/35 motion-safe:animate-quest-ring-pulse motion-reduce:hidden [animation-delay:120ms]" />
+            <div className="absolute inset-[-12px] rounded-full border border-[var(--orange)]/25 motion-safe:animate-quest-ring-pulse motion-reduce:hidden [animation-delay:220ms]" />
           </div>
         ) : null}
-
-        {/* Fond animé léger */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.5] motion-safe:animate-celebrate-shimmer motion-reduce:opacity-30"
-          style={{
-            background:
-              'radial-gradient(ellipse 80% 55% at 50% -10%, rgba(34,211,238,0.42), transparent 55%), radial-gradient(ellipse 70% 50% at 100% 100%, rgba(249,115,22,0.22), transparent 50%)',
-          }}
-        />
 
         {/* Confettis */}
         {!reducedMotion && particles.length > 0 ? (
@@ -206,64 +226,75 @@ export function QuestXpCelebration({
           </div>
         ) : null}
 
-        <div className="h-1.5 bg-gradient-to-r from-cyan-500 via-amber-400 to-orange-500 relative z-[1]" />
+        <div className="relative z-[1] h-1 bg-[var(--orange)]" />
 
         <div className="relative z-[1] p-7">
           <p
             id="xp-celebration-title"
-            className="text-center font-display text-sm font-black tracking-tight text-cyan-900 motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:60ms] [animation-fill-mode:backwards]"
+            className="text-center font-display text-sm font-bold tracking-tight text-[var(--violet)] motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:60ms] [animation-fill-mode:backwards]"
           >
             {t('completedTitle')}
           </p>
 
           {levelInfo.leveledUp ? (
             <div
-              className="relative mt-4 flex flex-col items-center justify-center rounded-2xl border-2 border-amber-300/70 bg-gradient-to-br from-amber-100 via-white to-cyan-50 px-4 py-4 text-center shadow-[0_8px_30px_-8px_rgba(251,191,36,0.45)] motion-safe:animate-level-banner-in motion-reduce:animate-none [animation-delay:90ms] [animation-fill-mode:backwards]"
+              className="relative mt-4 flex flex-col items-center justify-center rounded-2xl border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_8%,var(--card))] px-4 py-4 text-center motion-safe:animate-level-banner-in motion-reduce:animate-none [animation-delay:90ms] [animation-fill-mode:backwards]"
             >
-              <span className="text-[11px] font-black uppercase tracking-[0.25em] text-amber-800">Niveau atteint</span>
-              <p className="mt-1 font-display text-4xl font-black tabular-nums tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-amber-500 to-orange-600 drop-shadow-sm motion-safe:animate-xp-number-pop motion-reduce:animate-none [animation-delay:180ms] [animation-fill-mode:backwards]">
+              <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[var(--gold)]">Niveau atteint</span>
+              <p className="mt-1 font-display text-4xl font-bold tabular-nums tracking-tight text-[var(--text)] motion-safe:animate-xp-number-pop motion-reduce:animate-none [animation-delay:180ms] [animation-fill-mode:backwards]">
                 {levelInfo.afterLevel}
               </p>
               {levelInfo.levelsGained > 1 ? (
-                <p className="mt-1 text-xs font-bold text-amber-900/90">
+                <p className="mt-1 text-xs font-bold text-[var(--gold)]">
                   +{levelInfo.levelsGained} niveaux d'un coup !
                 </p>
               ) : (
-                <p className="mt-1 text-xs font-bold text-[var(--on-cream-muted)]">Palier de progression débloqué</p>
+                <p className="mt-1 text-xs font-bold text-[var(--muted)]">Palier de progression débloqué</p>
               )}
-              <span
-                className="pointer-events-none absolute -right-1 -top-1 h-14 w-14 rounded-full bg-amber-300/30 blur-xl motion-safe:animate-pulse motion-reduce:hidden"
-                aria-hidden
-              />
             </div>
           ) : null}
 
           <p
-            className={`text-center font-display text-4xl font-black text-slate-900 motion-safe:animate-xp-number-pop motion-reduce:animate-none tabular-nums ${
+            className={`text-center font-display text-4xl font-bold text-[var(--text)] motion-safe:animate-xp-number-pop motion-reduce:animate-none tabular-nums ${
               levelInfo.leveledUp ? 'mt-4' : 'mt-3'
             } [animation-delay:120ms] [animation-fill-mode:backwards]`}
           >
             +{xpGain.gained} XP
           </p>
-          <p className="mt-2 text-center text-sm font-semibold text-[var(--on-cream-muted)]">
+          <p className="mt-2 text-center text-sm font-semibold text-[var(--muted)]">
             Total {xpGain.previousTotal} →{' '}
-            <span className="font-black text-cyan-900">{xpGain.newTotal}</span>
+            <span className="font-bold text-[var(--violet)]">{xpGain.newTotal}</span>
           </p>
 
+          {coinGain && coinGain.gained > 0 ? (
+            <div className="mt-4 flex items-center justify-center gap-3 rounded-2xl border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_9%,var(--card))] px-4 py-3 motion-safe:animate-xp-number-pop motion-reduce:animate-none [animation-delay:150ms] [animation-fill-mode:backwards]">
+              <Icon name="Coins" size="lg" className="text-[var(--gold)]" />
+              <div className="text-left">
+                <p className="font-display text-2xl font-bold tabular-nums leading-none text-[var(--text)]">
+                  +{coinGain.gained} QC
+                </p>
+                <p className="mt-1 text-[11px] font-semibold text-[var(--muted)]">
+                  Solde {coinGain.previousBalance} →{' '}
+                  <span className="font-bold text-[var(--gold)]">{coinGain.newBalance}</span>
+                </p>
+              </div>
+            </div>
+          ) : null}
+
           <div
-            className="mt-5 rounded-2xl border border-cyan-300/45 bg-gradient-to-r from-cyan-50 to-white px-4 py-3 shadow-sm motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:160ms] [animation-fill-mode:backwards]"
+            className="mt-5 rounded-2xl border border-[var(--border-cyan)] bg-[var(--surface)] px-4 py-3 motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:160ms] [animation-fill-mode:backwards]"
             role="group"
             aria-label="Progression dans le niveau actuel"
           >
-            <div className="flex flex-wrap items-baseline justify-between gap-2 text-xs font-black text-cyan-950">
+            <div className="flex flex-wrap items-baseline justify-between gap-2 text-xs font-bold text-[var(--text)]">
               <span>Niveau {barLevel}</span>
-              <span className="tabular-nums text-[var(--on-cream-muted)]">
+              <span className="tabular-nums text-[var(--muted)]">
                 {xpIntoDisplay}/{XP_PER_LEVEL} XP dans ce niveau
               </span>
             </div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full border border-cyan-200/50 bg-[color:var(--progress-track)]">
+            <div className="mt-2 h-2 overflow-hidden rounded-full border border-[var(--border-ui-strong)] bg-[color:var(--progress-track)]">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-orange-400 motion-reduce:transition-none"
+                className="h-full rounded-full bg-[var(--violet)] motion-reduce:transition-none"
                 style={{
                   width: `${barPct}%`,
                   transition:
@@ -273,25 +304,25 @@ export function QuestXpCelebration({
                 }}
               />
             </div>
-            <p className="mt-2 text-[10px] font-semibold leading-snug text-[var(--on-cream-subtle)]">
+            <p className="mt-2 text-[10px] font-semibold leading-snug text-[var(--subtle)]">
               Même barre que sur l'accueil : elle se remplit dans ton niveau actuel, puis repart à zéro si tu passes au
               niveau suivant.
             </p>
           </div>
 
           <div className="mt-5 motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:200ms] [animation-fill-mode:backwards]">
-            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-900">Comment ces XP sont calculés</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--violet)]">Comment ces XP sont calculés</p>
             <ul className="mt-3 space-y-2.5">
               {breakdownRows.map((row) => (
                 <li
                   key={row.key}
-                  className="rounded-xl border border-cyan-200/60 bg-white px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
+                  className="rounded-xl border border-[var(--border-ui)] bg-[var(--surface)] px-3 py-2.5"
                 >
                   <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
-                    <span className="text-[11px] font-black uppercase tracking-wide text-cyan-900/90">{row.label}</span>
-                    <span className="text-sm font-black tabular-nums text-slate-900">{row.value}</span>
+                    <span className="text-[11px] font-bold uppercase tracking-wide text-[var(--violet)]">{row.label}</span>
+                    <span className="text-sm font-bold tabular-nums text-[var(--text)]">{row.value}</span>
                   </div>
-                  <p className="mt-1.5 text-[11px] font-medium leading-relaxed text-[var(--on-cream-muted)]">
+                  <p className="mt-1.5 text-[11px] font-medium leading-relaxed text-[var(--muted)]">
                     {row.detail}
                   </p>
                 </li>
@@ -299,31 +330,92 @@ export function QuestXpCelebration({
             </ul>
           </div>
 
+          {coinRows.length > 0 ? (
+            <div className="mt-5 motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:220ms] [animation-fill-mode:backwards]">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">
+                Comment ces Quest Coins sont calculés
+              </p>
+              <ul className="mt-3 space-y-2.5">
+                {coinRows.map((row) => (
+                  <li
+                    key={row.key}
+                    className="rounded-xl border border-[var(--border-ui)] bg-[var(--surface)] px-3 py-2.5"
+                  >
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
+                      <span className="text-[11px] font-bold uppercase tracking-wide text-[var(--gold)]">{row.label}</span>
+                      <span className="text-sm font-bold tabular-nums text-[var(--text)]">{row.value}</span>
+                    </div>
+                    <p className="mt-1.5 text-[11px] font-medium leading-relaxed text-[var(--muted)]">{row.detail}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {paidLevels.length > 0 ? (
+            <div className="mt-5 space-y-2 motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:250ms] [animation-fill-mode:backwards]">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">Paliers franchis</p>
+              <ul className="space-y-2">
+                {paidLevels.map((r) => (
+                  <li
+                    key={r.level}
+                    className="flex items-center gap-3 rounded-xl border border-[var(--border-ui)] bg-[var(--surface)] px-3 py-2.5"
+                  >
+                    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_10%,transparent)] font-display text-sm font-bold tabular-nums text-[var(--gold)]">
+                      {r.level}
+                    </span>
+                    <p className="text-xs font-semibold text-[var(--text)]">{levelRewardSummaryFr(r)}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {newTitles.length > 0 ? (
+            <div className="mt-5 space-y-2 motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:270ms] [animation-fill-mode:backwards]">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--violet)]">Nouveaux titres</p>
+              <ul className="space-y-2">
+                {newTitles.map((def) => (
+                  <li
+                    key={def.id}
+                    className="flex items-center gap-3 rounded-xl border border-[var(--border-cyan)] bg-[var(--surface)] px-3 py-2.5"
+                  >
+                    <Icon name={def.icon} size="md" className="text-[var(--violet)]" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-[var(--text)]">{def.label}</p>
+                      <p className="text-[11px] font-medium text-[var(--muted)]">Équipable depuis ton profil.</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
           {badgesUnlocked.length > 0 ? (
             <div className="mt-5 space-y-3">
-              <p className="text-xs font-black uppercase tracking-wider text-orange-600 motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:240ms] [animation-fill-mode:backwards]">
+              <p className="text-xs font-bold uppercase tracking-wider text-[var(--orange)] motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:240ms] [animation-fill-mode:backwards]">
                 Nouveaux badges
               </p>
               <ul className="space-y-2">
                 {badgesUnlocked.map((b, i) => (
                   <li
                     key={b.id}
-                    className="flex gap-3 rounded-2xl border border-orange-200/60 bg-gradient-to-r from-cyan-50 to-amber-50 p-3 shadow-sm motion-safe:animate-badge-reveal motion-reduce:opacity-100"
+                    className="flex gap-3 rounded-2xl border border-[var(--border-ui-strong)] bg-[var(--surface)] p-3 motion-safe:animate-badge-reveal motion-reduce:opacity-100"
                     style={{
                       animationDelay: reducedMotion ? '0ms' : `${280 + i * 95}ms`,
                       animationFillMode: 'backwards',
                     }}
                   >
                     <span
-                      className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-100 to-cyan-100 shadow-inner ring-2 ring-amber-300/50 ring-offset-2 ring-offset-white motion-safe:animate-xp-number-pop motion-reduce:animate-none"
+                      className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_10%,transparent)] motion-safe:animate-xp-number-pop motion-reduce:animate-none"
                       style={{ animationDelay: reducedMotion ? '0ms' : `${300 + i * 95}ms` }}
                       aria-hidden
                     >
-                      <Icon name={b.placeholderIcon} size="lg" className="text-orange-700" />
+                      <Icon name={b.placeholderIcon} size="lg" className="text-[var(--gold)]" />
                     </span>
                     <div className="min-w-0">
-                      <p className="font-black text-[var(--on-cream)]">{b.title}</p>
-                      <p className="text-xs font-medium text-[var(--on-cream-muted)]">{b.criteria}</p>
+                      <p className="font-bold text-[var(--text)]">{b.title}</p>
+                      <p className="text-xs font-medium text-[var(--muted)]">{b.criteria}</p>
                     </div>
                   </li>
                 ))}
@@ -333,7 +425,7 @@ export function QuestXpCelebration({
 
           <button
             type="button"
-            className="btn btn-cta btn-lg mt-6 w-full text-base font-black motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:420ms] [animation-fill-mode:backwards]"
+            className="btn btn-cta btn-lg mt-6 w-full text-base font-bold motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:420ms] [animation-fill-mode:backwards]"
             onClick={() => {
               onContinue();
               onOpenChange(false);

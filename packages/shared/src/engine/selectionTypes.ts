@@ -37,6 +37,12 @@ export interface ProfileSnapshot {
    * Cohabite avec `refinementBias` : les deux s'additionnent dans le scoring.
    */
   questPackBias?: Partial<Record<PsychologicalCategory, number>>;
+  /**
+   * Biais du jalon de Cap en cours (`capCategoryBias`). Le Cap est la colonne
+   * vertébrale du parcours : il oriente plus fort que les packs, sans jamais
+   * forcer la famille — la somme des biais reste bornée à ±0.3 au scoring.
+   */
+  capBias?: Partial<Record<PsychologicalCategory, number>>;
   /** Logs récents (du plus récent au plus ancien). */
   recentLogs: ScoringQuestLog[];
   /** True si l'utilisateur a accepté de partager sa position GPS. */

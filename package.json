@@ -14,7 +14,7 @@
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "node scripts/patch-expo-web-browser-config.mjs",
+    "postinstall": "node scripts/patch-expo-web-browser-config.mjs && node scripts/link-clerk-expo-for-prebuild.mjs",
     "dev": "turbo dev",
     "dev:web": "turbo dev --filter=@questia/web",
     "dev:mobile": "turbo dev --filter=@questia/mobile",

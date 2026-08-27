@@ -53,6 +53,8 @@ export type ShopScreenStrings = {
   sectionThemes: string;
   sectionTitles: string;
   sectionRerolls: string;
+  rerollsFreeNote: string;
+  rerollTierFrom(level: number): string;
   sectionQuestPacks: string;
   questPacksIntro: string;
   questPackKindAll: string;
@@ -172,6 +174,9 @@ function frStrings(): ShopScreenStrings {
     sectionThemes: 'Thèmes',
     sectionTitles: 'Titres',
     sectionRerolls: 'Relances',
+    rerollsFreeNote:
+      "Les relances quotidiennes ne s'achètent plus : elles sont offertes et montent avec ton niveau.",
+    rerollTierFrom: (level: number) => `dès le niveau ${level}`,
     sectionQuestPacks: 'Packs de quêtes',
     questPacksIntro:
       "Chaque pack est un parcours de 10 quêtes en 3 chapitres, à jouer en parallèle de ta quête quotidienne. Titre exclusif et Quest Coins à la clé.",
@@ -278,6 +283,9 @@ function enStrings(): ShopScreenStrings {
     sectionThemes: 'Themes',
     sectionTitles: 'Titles',
     sectionRerolls: 'Rerolls',
+    rerollsFreeNote:
+      'Daily rerolls are no longer for sale: they come free and grow with your level.',
+    rerollTierFrom: (level: number) => `from level ${level}`,
     sectionQuestPacks: 'Quest packs',
     questPacksIntro:
       'Each pack is a 10-quest journey in 3 chapters, played alongside your daily quest. Earn an exclusive title and Quest Coins on completion.',

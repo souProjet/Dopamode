@@ -59,15 +59,14 @@ export function QuestHomeLoading() {
 
       <div className="relative flex w-full max-w-lg flex-col items-center px-2 text-center motion-safe:animate-quest-loader-in motion-reduce:animate-none motion-reduce:opacity-100 [animation-fill-mode:both]">
         <div className="relative mb-10 flex h-24 w-24 items-center justify-center">
-          <span className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400/25 to-orange-400/20 blur-xl motion-safe:animate-pulse motion-reduce:opacity-50" />
-          <span className="absolute inset-2 rounded-full bg-gradient-to-br from-white/40 to-cyan-100/20 blur-md motion-safe:animate-ping motion-reduce:animate-none opacity-50" />
+          <span className="absolute inset-0 rounded-full border border-[var(--border-cyan)] bg-[color-mix(in_srgb,var(--violet)_6%,transparent)] motion-safe:animate-pulse motion-reduce:animate-none" />
           <Compass
-            className="relative z-[1] h-14 w-14 text-cyan-900/90 drop-shadow-[0_2px_12px_rgba(34,211,238,0.35)] motion-safe:animate-quest-loader-bounce motion-reduce:animate-none"
+            className="relative z-[1] h-14 w-14 text-[var(--violet)] motion-safe:animate-quest-loader-bounce motion-reduce:animate-none"
             strokeWidth={1.5}
             aria-hidden
           />
           <Sparkles
-            className="absolute -right-0.5 top-0 z-[1] h-7 w-7 text-amber-500 drop-shadow-sm motion-safe:animate-pulse"
+            className="absolute -right-0.5 top-0 z-[1] h-7 w-7 text-[var(--gold)] motion-safe:animate-pulse motion-reduce:animate-none"
             strokeWidth={1.4}
             aria-hidden
           />
@@ -75,27 +74,27 @@ export function QuestHomeLoading() {
 
         <p
           suppressHydrationWarning
-          className="font-display text-[1.4rem] font-black leading-snug tracking-tight sm:text-[1.65rem] text-gradient-on-dark max-w-[22rem] text-balance"
+          className="font-display text-[1.4rem] font-bold leading-snug tracking-tight sm:text-[1.65rem] text-gradient-on-dark max-w-[22rem] text-balance"
         >
           {primary}
         </p>
         <p
           suppressHydrationWarning
-          className="mt-5 max-w-[24rem] text-sm font-semibold leading-relaxed text-[var(--on-cream-muted)] text-balance"
+          className="mt-5 max-w-[24rem] text-sm font-semibold leading-relaxed text-[var(--muted)] text-balance"
         >
           {secondary}
         </p>
 
         {/* Barre indéterminée : segment en position absolute, left animé (voir tailwind questLoaderBar) */}
         <div className="relative mt-10 h-[3px] w-full max-w-[11rem] overflow-hidden rounded-full bg-[color:var(--progress-track)]/75">
-          <div className="absolute inset-y-0 left-0 w-[38%] rounded-full bg-gradient-to-r from-cyan-400 via-amber-400 to-orange-400 shadow-[0_0_12px_rgba(34,211,238,0.35)] motion-safe:animate-quest-loader-bar motion-reduce:animate-none" />
+          <div className="absolute inset-y-0 left-0 w-[38%] rounded-full bg-[var(--orange)] motion-safe:animate-quest-loader-bar motion-reduce:animate-none" />
         </div>
 
         <div className="mt-8 flex gap-2" aria-hidden>
           {[0, 1, 2, 3].map((i) => (
             <span
               key={i}
-              className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-cyan-500 to-orange-400 opacity-90 shadow-[0_0_8px_rgba(249,115,22,0.35)] motion-safe:animate-bounce motion-reduce:opacity-70"
+              className="h-1.5 w-1.5 rounded-full bg-[var(--violet)] opacity-80 motion-safe:animate-bounce motion-reduce:opacity-60"
               style={{ animationDelay: `${i * 0.09}s` }}
             />
           ))}

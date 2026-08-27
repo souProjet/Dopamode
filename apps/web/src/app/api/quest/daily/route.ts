@@ -6,8 +6,15 @@ import {
   computeCongruenceDelta,
   getEffectivePhase,
   computeCompletionXp,
+  computeCompletionCoins,
   evaluateNewBadges,
+  aggregateBadgeRewards,
   levelFromTotalXp,
+  levelRewardsBetween,
+  aggregateLevelRewards,
+  dailyRerollsForLevel,
+  nextStreakOnCompletion,
+  streakForNewDay,
   getBadgeCatalogForUi,
   XP_SHOP_BONUS_PER_CHARGE,
   REFINEMENT_SCHEMA_VERSION,
@@ -15,12 +22,17 @@ import {
   parseValidRefinementAnswers,
   buildRefinementContextForPrompt,
   questPackBiasFromOwned,
+  parseCapState,
+  capCategoryBias,
+  capProgressView,
+  isMilestoneQuestNext,
+  milestoneQuestIdealDuration,
+  advanceCapOnCompletion,
   isValidReportDeferredDate,
   isValidQuestDateIso,
   getQuestCalendarDateNow,
   getPreviousQuestCalendarDate,
   softUpdateDeclaredPersonality,
-  DAILY_FREE_REROLLS,
   DEFAULT_RECENT_EXCLUSION_DAYS,
   buildQuestParameters,
   buildEmergencyQuestParameters,
@@ -28,6 +40,7 @@ import {
   clampQuestDurationBounds,
   parseHeavyQuestPreference,
   effectiveOwnedThemes,
+  isTitleEquippable,
 } from '@questia/shared';
 import type {
   AppLocale,
@@ -161,7 +174,7 @@ function shopClientPayload(profile: {
 }) {
   const ownedTitles = parseStringArray(profile.ownedTitleIds);
   let equipped = profile.equippedTitleId ?? null;
-  if (equipped && !ownedTitles.includes(equipped)) equipped = null;
+  if (equipped && !isTitleEquippable(equipped, ownedTitles)) equipped = null;
   return {
     coinBalance: profile.coinBalance ?? 0,
     rerollsRemaining: profile.rerollsRemaining,
@@ -173,6 +186,11 @@ function shopClientPayload(profile: {
     xpBonusCharges: profile.xpBonusCharges ?? 0,
     ownedQuestPackIds: parseStringArray(profile.ownedQuestPackIds),
   };
+}
+
+/** Cap en cours, tel qu'affiché par le client (null si aucun). */
+function capPayload(profile: { capState?: unknown }, locale: AppLocale) {
+  return { cap: capProgressView(parseCapState(profile.capState), locale) };
 }
 
 function progressionPayload(profile: { totalXp: number; badgesEarned: unknown }, locale: AppLocale) {
@@ -251,6 +269,7 @@ export async function GET(request: NextRequest) {
       phase: profile.currentPhase,
       deferredSocialUntil: profile.deferredSocialUntil ?? null,
       ...shopClientPayload(profile),
+      ...capPayload(profile, questLocale),
       progression: progressionPayload(profile, questLocale),
       refinement: refinementSurvey,
       ...(context ? { context } : {}),
@@ -271,6 +290,7 @@ export async function GET(request: NextRequest) {
       phase: profile.currentPhase,
       deferredSocialUntil: profile.deferredSocialUntil ?? null,
       ...shopClientPayload(profile),
+      ...capPayload(profile, questLocale),
       progression: progressionPayload(profile, questLocale),
       refinement: refinementSurvey,
     });
@@ -353,6 +373,10 @@ export async function GET(request: NextRequest) {
   );
   const questPackBias = questPackBiasFromOwned(ownedQuestPackIds);
 
+  // Cap : le jalon en cours oriente la famille du jour et le brief de génération.
+  const capState = parseCapState((profile as { capState?: unknown }).capState);
+  const capBias = capCategoryBias(capState);
+
   // Exclusions cumulées (relances du jour)
   const lastQuestDateStr =
     profile.lastQuestDate == null ? null : String(profile.lastQuestDate).slice(0, 10);
@@ -382,6 +406,7 @@ export async function GET(request: NextRequest) {
     sociability,
     refinementBias,
     questPackBias,
+    capBias,
     recentLogs: scoringLogs,
     hasUserLocation: context.hasUserLocation,
     isOutdoorFriendly: context.isOutdoorFriendly,
@@ -424,6 +449,18 @@ export async function GET(request: NextRequest) {
     );
   } else {
     questParameters = built.params;
+  }
+
+  // Quête de jalon : la dernière étape d'un jalon est la « grosse quête » du Cap.
+  const isCapMilestoneQuest = isMilestoneQuestNext(capState);
+  if (isCapMilestoneQuest) {
+    questParameters = {
+      ...questParameters,
+      idealDurationMinutes: milestoneQuestIdealDuration(
+        questParameters.idealDurationMinutes,
+        durationBounds.questDurationMaxMinutes,
+      ),
+    };
   }
 
   // Brief historique pour le LLM (5 dernières quêtes, statut + texte)
@@ -472,6 +509,7 @@ export async function GET(request: NextRequest) {
     generationSeed: selectionSeed,
     isReroll,
     substitutedInstantAfterDefer: instantOnly,
+    capState,
   });
 
   // Géocodage pour les quêtes outdoor
@@ -511,17 +549,19 @@ export async function GET(request: NextRequest) {
   // Progression : jour, phase, série
   const lastDate = profile.lastQuestDate;
   const yesterdayStr = getPreviousQuestCalendarDate(today);
-  const isSameDayRegen = lastDate === today;
-  const isConsecutive = lastDate === yesterdayStr;
-  const newStreak = isSameDayRegen
-    ? profile.streakCount
-    : isConsecutive
-      ? profile.streakCount + 1
-      : 1;
+  // La série ne monte pas ici : générer une quête ne vaut pas la faire. On se
+  // contente de casser la chaîne si la veille n'a pas été validée.
+  const yesterdayCompleted = recentLogRows.some(
+    (r) => r.questDate === yesterdayStr && r.status === 'completed',
+  );
+  const newStreak = streakForNewDay(profile.streakCount, yesterdayCompleted);
   const newDay = profile.currentDay + (lastDate !== today ? 1 : 0);
   const newPhase: EscalationPhase = getEffectivePhase(newDay, phaseLogs, today);
 
-  const rerollsAfterQuestCreate = isReroll ? profile.rerollsRemaining : DAILY_FREE_REROLLS;
+  const freeRerollsForLevel = dailyRerollsForLevel(
+    levelFromTotalXp(profile.totalXp ?? 0).level,
+  );
+  const rerollsAfterQuestCreate = isReroll ? profile.rerollsRemaining : freeRerollsForLevel;
   const wasWeatherFallback = generated.wasFallback;
   const chosenArchetypeId = generated.archetypeId;
 
@@ -579,6 +619,7 @@ export async function GET(request: NextRequest) {
       deferredSocialUntil: p.deferredSocialUntil ?? null,
       context,
       ...shopClientPayload(p),
+      ...capPayload(p, questLocale),
       progression: progressionPayload(p, questLocale),
       refinement: getRefinementSurveyPayload(
         {
@@ -709,6 +750,7 @@ export async function POST(request: NextRequest) {
       reported: true,
       deferredUntil,
       ...shopClientPayload(updatedProfile),
+      ...capPayload(updatedProfile, questLocale),
       progression: progressionPayload(updatedProfile, questLocale),
       deferredSocialUntil: updatedProfile.deferredSocialUntil ?? null,
     });
@@ -761,6 +803,7 @@ export async function POST(request: NextRequest) {
       streak: p.streakCount,
       deferredSocialUntil: null,
       ...shopClientPayload(p),
+      ...capPayload(p, questLocale),
       progression: progressionPayload(p, questLocale),
     });
   }
@@ -829,6 +872,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       rerolled: true,
       ...shopClientPayload(updatedProfile),
+      ...capPayload(updatedProfile, questLocale),
       progression: progressionPayload(updatedProfile, questLocale),
     });
   }
@@ -851,21 +895,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const [completedBefore, outdoorBefore] = await Promise.all([
+    const yesterdayIso = getPreviousQuestCalendarDate(today);
+    const [completedBefore, outdoorBefore, yesterdayLog] = await Promise.all([
       prisma.questLog.count({
         where: { profileId: profile.id, status: 'completed' },
       }),
       prisma.questLog.count({
         where: { profileId: profile.id, status: 'completed', isOutdoor: true },
       }),
+      prisma.questLog.findUnique({
+        where: { profileId_questDate: { profileId: profile.id, questDate: yesterdayIso } },
+        select: { status: true },
+      }),
     ]);
+
+    // La série se gagne ici, pas à la génération : c'est la validation qui compte.
+    const newStreak = nextStreakOnCompletion(
+      profile.streakCount,
+      yesterdayLog?.status === 'completed',
+    );
 
     const { total: xpGained, breakdown } = computeCompletionXp({
       phaseAtAssignment: existing.phaseAtAssignment as EscalationPhase,
-      streakCount: profile.streakCount,
+      streakCount: newStreak,
       isOutdoor: existing.isOutdoor,
       explorerAxis: profile.explorerAxis as ExplorerAxis,
       riskAxis: profile.riskAxis as RiskAxis,
+      wasRerolled: existing.wasRerolled,
+      wasFallback: existing.wasFallback,
+    });
+
+    const { total: questCoins, breakdown: coinBreakdown } = computeCompletionCoins({
+      phaseAtAssignment: existing.phaseAtAssignment as EscalationPhase,
+      streakCount: newStreak,
+      isOutdoor: existing.isOutdoor,
       wasRerolled: existing.wasRerolled,
       wasFallback: existing.wasFallback,
     });
@@ -890,7 +953,7 @@ export async function POST(request: NextRequest) {
     const newBadges = evaluateNewBadges(existingBadgeIds, {
       totalCompletions,
       outdoorCompletions,
-      currentStreak: profile.streakCount,
+      currentStreak: newStreak,
       currentDay: profile.currentDay,
       currentPhase: profile.currentPhase as EscalationPhase,
       explorerAxis: profile.explorerAxis as ExplorerAxis,
@@ -903,7 +966,41 @@ export async function POST(request: NextRequest) {
       ...newBadges.map((b) => ({ id: b.id, unlockedAt: b.unlockedAt })),
     ];
 
-    const newTotalXp = (profile.totalXp ?? 0) + totalXpGained;
+    const previousTotalXp = profile.totalXp ?? 0;
+    const newTotalXp = previousTotalXp + totalXpGained;
+
+    // Ce que la complétion rapporte au-delà de l'XP : coins de quête, primes
+    // d'insignes, paliers de niveau franchis (coins + titres de prestige).
+    const badgeReward = aggregateBadgeRewards(newBadges.map((b) => b.id));
+    const crossedLevels = levelRewardsBetween(previousTotalXp, newTotalXp);
+    const levelReward = aggregateLevelRewards(crossedLevels);
+
+    const ownedTitles = parseStringArray(
+      (profile as { ownedTitleIds?: unknown }).ownedTitleIds,
+    );
+    const titlesUnlocked = [
+      ...new Set([...badgeReward.titleIds, ...levelReward.titleIds]),
+    ].filter((id) => !ownedTitles.includes(id));
+    const newOwnedTitleIds: string[] = [...ownedTitles, ...titlesUnlocked];
+
+    // Cap : la quête du jour fait avancer le jalon si elle est dans une de ses
+    // familles. Jalon franchi ou Cap terminé = coins en plus, titre exclusif à la fin.
+    const capStateBefore = parseCapState((profile as { capState?: unknown }).capState);
+    const capAdvance = advanceCapOnCompletion(
+      capStateBefore,
+      postTaxMap.get(existing.archetypeId)?.category ?? null,
+    );
+    const capTitleUnlocked =
+      capAdvance.titleId && !ownedTitles.includes(capAdvance.titleId) ? capAdvance.titleId : null;
+    if (capTitleUnlocked) {
+      titlesUnlocked.push(capTitleUnlocked);
+      newOwnedTitleIds.push(capTitleUnlocked);
+    }
+
+    const coinsGained =
+      questCoins + badgeReward.coins + levelReward.coins + capAdvance.coins;
+    const previousCoinBalance = (profile as { coinBalance?: number | null }).coinBalance ?? 0;
+    const newCoinBalance = previousCoinBalance + coinsGained;
 
     void trySoftUpdateDeclared(
       profile.id,
@@ -930,6 +1027,14 @@ export async function POST(request: NextRequest) {
           totalXp: newTotalXp,
           badgesEarned: mergedBadges as unknown as Prisma.InputJsonValue,
           xpBonusCharges: xpBonusChargesAfter,
+          streakCount: newStreak,
+          coinBalance: newCoinBalance,
+          ...(titlesUnlocked.length > 0
+            ? { ownedTitleIds: newOwnedTitleIds as unknown as Prisma.InputJsonValue }
+            : {}),
+          ...(capAdvance.counted
+            ? { capState: capAdvance.state as unknown as Prisma.InputJsonValue }
+            : {}),
           deferredSocialUntil: null,
         } as unknown as Prisma.ProfileUpdateInput,
       }),
@@ -944,14 +1049,48 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       ...(await toQuestResponse(updated, profileAfter)),
       progression: prog,
+      streak: newStreak,
       ...shopClientPayload(profileAfter),
+      ...capPayload(profileAfter, questLocale),
       xpGain: {
         gained: totalXpGained,
         breakdown: breakdownWithShop,
-        previousTotal: profile.totalXp ?? 0,
+        previousTotal: previousTotalXp,
         newTotal: newTotalXp,
       },
+      coinGain: {
+        gained: coinsGained,
+        fromQuest: questCoins,
+        fromBadges: badgeReward.coins,
+        fromLevels: levelReward.coins,
+        breakdown: coinBreakdown,
+        previousBalance: previousCoinBalance,
+        newBalance: newCoinBalance,
+      },
+      levelRewards: crossedLevels,
+      titlesUnlocked,
       badgesUnlocked,
+      capGain: capAdvance.counted
+        ? {
+            capId: capStateBefore.active!.capId,
+            coins: capAdvance.coins,
+            milestoneCompleted: capAdvance.milestoneCompleted
+              ? {
+                  slug: capAdvance.milestoneCompleted.slug,
+                  title: capAdvance.milestoneCompleted.title[questLocale],
+                  rewardCoins: capAdvance.milestoneCompleted.rewardCoins,
+                }
+              : null,
+            capCompleted: capAdvance.capCompleted
+              ? {
+                  id: capAdvance.capCompleted.id,
+                  label: capAdvance.capCompleted.label[questLocale],
+                  rewardCoins: capAdvance.capCompleted.rewardCoins,
+                  rewardTitleId: capAdvance.capCompleted.rewardTitleId,
+                }
+              : null,
+          }
+        : null,
     });
   }
 
@@ -975,6 +1114,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       ...(await toQuestResponse(logForAccept, profile)),
       ...shopClientPayload(profile),
+      ...capPayload(profile, questLocale),
     });
   }
 
@@ -999,6 +1139,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     ...(await toQuestResponse(updated, profile)),
     ...shopClientPayload(profile),
+    ...capPayload(profile, questLocale),
   });
 }
 

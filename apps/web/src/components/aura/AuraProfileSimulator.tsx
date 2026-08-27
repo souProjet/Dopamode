@@ -17,7 +17,6 @@ interface TraitConfig {
   descLow: string;
   descHigh: string;
   Icon: LucideIcon;
-  accentClass: string;
 }
 
 const TRAITS: TraitConfig[] = [
@@ -27,7 +26,6 @@ const TRAITS: TraitConfig[] = [
     descLow: 'Concret, habitudes stables',
     descHigh: 'Curieux, imaginatif, créatif',
     Icon: Compass,
-    accentClass: 'text-[var(--violet)]',
   },
   {
     key: 'conscientiousness',
@@ -35,7 +33,6 @@ const TRAITS: TraitConfig[] = [
     descLow: 'Flexible, spontané',
     descHigh: 'Rigoureux, organisé',
     Icon: Shield,
-    accentClass: 'text-[var(--cyan)]',
   },
   {
     key: 'extraversion',
@@ -43,7 +40,6 @@ const TRAITS: TraitConfig[] = [
     descLow: 'Solitaire, introverti',
     descHigh: 'Social, expressif, énergique',
     Icon: Zap,
-    accentClass: 'text-[var(--orange)]',
   },
   {
     key: 'agreeableness',
@@ -51,7 +47,6 @@ const TRAITS: TraitConfig[] = [
     descLow: 'Direct, compétitif',
     descHigh: 'Bienveillant, coopératif',
     Icon: Heart,
-    accentClass: 'text-[var(--green)]',
   },
   {
     key: 'emotionalStability',
@@ -59,7 +54,6 @@ const TRAITS: TraitConfig[] = [
     descLow: 'Réactif, intense',
     descHigh: 'Serein, équilibré',
     Icon: Wind,
-    accentClass: 'text-[var(--gold)]',
   },
   {
     key: 'thrillSeeking',
@@ -67,7 +61,6 @@ const TRAITS: TraitConfig[] = [
     descLow: 'Prudent, confort assuré',
     descHigh: 'Adrénaline, prises de risque',
     Icon: Flame,
-    accentClass: 'text-[var(--red)]',
   },
   {
     key: 'boredomSusceptibility',
@@ -75,7 +68,6 @@ const TRAITS: TraitConfig[] = [
     descLow: 'Patient, routine acceptable',
     descHigh: 'S\'ennuie vite, cherche la nouveauté',
     Icon: Sparkles,
-    accentClass: 'text-[var(--cyan)]',
   },
 ];
 
@@ -123,14 +115,14 @@ function TraitSlider({
   value: number;
   onChange: (v: number) => void;
 }) {
-  const { Icon, labelFr, descLow, descHigh, accentClass } = config;
+  const { Icon, labelFr, descLow, descHigh } = config;
   const pct = Math.round(value * 100);
 
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5">
-          <Icon className={`h-3.5 w-3.5 shrink-0 ${accentClass}`} strokeWidth={2.25} aria-hidden />
+          <Icon className="h-3.5 w-3.5 shrink-0 text-[var(--subtle)]" strokeWidth={2} aria-hidden />
           <span className="text-sm font-semibold text-[var(--text)]">{labelFr}</span>
         </div>
         <span className="tabular-nums text-xs font-bold text-[var(--muted)] w-8 text-right">{pct}%</span>
@@ -166,7 +158,7 @@ function AuraPreview({ colors }: { colors: { tr: string; bl: string; tl: string 
 
   return (
     <div
-      className="relative w-full h-[220px] sm:h-[260px] rounded-2xl overflow-hidden border border-[var(--border-m)] bg-[var(--surface)]"
+      className="relative w-full h-[220px] sm:h-[260px] overflow-hidden border border-[var(--border-m)] bg-[var(--surface)]"
       aria-label="Prévisualisation des orbes d'aura"
     >
       {/* Orbe TR */}
@@ -189,9 +181,9 @@ function AuraPreview({ colors }: { colors: { tr: string; bl: string; tl: string 
       />
       {/* Texte central */}
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 pointer-events-none">
-        <div className="rounded-2xl border border-[var(--border-ui)] bg-[var(--card)]/70 backdrop-blur-sm px-5 py-3 text-center">
+        <div className="border border-[var(--border-ui)] bg-[var(--card)] px-5 py-3 text-center">
           <p className="text-xs font-bold uppercase tracking-widest text-[var(--muted)]">Ton aura aujourd'hui</p>
-          <p className="mt-1 text-sm font-black text-[var(--text)]">Quête du jour</p>
+          <p className="mt-1 text-sm font-semibold text-[var(--text)]">Quête du jour</p>
         </div>
       </div>
     </div>
@@ -248,7 +240,7 @@ export function AuraProfileSimulator() {
 
       {/* ── Prévisualisation ── */}
       <section aria-labelledby="simulator-preview-title">
-        <h2 id="simulator-preview-title" className="mb-3 font-display text-lg font-black text-[var(--text)]">
+        <h2 id="simulator-preview-title" className="mb-3 font-display text-lg font-semibold text-[var(--text)]">
           Ton profil aura en direct
         </h2>
         <AuraPreview colors={auraColors} />
@@ -276,7 +268,7 @@ export function AuraProfileSimulator() {
 
       {/* ── Sliders ── */}
       <section aria-labelledby="simulator-sliders-title">
-        <h2 id="simulator-sliders-title" className="mb-4 font-display text-lg font-black text-[var(--text)]">
+        <h2 id="simulator-sliders-title" className="mb-4 font-display text-lg font-semibold text-[var(--text)]">
           Ajuste ta personnalité
         </h2>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -293,7 +285,7 @@ export function AuraProfileSimulator() {
 
       {/* ── Légende des orbes ── */}
       <section aria-labelledby="orb-legend-title">
-        <h2 id="orb-legend-title" className="mb-4 font-display text-lg font-black text-[var(--text)]">
+        <h2 id="orb-legend-title" className="mb-4 font-display text-lg font-semibold text-[var(--text)]">
           Ce que chaque orbe exprime
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -306,20 +298,20 @@ export function AuraProfileSimulator() {
             return (
               <motion.div
                 key={orb.id}
-                className="relative overflow-hidden rounded-2xl border border-[var(--border-ui)] bg-[var(--card)] p-4"
+                className="relative overflow-hidden border border-[var(--border-ui)] bg-[var(--card)] p-4"
                 layout
                 transition={reduceMotion ? { duration: 0 } : { duration: 0.3 }}
               >
                 {/* Fond coloré avec la couleur d'aura correspondante */}
                 <div
                   className="pointer-events-none absolute inset-0 transition-all duration-700"
-                  style={{ backgroundColor: color, opacity: 0.6 }}
+                  style={{ backgroundColor: color, opacity: 0.38 }}
                   aria-hidden
                 />
                 <div className="relative">
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="font-display text-base font-black text-[var(--text)]">{orb.label}</span>
-                    <span className="rounded-full border border-[var(--border-ui)] bg-[var(--surface)]/80 px-2 py-0.5 text-[10px] font-bold text-[var(--muted)] backdrop-blur-sm">
+                    <span className="font-display text-base font-semibold text-[var(--text)]">{orb.label}</span>
+                    <span className="border border-[var(--border-ui)] bg-[var(--surface)] px-2 py-0.5 text-[10px] font-semibold tracking-wide text-[var(--muted)]">
                       {orb.id}
                     </span>
                   </div>
@@ -336,7 +328,7 @@ export function AuraProfileSimulator() {
       </section>
 
       {/* ── Note technique ── */}
-      <div className="rounded-2xl border border-[var(--border-ui)] bg-[var(--surface)] px-5 py-4">
+      <div className="border-l-2 border-[var(--border-cyan)] bg-[var(--surface)] px-5 py-4">
         <p className="text-xs font-bold uppercase tracking-widest text-[var(--muted)] mb-2">Note technique</p>
         <p className="text-sm leading-relaxed text-[var(--muted)]">
           Chaque trait est converti en teinte HSL via une interpolation circulaire entre deux pôles.

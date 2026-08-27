@@ -1,5 +1,6 @@
 {
   "ErrorPage": {
+    "eyebrow": "Incident technique",
     "title": "Un problème est survenu",
     "description": "Quelque chose s'est mal passé. Tu peux réessayer ou retourner à l'accueil.",
     "retry": "Réessayer",
@@ -110,7 +111,8 @@
     "navSections": "Sections du site",
     "navApp": "Navigation app",
     "adminConsole": "Console d'administration",
-    "adminLabel": "Console"
+    "adminLabel": "Console",
+    "cap": "Cap"
   },
   "HomeMetadata": {
     "titleStoresBoth": "Questia — App de quêtes quotidiennes IRL (iOS, Android & Web)",
@@ -160,6 +162,10 @@
       "continueBrowser": "Continuer dans le navigateur",
       "examplesAsideLabel": "Exemples de quêtes",
       "examplesCaption": "Trois quêtes tirées du carnet",
+      "examplePrev": "Quête précédente",
+      "exampleNext": "Quête suivante",
+      "exampleGoTo": "Aller à la quête {index} sur {total}",
+      "exampleOutdoor": "Extérieur",
       "facts": [
         {
           "value": "1",
@@ -371,6 +377,11 @@
     "ownedPacksEyebrow": "Parcours",
     "ownedPacksSectionA11y": "Parcours possédés — faire défiler",
     "ownedPackOpenA11y": "Parcours {name} — ouvrir",
+    "capEyebrow": "Cap",
+    "capOpenA11y": "Cap « {name} » : ouvrir",
+    "capMilestoneQuestChip": "Quête de jalon",
+    "capInvite": "Choisis un objectif long",
+    "capInviteCta": "Cap",
     "questOfDay": "Quête du jour",
     "detailCloseLabel": "Fermer",
     "detailEyebrow": "Détails",
@@ -437,6 +448,31 @@
     "safetyNotToday": "Pas aujourd'hui",
     "safetyLetsGo": "C'est parti !",
     "shareDefaultName": "Aventurier·e"
+  },
+  "AppCap": {
+    "back": "← Retour à la quête",
+    "eyebrow": "Objectif long",
+    "title": "Ton Cap",
+    "intro": "Un Cap est un objectif de vie découpé en quatre jalons. Il ne remplace pas la quête du jour : c'est lui qui la choisit. Chaque quête validée dans une famille du jalon te rapproche du bout, et la dernière de chaque jalon est une quête plus ample.",
+    "inProgress": "Cap en cours",
+    "milestoneOf": "Jalon {index}/{count}",
+    "progressLabel": "Avancement du Cap",
+    "questsInMilestone": "{done} quête(s) sur {total} dans ce jalon",
+    "milestoneQuestNext": "Prochaine étape : quête de jalon",
+    "finalReward": "À la fin du Cap : +{coins} QC et le titre « {title} ».",
+    "abandon": "Abandonner ce Cap",
+    "abandonWarning": "La progression de ce Cap sera perdue.",
+    "abandonConfirm": "Confirmer l'abandon",
+    "cancel": "Annuler",
+    "chooseTitle": "Choisis ton Cap",
+    "chooseIntro": "Un seul Cap à la fois. Tu peux en changer quand tu veux, mais la progression du Cap quitté est perdue.",
+    "changeTitle": "Changer de Cap",
+    "changeIntro": "Démarrer un autre Cap remplace celui en cours et efface sa progression.",
+    "capSummary": "{quests} quêtes · {coins} QC au total",
+    "start": "Prendre ce Cap",
+    "switchTo": "Basculer sur ce Cap",
+    "done": "Terminé",
+    "errorGeneric": "Une erreur est survenue."
   },
   "AppProfile": {
     "backToQuest": "← Retour à la quête",
@@ -615,6 +651,8 @@
     "sectionThemes": "Thèmes",
     "sectionTitles": "Titres",
     "sectionRerolls": "Relances",
+    "rerollsFreeNote": "Les relances quotidiennes ne s'achètent plus : elles sont offertes et montent avec ton niveau.",
+    "rerollTierFrom": "dès le niveau {level}",
     "txJournal": "Journal des transactions",
     "txHistoryLink": "Historique détaillé (filtres & recherche)",
     "noTx": "Aucune opération pour l'instant.",

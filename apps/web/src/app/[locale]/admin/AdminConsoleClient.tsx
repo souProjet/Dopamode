@@ -70,7 +70,7 @@ function datetimeLocalToIso(s: string): string | null {
 }
 
 const inputClass =
-  'min-w-0 flex-1 rounded-xl border-2 border-[color:color-mix(in_srgb,var(--cyan)_42%,transparent)] bg-white px-3 py-2.5 text-sm font-semibold text-[var(--text)] shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/40';
+  'min-w-0 flex-1 rounded-xl border border-[var(--border-ui-strong)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--text)] focus:border-[var(--violet)] focus:outline-none focus:ring-1 focus:ring-[var(--violet)]';
 
 type UserSearchHit = {
   clerkId: string;
@@ -411,22 +411,22 @@ export default function AdminConsoleClient() {
 
   if (loading && !data) {
     return (
-      <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-[1.75rem] border-2 border-orange-200/60 bg-white/80 px-6 py-16 shadow-inner">
+      <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-[1.75rem] border border-[var(--border-ui)] bg-[var(--surface)] px-6 py-16">
         <div
-          className="h-12 w-12 animate-spin rounded-full border-[3px] border-cyan-200 border-t-cyan-500"
+          className="h-12 w-12 animate-spin rounded-full border-[3px] border-[var(--border-ui-strong)] border-t-[var(--orange)]"
           role="status"
           aria-label="Chargement"
         />
-        <p className="text-sm font-bold text-[var(--muted)]">Chargement des métriques…</p>
+        <p className="text-sm text-[var(--muted)]">Chargement des métriques…</p>
       </div>
     );
   }
 
   if (err && !data) {
     return (
-      <div className="rounded-[1.75rem] border-2 border-red-200/80 bg-gradient-to-br from-red-50 to-amber-50/50 px-6 py-8 shadow-inner">
-        <p className="font-display text-lg font-black text-red-900">Impossible de charger la console</p>
-        <p className="mt-2 text-sm font-semibold text-red-800/90">{err}</p>
+      <div className="rounded-[1.75rem] border border-[var(--red)] bg-[color-mix(in_srgb,var(--red)_7%,var(--card))] px-6 py-8">
+        <p className="font-display text-lg font-bold text-[var(--red)]">Impossible de charger la console</p>
+        <p className="mt-2 text-sm text-[var(--text)]">{err}</p>
       </div>
     );
   }
@@ -450,20 +450,18 @@ export default function AdminConsoleClient() {
   return (
     <div className="space-y-8">
       <div
-        className={`rounded-[1.75rem] border-2 px-5 py-4 sm:px-6 sm:py-5 ${
+        className={`rounded-[1.75rem] border px-5 py-4 shadow-[0_1px_2px_color-mix(in_srgb,var(--text)_6%,transparent)] sm:px-6 sm:py-5 ${
           d.snapshotScope === 'target'
-            ? 'border-amber-400/90 bg-gradient-to-br from-amber-50 via-[#fffbeb] to-orange-50/90 shadow-[0_6px_24px_-8px_rgba(245,158,11,0.35)]'
-            : 'border-cyan-300/55 bg-gradient-to-br from-cyan-50/80 via-white to-white'
+            ? 'border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_8%,var(--card))]'
+            : 'border-[var(--border-cyan)] bg-[var(--card)]'
         }`}
       >
-        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[var(--muted)]">
-          ① · Compte concerné (état du jeu et interventions)
-        </p>
+        <p className="carnet-eyebrow">① · Compte concerné (état du jeu et interventions)</p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="font-display text-xl font-black text-[var(--on-cream)] sm:text-2xl">{focusTitle}</p>
-            <p className="mt-1 max-w-2xl text-sm font-semibold text-[var(--on-cream-muted)]">{focusSubtitle}</p>
-            <p className="mt-2 text-xs font-mono font-semibold text-[var(--on-cream-subtle)]">
+            <p className="font-display text-xl font-bold text-[var(--text)] sm:text-2xl">{focusTitle}</p>
+            <p className="mt-1 max-w-2xl text-sm font-semibold text-[var(--muted)]">{focusSubtitle}</p>
+            <p className="mt-2 text-xs font-mono font-semibold text-[var(--subtle)]">
               Toi connecté (admin) : {d.adminClerkIdSuffix}
               {d.snapshotScope === 'target' && d.snapshotClerkSuffix ? (
                 <> · profil affiché : {d.snapshotClerkSuffix}</>
@@ -474,7 +472,7 @@ export default function AdminConsoleClient() {
             {targetClerkId ? (
               <button
                 type="button"
-                className="btn btn-ghost btn-sm font-black"
+                className="btn btn-ghost btn-sm font-bold"
                 onClick={() => {
                   setTargetClerkId('');
                   setProfilePreview(null);
@@ -483,23 +481,23 @@ export default function AdminConsoleClient() {
                 Revenir sur mon compte
               </button>
             ) : null}
-            <button type="button" className="btn btn-cta btn-sm font-black" onClick={() => void loadProfilePreview()}>
+            <button type="button" className="btn btn-cta btn-sm font-bold" onClick={() => void loadProfilePreview()}>
               Données techniques brutes
             </button>
           </div>
         </div>
       </div>
 
-      <section className="overflow-hidden rounded-[1.75rem] border-2 border-violet-300/50 bg-gradient-to-br from-violet-50/70 via-white to-fuchsia-50/30 p-6 shadow-[0_12px_40px_-16px_rgba(139,92,246,0.25)] sm:p-7">
-        <h2 className="font-display text-lg font-black text-[var(--on-cream)]">② · Changer de joueur</h2>
-        <p className="mt-1 text-xs font-semibold leading-relaxed text-[var(--on-cream-muted)]">
+      <section className="rounded-[1.75rem] border border-[var(--border-cyan)] bg-[var(--card)] p-6 shadow-[0_1px_2px_color-mix(in_srgb,var(--text)_6%,transparent)] sm:p-7">
+        <h2 className="font-display text-lg font-bold text-[var(--text)]">② · Changer de joueur</h2>
+        <p className="mt-1 text-xs font-semibold leading-relaxed text-[var(--muted)]">
           Saisis un prénom, un nom, un pseudo ou une partie d'e-mail : la recherche interroge le service qui héberge les
           comptes joueurs. Dès qu'un joueur est choisi, les blocs « État du jeu » et « Mode intervention » affichent{' '}
-          <strong className="text-[var(--on-cream)]">ses</strong> données.
+          <strong className="text-[var(--text)]">ses</strong> données.
         </p>
 
         <div className="mt-5">
-          <label className="text-[11px] font-black uppercase tracking-[0.12em] text-[var(--muted)]" htmlFor="admin-user-search">
+          <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]" htmlFor="admin-user-search">
             Recherche
           </label>
           <div className="relative mt-2">
@@ -511,7 +509,7 @@ export default function AdminConsoleClient() {
             </span>
             <input
               id="admin-user-search"
-              className="w-full rounded-2xl border-2 border-[color:color-mix(in_srgb,var(--violet)_40%,transparent)] bg-white py-3.5 pl-12 pr-4 text-sm font-semibold text-[var(--text)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)] ring-1 ring-violet-100/90 transition placeholder:font-medium placeholder:text-[var(--muted)] focus:border-violet-400/80 focus:outline-none focus:ring-2 focus:ring-violet-400/35"
+              className="w-full rounded-2xl border border-[var(--border-ui-strong)] bg-[var(--input-bg)] py-3.5 pl-12 pr-4 text-sm text-[var(--text)] transition-colors placeholder:text-[var(--subtle)] focus:border-[var(--violet)] focus:outline-none focus:ring-1 focus:ring-[var(--violet)]"
               placeholder="Au moins 2 caractères…"
               value={userSearchQuery}
               onChange={(e) => {
@@ -525,16 +523,16 @@ export default function AdminConsoleClient() {
             />
           </div>
           {searchLoading ? (
-            <p className="mt-3 flex items-center gap-2 text-xs font-bold text-violet-800/90">
+            <p className="mt-3 flex items-center gap-2 text-xs font-semibold text-[var(--violet)]">
               <span
-                className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-violet-200 border-t-violet-600"
+                className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-[var(--border-ui-strong)] border-t-[var(--violet)]"
                 aria-hidden
               />
               Recherche en cours…
             </p>
           ) : null}
           {searchErr ? (
-            <p className="mt-3 rounded-xl border border-red-200/90 bg-red-50/95 px-3 py-2 text-xs font-bold text-red-900">
+            <p className="mt-3 rounded-xl border border-[var(--red)] bg-[color-mix(in_srgb,var(--red)_7%,var(--card))] px-3 py-2 text-xs font-semibold text-[var(--red)]">
               {searchErr}
             </p>
           ) : null}
@@ -542,18 +540,18 @@ export default function AdminConsoleClient() {
             <p className="mt-3 text-xs font-semibold text-[var(--muted)]">Aucun compte ne correspond.</p>
           ) : null}
           {userSearchQuery.trim().length > 0 && userSearchQuery.trim().length < 2 ? (
-            <p className="mt-2 text-[11px] font-semibold text-[var(--on-cream-subtle)]">
+            <p className="mt-2 text-[11px] font-semibold text-[var(--subtle)]">
               Encore {2 - userSearchQuery.trim().length} caractère{userSearchQuery.trim().length === 1 ? '' : 's'} pour
               lancer la recherche.
             </p>
           ) : null}
           {searchResults.length > 0 ? (
-            <ul className="mt-4 max-h-52 divide-y divide-violet-100 overflow-y-auto rounded-2xl border-2 border-violet-200/80 bg-white shadow-inner">
+            <ul className="mt-4 max-h-52 divide-y divide-[var(--border-ui)] overflow-y-auto rounded-2xl border border-[var(--border-ui-strong)] bg-[var(--card)]">
               {searchResults.map((h) => (
                 <li key={h.clerkId}>
                   <button
                     type="button"
-                    className="flex w-full flex-wrap items-center justify-between gap-2 px-4 py-3 text-left text-sm font-semibold text-[var(--text)] transition hover:bg-violet-50/95 active:bg-violet-100/80"
+                    className="flex w-full flex-wrap items-center justify-between gap-2 px-4 py-3 text-left text-sm font-medium text-[var(--text)] transition-colors hover:bg-[var(--surface)]"
                     onClick={() => {
                       if (!h.hasQuestiaProfile) {
                         setSearchErr(
@@ -579,19 +577,19 @@ export default function AdminConsoleClient() {
         </div>
 
         {profilePreview ? (
-          <pre className="mt-4 max-h-56 overflow-auto rounded-2xl border border-violet-200/80 bg-white/95 p-4 font-mono text-[11px] font-semibold text-violet-950 shadow-inner">
+          <pre className="mt-4 max-h-56 overflow-auto rounded-2xl border border-[var(--border-ui)] bg-[var(--surface)] p-4 font-mono text-[11px] text-[var(--text)]">
             {profilePreview}
           </pre>
         ) : null}
       </section>
 
-      <section className="overflow-hidden rounded-[1.75rem] border-2 border-orange-300/40 bg-gradient-to-br from-[#fffbeb] via-white to-amber-50/30 p-6 shadow-sm sm:p-7">
-        <h2 className="font-display text-lg font-black text-[var(--on-cream)]">③ · État du jeu (temps réel)</h2>
-        <p className="mt-1 text-xs font-semibold text-[var(--on-cream-muted)]">
+      <section className="rounded-[1.75rem] border border-[color:color-mix(in_srgb,var(--orange)_28%,var(--border-ui))] bg-[var(--card)] p-6 shadow-[0_1px_2px_color-mix(in_srgb,var(--text)_6%,transparent)] sm:p-7">
+        <h2 className="font-display text-lg font-bold text-[var(--text)]">③ · État du jeu (temps réel)</h2>
+        <p className="mt-1 text-xs font-semibold text-[var(--muted)]">
           Ces valeurs viennent de la base pour le profil du bandeau — ce sont celles que le mode intervention modifiera
           en dessous.
         </p>
-        <div className="mt-4 space-y-3 rounded-2xl border border-orange-200/70 bg-white/90 p-5 text-sm font-semibold text-[var(--on-cream)] shadow-sm">
+        <div className="mt-4 space-y-3 rounded-2xl border border-[var(--border-ui-strong)] bg-[var(--surface)] p-5 text-sm text-[var(--text)]">
           <div className="flex flex-wrap gap-2">
             <span className="pill-indoor font-mono text-[11px]">
               Compte {d.snapshotScope === 'target' && d.snapshotClerkSuffix ? d.snapshotClerkSuffix : d.adminClerkIdSuffix}
@@ -602,32 +600,32 @@ export default function AdminConsoleClient() {
               {AXE_RISQUE_FR[d.snapshot.riskAxis] ?? d.snapshot.riskAxis}
             </span>
           </div>
-          <p className="leading-relaxed text-[var(--on-cream-muted)]">
-            Jour <strong className="text-[var(--on-cream)]">{d.snapshot.currentDay}</strong> ·{' '}
+          <p className="leading-relaxed text-[var(--muted)]">
+            Jour <strong className="text-[var(--text)]">{d.snapshot.currentDay}</strong> ·{' '}
             <span className={phasePillClass}>{libellePhase(d.snapshot.phase)}</span> · δ {d.snapshot.congruenceDelta} ·{' '}
-            <strong className="text-[var(--on-cream)]">{d.snapshot.totalXp}</strong> XP · charges bonus{' '}
+            <strong className="text-[var(--text)]">{d.snapshot.totalXp}</strong> XP · charges bonus{' '}
             {d.snapshot.xpBonusCharges} · série{' '}
-            <strong className="text-[var(--on-cream)]">{d.snapshot.streak}</strong> ·{' '}
-            <strong className="text-[var(--on-cream)]">{d.snapshot.coins}</strong> QC · relances{' '}
+            <strong className="text-[var(--text)]">{d.snapshot.streak}</strong> ·{' '}
+            <strong className="text-[var(--text)]">{d.snapshot.coins}</strong> QC · relances{' '}
             {d.snapshot.rerollsDaily}+{d.snapshot.rerollsBonus} · thème{' '}
             <span className="font-mono text-xs">{THEME_LIB[d.snapshot.activeThemeId] ?? d.snapshot.activeThemeId}</span>
           </p>
-          <p className="text-xs font-bold text-amber-900/90">
+          <p className="text-xs font-semibold text-[var(--gold)]">
             Raffinement v{d.snapshot.refinementSchemaVersion} · rappel notification{' '}
             {d.snapshot.reminderPushEnabled ? 'activé' : 'désactivé'} · courriel{' '}
             {d.snapshot.reminderEmailEnabled ? 'activé' : 'désactivé'} · {d.snapshot.reminderTimeMinutes} min ·{' '}
             {d.snapshot.reminderTimezone}
           </p>
-          <p className="text-xs font-bold text-amber-900/90">
+          <p className="text-xs font-semibold text-[var(--gold)]">
             Indicateurs : après relance {d.snapshot.flags.nextAfterReroll ? 'oui' : 'non'} · quête instantanée suivante{' '}
             {d.snapshot.flags.nextInstantOnly ? 'oui' : 'non'} · report social le{' '}
             {d.snapshot.flags.deferredSocialUntil ?? '—'}
           </p>
-          <p className="border-t border-dashed border-orange-200/80 pt-3 text-[var(--on-cream-muted)]">
+          <p className="border-t border-dashed border-[var(--border-ui-strong)] pt-3 text-[var(--muted)]">
             Quête du jour :{' '}
             {d.snapshot.questToday ? (
               <>
-                <span className="font-black text-[var(--on-cream)]">
+                <span className="font-bold text-[var(--text)]">
                   {libelleStatutQuete(d.snapshot.questToday.status)}
                 </span>{' '}
                 · archétype {d.snapshot.questToday.archetypeId}
@@ -642,9 +640,9 @@ export default function AdminConsoleClient() {
         </div>
       </section>
 
-      <section className="overflow-hidden rounded-[1.75rem] border-2 border-orange-300/45 bg-gradient-to-br from-white via-amber-50/40 to-cyan-50/40 p-6 shadow-[0_8px_28px_-6px_rgba(249,115,22,0.12)] sm:p-7">
-        <h2 className="font-display text-lg font-black text-gradient-pop">④ · Mode intervention</h2>
-        <p className="mt-2 text-sm font-semibold text-[var(--on-cream-muted)]">
+      <section className="rounded-[1.75rem] border border-[color:color-mix(in_srgb,var(--orange)_28%,var(--border-ui))] bg-[var(--card)] p-6 shadow-[0_1px_2px_color-mix(in_srgb,var(--text)_6%,transparent)] sm:p-7">
+        <h2 className="font-display text-lg font-bold text-[var(--text)]">④ · Mode intervention</h2>
+        <p className="mt-2 text-sm font-semibold text-[var(--muted)]">
           Actions sur le compte « {focusTitle} » (même que le bandeau et l'état du jeu). Pour les cas limites, utilise
           l'interface graphique Prisma.
         </p>
@@ -652,19 +650,19 @@ export default function AdminConsoleClient() {
         {(godBusy || godFeedback) && (
           <output
             aria-live="polite"
-            className={`mt-4 block rounded-2xl border-2 p-4 text-sm shadow-inner ${
+            className={`mt-4 block rounded-2xl border p-4 text-sm ${
               godBusy
-                ? 'border-cyan-300/70 bg-cyan-50/90 text-cyan-950'
+                ? 'border-[var(--border-cyan)] bg-[var(--surface)] text-[var(--text)]'
                 : godFeedback?.tone === 'error'
-                  ? 'border-red-400/80 bg-red-50/95 text-red-950'
-                  : 'border-emerald-400/80 bg-emerald-50/95 text-emerald-950'
+                  ? 'border-[var(--red)] bg-[color-mix(in_srgb,var(--red)_7%,var(--card))] text-[var(--text)]'
+                  : 'border-[var(--green)] bg-[color-mix(in_srgb,var(--green)_8%,var(--card))] text-[var(--text)]'
             }`}
           >
             {godBusy ? (
-              <p className="font-black">Exécution en cours…</p>
+              <p className="font-bold">Exécution en cours…</p>
             ) : godFeedback ? (
               <>
-                <p className="font-display text-xs font-black uppercase tracking-wide text-[var(--muted)]">
+                <p className="font-display text-xs font-bold uppercase tracking-wide text-[var(--muted)]">
                   {godFeedback.tone === 'success' ? 'Succès' : 'Erreur'}
                 </p>
                 <pre className="mt-2 max-h-56 overflow-auto whitespace-pre-wrap break-words font-mono text-xs font-semibold">
@@ -680,7 +678,7 @@ export default function AdminConsoleClient() {
             type="button"
             disabled={godBusy}
             onClick={() => void god({ action: 'reset_quest_flags' })}
-            className="btn btn-ghost btn-md font-black"
+            className="btn btn-ghost btn-md font-bold"
           >
             Réinitialiser les indicateurs de quête
           </button>
@@ -688,7 +686,7 @@ export default function AdminConsoleClient() {
             type="button"
             disabled={godBusy}
             onClick={() => void god({ action: 'delete_today_quest' })}
-            className="btn btn-ghost btn-md font-black"
+            className="btn btn-ghost btn-md font-bold"
           >
             Supprimer la quête du jour
           </button>
@@ -696,7 +694,7 @@ export default function AdminConsoleClient() {
             type="button"
             disabled={godBusy}
             onClick={() => void god({ action: 'reset_last_quest_date' })}
-            className="btn btn-ghost btn-md font-black"
+            className="btn btn-ghost btn-md font-bold"
           >
             Effacer la date de dernière quête
           </button>
@@ -704,7 +702,7 @@ export default function AdminConsoleClient() {
             type="button"
             disabled={godBusy}
             onClick={() => void god({ action: 'reset_refinement' })}
-            className="btn btn-ghost btn-md font-black"
+            className="btn btn-ghost btn-md font-bold"
           >
             Réinitialiser le questionnaire de raffinement
           </button>
@@ -712,7 +710,7 @@ export default function AdminConsoleClient() {
             type="button"
             disabled={godBusy}
             onClick={() => void god({ action: 'reset_badges' })}
-            className="btn btn-ghost btn-md font-black"
+            className="btn btn-ghost btn-md font-bold"
           >
             Réinitialiser les insignes
           </button>
@@ -720,7 +718,7 @@ export default function AdminConsoleClient() {
             type="button"
             disabled={godBusy}
             onClick={() => void god({ action: 'reset_reminder_dates' })}
-            className="btn btn-ghost btn-md font-black"
+            className="btn btn-ghost btn-md font-bold"
           >
             Effacer les dates de derniers rappels
           </button>
@@ -728,30 +726,30 @@ export default function AdminConsoleClient() {
 
         {d.snapshotScope === 'self' ? (
           <>
-            <div className="mt-8 rounded-2xl border-2 border-violet-300/50 bg-gradient-to-br from-violet-50/95 via-white to-cyan-50/40 p-4 sm:p-5">
-              <h3 className="font-display text-base font-black text-violet-950">
+            <div className="mt-8 rounded-2xl border border-[var(--border-cyan)] bg-[var(--surface)] p-4 sm:p-5">
+              <h3 className="font-display text-base font-bold text-[var(--text)]">
                 Annonce modale (app web + mobile)
               </h3>
-              <p className="mt-1 text-xs font-semibold text-violet-900/85">
+              <p className="mt-1 text-xs text-[var(--muted)]">
                 Une modale s’affiche une fois par identifiant d’annonce à l’ouverture de l’espace connecté (web) ou au
                 lancement de l’app (mobile). Cocher « Nouvel ID » pour forcer l’affichage chez tout le monde après une
                 mise à jour.
               </p>
               {annLoadedId ? (
-                <p className="mt-2 font-mono text-[11px] font-semibold text-violet-800/80">
+                <p className="mt-2 font-mono text-[11px] text-[var(--muted)]">
                   ID courant : {annLoadedId}
                 </p>
               ) : null}
-              <label className="mt-4 flex cursor-pointer items-center gap-2 text-sm font-bold text-violet-950">
+              <label className="mt-4 flex cursor-pointer items-center gap-2 text-sm font-medium text-[var(--text)]">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 accent-violet-600"
+                  className="h-4 w-4 accent-[var(--violet)]"
                   checked={annEnabled}
                   onChange={(e) => setAnnEnabled(e.target.checked)}
                 />
                 Annonce active
               </label>
-              <label className="mt-3 block text-xs font-bold text-[var(--on-cream-muted)]">
+              <label className="mt-3 carnet-eyebrow block">
                 Titre
                 <input
                   className={`${inputClass} mt-1 w-full`}
@@ -761,7 +759,7 @@ export default function AdminConsoleClient() {
                   placeholder="Ex. Nouveautés Questia"
                 />
               </label>
-              <label className="mt-3 block text-xs font-bold text-[var(--on-cream-muted)]">
+              <label className="mt-3 carnet-eyebrow block">
                 Corps (texte brut, retours à la ligne conservés)
                 <textarea
                   className={`${textareaClass} mt-1 w-full`}
@@ -773,7 +771,7 @@ export default function AdminConsoleClient() {
                 />
               </label>
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <label className="block text-xs font-bold text-[var(--on-cream-muted)]">
+                <label className="carnet-eyebrow block">
                   Début (optionnel, heure locale)
                   <input
                     type="datetime-local"
@@ -782,7 +780,7 @@ export default function AdminConsoleClient() {
                     onChange={(e) => setAnnStartsAtLocal(e.target.value)}
                   />
                 </label>
-                <label className="block text-xs font-bold text-[var(--on-cream-muted)]">
+                <label className="carnet-eyebrow block">
                   Fin (optionnel)
                   <input
                     type="datetime-local"
@@ -792,40 +790,40 @@ export default function AdminConsoleClient() {
                   />
                 </label>
               </div>
-              <p className="mt-3 text-xs font-bold text-violet-900/80">Plateformes</p>
+              <p className="mt-3 carnet-eyebrow">Plateformes</p>
               <div className="mt-2 flex flex-wrap gap-4">
-                <label className="flex cursor-pointer items-center gap-2 text-sm font-bold text-violet-950">
+                <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-[var(--text)]">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 accent-violet-600"
+                    className="h-4 w-4 accent-[var(--violet)]"
                     checked={annPlatWeb}
                     onChange={(e) => setAnnPlatWeb(e.target.checked)}
                   />
                   Web
                 </label>
-                <label className="flex cursor-pointer items-center gap-2 text-sm font-bold text-violet-950">
+                <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-[var(--text)]">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 accent-violet-600"
+                    className="h-4 w-4 accent-[var(--violet)]"
                     checked={annPlatIos}
                     onChange={(e) => setAnnPlatIos(e.target.checked)}
                   />
                   iOS
                 </label>
-                <label className="flex cursor-pointer items-center gap-2 text-sm font-bold text-violet-950">
+                <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-[var(--text)]">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 accent-violet-600"
+                    className="h-4 w-4 accent-[var(--violet)]"
                     checked={annPlatAndroid}
                     onChange={(e) => setAnnPlatAndroid(e.target.checked)}
                   />
                   Android
                 </label>
               </div>
-              <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-violet-200/80 bg-white/80 p-3 text-sm font-bold text-violet-950">
+              <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--border-ui-strong)] bg-[var(--card)] p-3 text-sm font-semibold text-[var(--text)]">
                 <input
                   type="checkbox"
-                  className="mt-1 h-4 w-4 shrink-0 accent-violet-600"
+                  className="mt-1 h-4 w-4 shrink-0 accent-[var(--violet)]"
                   checked={annRenewId}
                   onChange={(e) => setAnnRenewId(e.target.checked)}
                 />
@@ -838,28 +836,28 @@ export default function AdminConsoleClient() {
                 type="button"
                 disabled={annBusy || godBusy || broadcastBusy}
                 onClick={() => void saveAnnouncement()}
-                className="btn btn-md mt-4 w-full border-2 border-violet-400/70 bg-violet-600 font-black text-white hover:bg-violet-700 sm:w-auto"
+                className="btn btn-primary btn-md mt-4 w-full sm:w-auto"
               >
                 Enregistrer l’annonce
               </button>
               {annMsg ? (
-                <pre className="mt-4 max-h-48 overflow-auto rounded-xl border border-violet-200/60 bg-black/5 p-3 text-xs font-mono text-violet-950">
+                <pre className="mt-4 max-h-48 overflow-auto rounded-xl border border-[var(--border-ui)] bg-[var(--surface)] p-3 text-xs font-mono text-[var(--text)]">
                   {annMsg}
                 </pre>
               ) : null}
             </div>
 
-            <div className="mt-8 rounded-2xl border-2 border-red-300/50 bg-gradient-to-br from-red-50/90 via-white to-amber-50/50 p-4 sm:p-5">
-            <h3 className="font-display text-base font-black text-red-900">Diffusion globale (tous les comptes)</h3>
-            <p className="mt-1 text-xs font-semibold text-red-900/80">
+            <div className="mt-8 rounded-2xl border border-[var(--red)] bg-[color-mix(in_srgb,var(--red)_6%,var(--card))] p-4 sm:p-5">
+            <h3 className="font-display text-base font-bold text-[var(--red)]">Diffusion globale (tous les comptes)</h3>
+            <p className="mt-1 text-xs text-[var(--muted)]">
               Push : chaque jeton Expo distinct en base (~{d.pushDevicesCount} appareils). E-mail : une lettre par
               adresse Clerk unique pour chaque profil (~{d.totalProfiles} profils). Peut prendre du temps ; prévoir
               limites Vercel / Resend / Clerk sur les gros volumes.
             </p>
-            <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-red-200/80 bg-white/80 p-3 text-sm font-bold text-red-950">
+            <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--red)] bg-[var(--card)] p-3 text-sm font-semibold text-[var(--text)]">
               <input
                 type="checkbox"
-                className="mt-1 h-4 w-4 shrink-0 accent-red-600"
+                className="mt-1 h-4 w-4 shrink-0 accent-[var(--red)]"
                 checked={globalBroadcastConfirm}
                 onChange={(e) => setGlobalBroadcastConfirm(e.target.checked)}
               />
@@ -869,9 +867,9 @@ export default function AdminConsoleClient() {
               </span>
             </label>
             <div className="mt-4 grid gap-4 lg:grid-cols-2">
-              <div className="space-y-2 rounded-xl border border-cyan-200/60 bg-white/90 p-3">
-                <p className="text-xs font-black uppercase tracking-wide text-cyan-900/80">Push — tous les appareils</p>
-                <label className="block text-xs font-bold text-[var(--on-cream-muted)]">
+              <div className="space-y-2 rounded-xl border border-[var(--border-cyan)] bg-[var(--card)] p-3">
+                <p className="carnet-eyebrow">Push — tous les appareils</p>
+                <label className="carnet-eyebrow block">
                   Titre
                   <input
                     className={`${inputClass} mt-1 w-full`}
@@ -880,7 +878,7 @@ export default function AdminConsoleClient() {
                     maxLength={100}
                   />
                 </label>
-                <label className="block text-xs font-bold text-[var(--on-cream-muted)]">
+                <label className="carnet-eyebrow block">
                   Corps
                   <textarea
                     className={`${textareaClass} mt-1 w-full`}
@@ -894,14 +892,14 @@ export default function AdminConsoleClient() {
                   type="button"
                   disabled={broadcastBusy || godBusy}
                   onClick={() => void broadcastGlobal('push')}
-                  className="btn btn-md w-full border-2 border-red-400/70 bg-red-600 font-black text-white hover:bg-red-700"
+                  className="btn btn-md w-full border border-[var(--red)] bg-[var(--red)] text-[var(--card)] transition-opacity duration-200 hover:opacity-90"
                 >
                   Diffuser le push à tout le monde
                 </button>
               </div>
-              <div className="space-y-2 rounded-xl border border-amber-200/60 bg-white/90 p-3">
-                <p className="text-xs font-black uppercase tracking-wide text-amber-900/80">E-mail — toutes les adresses</p>
-                <label className="block text-xs font-bold text-[var(--on-cream-muted)]">
+              <div className="space-y-2 rounded-xl border border-[var(--gold)] bg-[var(--card)] p-3">
+                <p className="carnet-eyebrow">E-mail — toutes les adresses</p>
+                <label className="carnet-eyebrow block">
                   Objet
                   <input
                     className={`${inputClass} mt-1 w-full`}
@@ -910,7 +908,7 @@ export default function AdminConsoleClient() {
                     maxLength={200}
                   />
                 </label>
-                <label className="block text-xs font-bold text-[var(--on-cream-muted)]">
+                <label className="carnet-eyebrow block">
                   Corps (texte)
                   <textarea
                     className={`${textareaClass} mt-1 w-full`}
@@ -924,14 +922,14 @@ export default function AdminConsoleClient() {
                   type="button"
                   disabled={broadcastBusy || godBusy}
                   onClick={() => void broadcastGlobal('email')}
-                  className="btn btn-md w-full border-2 border-red-400/70 bg-red-600 font-black text-white hover:bg-red-700"
+                  className="btn btn-md w-full border border-[var(--red)] bg-[var(--red)] text-[var(--card)] transition-opacity duration-200 hover:opacity-90"
                 >
                   Diffuser l’e-mail à tout le monde
                 </button>
               </div>
             </div>
             {broadcastMsg ? (
-              <pre className="mt-4 max-h-48 overflow-auto rounded-xl border border-red-200/60 bg-black/5 p-3 text-xs font-mono text-red-950">
+              <pre className="mt-4 max-h-48 overflow-auto rounded-xl border border-[var(--border-ui)] bg-[var(--surface)] p-3 text-xs font-mono text-[var(--text)]">
                 {broadcastMsg}
               </pre>
             ) : null}
@@ -940,27 +938,27 @@ export default function AdminConsoleClient() {
         ) : null}
 
         {d.snapshotScope === 'target' || d.snapshotScope === 'self' ? (
-          <div className="mt-8 rounded-2xl border-2 border-dashed border-cyan-400/40 bg-white/70 p-4 sm:p-5">
-            <h3 className="font-display text-base font-black text-[var(--on-cream)]">
+          <div className="mt-8 rounded-2xl border border-dashed border-[var(--border-cyan)] bg-[var(--surface)] p-4 sm:p-5">
+            <h3 className="font-display text-base font-bold text-[var(--text)]">
               {d.snapshotScope === 'target' ? 'Message personnalisé au joueur' : 'Message personnalisé (test sur toi)'}
             </h3>
-            <p className="mt-1 text-xs font-semibold text-[var(--on-cream-muted)]">
+            <p className="mt-1 text-xs font-semibold text-[var(--muted)]">
               {d.snapshotScope === 'target' ? (
                 <>
-                  Prise de compte : <strong className="text-[var(--on-cream)]">{focusTitle}</strong>. Push = appareils
+                  Prise de compte : <strong className="text-[var(--text)]">{focusTitle}</strong>. Push = appareils
                   enregistrés pour ce profil ; e-mail = adresse Clerk via Resend.
                 </>
               ) : (
                 <>
-                  Tu es sur <strong className="text-[var(--on-cream)]">ton compte admin</strong> : tu peux t’envoyer un
+                  Tu es sur <strong className="text-[var(--text)]">ton compte admin</strong> : tu peux t’envoyer un
                   push / un e-mail pour tester, sans sélectionner un autre joueur.
                 </>
               )}
             </p>
             <div className="mt-4 grid gap-4 lg:grid-cols-2">
-              <div className="space-y-2 rounded-xl border border-cyan-200/60 bg-cyan-50/30 p-3">
-                <p className="text-xs font-black uppercase tracking-wide text-cyan-900/80">Notification push</p>
-                <label className="block text-xs font-bold text-[var(--on-cream-muted)]">
+              <div className="space-y-2 rounded-xl border border-[var(--border-cyan)] bg-[var(--surface)] p-3">
+                <p className="carnet-eyebrow">Notification push</p>
+                <label className="carnet-eyebrow block">
                   Titre
                   <input
                     className={`${inputClass} mt-1 w-full`}
@@ -969,7 +967,7 @@ export default function AdminConsoleClient() {
                     maxLength={100}
                   />
                 </label>
-                <label className="block text-xs font-bold text-[var(--on-cream-muted)]">
+                <label className="carnet-eyebrow block">
                   Corps
                   <textarea
                     className={`${textareaClass} mt-1 w-full`}
@@ -990,14 +988,14 @@ export default function AdminConsoleClient() {
                       pushBody: manualPushBody.trim(),
                     })
                   }
-                  className="btn btn-primary btn-md w-full font-black"
+                  className="btn btn-primary btn-md w-full font-bold"
                 >
                   Envoyer le push
                 </button>
               </div>
-              <div className="space-y-2 rounded-xl border border-amber-200/60 bg-amber-50/30 p-3">
-                <p className="text-xs font-black uppercase tracking-wide text-amber-900/80">Courriel</p>
-                <label className="block text-xs font-bold text-[var(--on-cream-muted)]">
+              <div className="space-y-2 rounded-xl border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_6%,var(--card))] p-3">
+                <p className="carnet-eyebrow">Courriel</p>
+                <label className="carnet-eyebrow block">
                   Objet
                   <input
                     className={`${inputClass} mt-1 w-full`}
@@ -1006,7 +1004,7 @@ export default function AdminConsoleClient() {
                     maxLength={200}
                   />
                 </label>
-                <label className="block text-xs font-bold text-[var(--on-cream-muted)]">
+                <label className="carnet-eyebrow block">
                   Corps (texte — retours à la ligne conservés)
                   <textarea
                     className={`${textareaClass} mt-1 w-full`}
@@ -1027,7 +1025,7 @@ export default function AdminConsoleClient() {
                       emailText: manualEmailText.trim(),
                     })
                   }
-                  className="btn btn-primary btn-md w-full font-black"
+                  className="btn btn-primary btn-md w-full font-bold"
                 >
                   Envoyer l’e-mail
                 </button>
@@ -1043,7 +1041,7 @@ export default function AdminConsoleClient() {
               type="button"
               disabled={godBusy}
               onClick={() => void god({ action: 'grant_coins', amount: Number(coinsAmount) })}
-              className="btn btn-primary btn-md shrink-0 font-black"
+              className="btn btn-primary btn-md shrink-0 font-bold"
             >
               Appliquer
             </button>
@@ -1071,7 +1069,7 @@ export default function AdminConsoleClient() {
                   bonus: Number(rerollBonus),
                 })
               }
-              className="btn btn-primary btn-md shrink-0 font-black"
+              className="btn btn-primary btn-md shrink-0 font-bold"
             >
               Appliquer
             </button>
@@ -1082,7 +1080,7 @@ export default function AdminConsoleClient() {
               type="button"
               disabled={godBusy}
               onClick={() => void god({ action: 'set_streak', streak: Number(streakVal) })}
-              className="btn btn-primary btn-md shrink-0 font-black"
+              className="btn btn-primary btn-md shrink-0 font-bold"
             >
               Appliquer
             </button>
@@ -1093,7 +1091,7 @@ export default function AdminConsoleClient() {
               type="button"
               disabled={godBusy}
               onClick={() => void god({ action: 'set_total_xp', totalXp: Number(xpVal) })}
-              className="btn btn-primary btn-md shrink-0 font-black"
+              className="btn btn-primary btn-md shrink-0 font-bold"
             >
               Appliquer
             </button>
@@ -1104,7 +1102,7 @@ export default function AdminConsoleClient() {
               type="button"
               disabled={godBusy}
               onClick={() => void god({ action: 'set_xp_bonus_charges', xpBonusCharges: Number(xpBonusVal) })}
-              className="btn btn-primary btn-md shrink-0 font-black"
+              className="btn btn-primary btn-md shrink-0 font-bold"
             >
               Appliquer
             </button>
@@ -1120,7 +1118,7 @@ export default function AdminConsoleClient() {
               type="button"
               disabled={godBusy}
               onClick={() => void god({ action: 'set_congruence_delta', congruenceDelta: Number(congruenceVal) })}
-              className="btn btn-primary btn-md shrink-0 font-black"
+              className="btn btn-primary btn-md shrink-0 font-bold"
             >
               Appliquer
             </button>
@@ -1152,7 +1150,7 @@ export default function AdminConsoleClient() {
                     currentPhase: phaseVal,
                   })
                 }
-                className="btn btn-cta btn-md shrink-0 font-black"
+                className="btn btn-cta btn-md shrink-0 font-bold"
               >
                 Appliquer
               </button>
@@ -1180,7 +1178,7 @@ export default function AdminConsoleClient() {
                 type="button"
                 disabled={godBusy}
                 onClick={() => void god({ action: 'set_explorer_risk', explorerAxis, riskAxis })}
-                className="btn btn-primary btn-md shrink-0 font-black"
+                className="btn btn-primary btn-md shrink-0 font-bold"
               >
                 Appliquer
               </button>
@@ -1188,7 +1186,7 @@ export default function AdminConsoleClient() {
           </div>
         </div>
 
-        <h3 className="mt-10 font-display text-sm font-black uppercase tracking-[0.12em] text-[var(--muted)]">Insignes</h3>
+        <h3 className="mt-10 font-display text-sm font-bold uppercase tracking-[0.12em] text-[var(--muted)]">Insignes</h3>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <select
             className={`${inputClass} !w-auto max-w-[min(100%,20rem)]`}
@@ -1205,13 +1203,13 @@ export default function AdminConsoleClient() {
             type="button"
             disabled={godBusy}
             onClick={() => void god({ action: 'grant_badge', badgeId: badgeGrantId })}
-            className="btn btn-primary btn-md font-black"
+            className="btn btn-primary btn-md font-bold"
           >
             Attribuer l'insigne
           </button>
         </div>
         <div className="mt-4">
-          <label className="text-[11px] font-black uppercase tracking-[0.12em] text-[var(--muted)]">
+          <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
             Tableau d'insignes (saisie avancée, format structuré)
           </label>
           <textarea
@@ -1222,7 +1220,7 @@ export default function AdminConsoleClient() {
           <button
             type="button"
             disabled={godBusy}
-            className="btn btn-ghost btn-sm mt-2 font-black"
+            className="btn btn-ghost btn-sm mt-2 font-bold"
             onClick={() => {
               try {
                 const parsed = JSON.parse(badgesJson) as unknown;
@@ -1236,7 +1234,7 @@ export default function AdminConsoleClient() {
           </button>
         </div>
 
-        <h3 className="mt-10 font-display text-sm font-black uppercase tracking-[0.12em] text-[var(--muted)]">Thèmes</h3>
+        <h3 className="mt-10 font-display text-sm font-bold uppercase tracking-[0.12em] text-[var(--muted)]">Thèmes</h3>
         <div className="mt-3 flex flex-wrap gap-2">
           <select className={`${inputClass} !w-auto`} value={themePick} onChange={(e) => setThemePick(e.target.value)}>
             {THEME_IDS.map((t) => (
@@ -1245,14 +1243,14 @@ export default function AdminConsoleClient() {
               </option>
             ))}
           </select>
-          <button type="button" disabled={godBusy} onClick={() => void god({ action: 'set_active_theme', themeId: themePick })} className="btn btn-primary btn-md font-black">
+          <button type="button" disabled={godBusy} onClick={() => void god({ action: 'set_active_theme', themeId: themePick })} className="btn btn-primary btn-md font-bold">
             Actif + possédé
           </button>
-          <button type="button" disabled={godBusy} onClick={() => void god({ action: 'add_owned_theme', themeId: themePick })} className="btn btn-ghost btn-md font-black">
+          <button type="button" disabled={godBusy} onClick={() => void god({ action: 'add_owned_theme', themeId: themePick })} className="btn btn-ghost btn-md font-bold">
             + possédé
           </button>
         </div>
-        <p className="mt-3 text-xs font-semibold text-[var(--on-cream-muted)]">
+        <p className="mt-3 text-xs font-semibold text-[var(--muted)]">
           Possédés complets :{' '}
           <button
             type="button"
@@ -1264,7 +1262,7 @@ export default function AdminConsoleClient() {
           </button>
         </p>
 
-        <h3 className="mt-10 font-display text-sm font-black uppercase tracking-[0.12em] text-[var(--muted)]">Titres boutique</h3>
+        <h3 className="mt-10 font-display text-sm font-bold uppercase tracking-[0.12em] text-[var(--muted)]">Titres boutique</h3>
         <GodField label="Identifiants de titres (séparés par des virgules)">
           <input
             className={inputClass}
@@ -1282,7 +1280,7 @@ export default function AdminConsoleClient() {
                 .filter(Boolean);
               void god({ action: 'set_owned_titles', ownedTitleIds: ids });
             }}
-            className="btn btn-primary btn-md shrink-0 font-black"
+            className="btn btn-primary btn-md shrink-0 font-bold"
           >
             Enregistrer les titres possédés
           </button>
@@ -1303,13 +1301,13 @@ export default function AdminConsoleClient() {
             type="button"
             disabled={godBusy}
             onClick={() => void god({ action: 'set_equipped_title', equippedTitleId: equipTitle || null })}
-            className="btn btn-primary btn-md shrink-0 font-black"
+            className="btn btn-primary btn-md shrink-0 font-bold"
           >
             Appliquer
           </button>
         </GodField>
 
-        <h3 className="mt-10 font-display text-sm font-black uppercase tracking-[0.12em] text-[var(--muted)]">Rappels</h3>
+        <h3 className="mt-10 font-display text-sm font-bold uppercase tracking-[0.12em] text-[var(--muted)]">Rappels</h3>
         <div className="mt-3 flex flex-wrap items-center gap-4 text-sm font-semibold">
           <label className="flex items-center gap-2">
             <input type="checkbox" checked={remPush} onChange={(e) => setRemPush(e.target.checked)} /> Notification push
@@ -1331,13 +1329,13 @@ export default function AdminConsoleClient() {
                 reminderTimezone: remTz,
               })
             }
-            className="btn btn-primary btn-md font-black"
+            className="btn btn-primary btn-md font-bold"
           >
             Appliquer rappels
           </button>
         </div>
 
-        <h3 className="mt-10 font-display text-sm font-black uppercase tracking-[0.12em] text-[var(--muted)]">Quête du jour (ligne existante)</h3>
+        <h3 className="mt-10 font-display text-sm font-bold uppercase tracking-[0.12em] text-[var(--muted)]">Quête du jour (ligne existante)</h3>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <select
             className={`${inputClass} !w-auto`}
@@ -1355,20 +1353,20 @@ export default function AdminConsoleClient() {
             type="button"
             disabled={godBusy}
             onClick={() => void god({ action: 'set_quest_status', questStatus: questStatusPick })}
-            className="btn btn-cta btn-md font-black"
+            className="btn btn-cta btn-md font-bold"
           >
             Forcer statut
           </button>
         </div>
 
-        <p className="mt-6 text-xs font-medium text-[var(--on-cream-subtle)]">
+        <p className="mt-6 text-xs font-medium text-[var(--subtle)]">
           Accès réservé aux comptes avec le rôle administrateur en base de données (interface graphique Prisma ou
           requête directe) — aucune variable d'environnement pour ce rôle.
         </p>
       </section>
 
       {err && data ? (
-        <p className="rounded-xl border border-amber-300/80 bg-amber-50/95 px-4 py-3 text-sm font-semibold text-amber-950">
+        <p className="rounded-xl border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_8%,var(--card))] px-4 py-3 text-sm text-[var(--text)]">
           {err}
         </p>
       ) : null}
@@ -1379,7 +1377,7 @@ export default function AdminConsoleClient() {
 function GodField({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="rounded-2xl border border-[color:color-mix(in_srgb,var(--orange)_35%,transparent)] bg-white/95 p-4 shadow-sm">
-      <label className="text-[11px] font-black uppercase tracking-[0.12em] text-[var(--muted)]">{label}</label>
+      <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">{label}</label>
       <div className="mt-3 flex flex-wrap items-center gap-2">{children}</div>
     </div>
   );

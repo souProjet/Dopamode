@@ -124,7 +124,8 @@ export function buildQuestParameters(
     const freshness = computeFreshnessScore(archetype, profile.recentLogs, taxonomyById);
     const refinementBias = profile.refinementBias[archetype.category] ?? 0;
     const packBias = profile.questPackBias?.[archetype.category] ?? 0;
-    const combinedBias = Math.max(-0.3, Math.min(0.3, refinementBias + packBias));
+    const capBias = profile.capBias?.[archetype.category] ?? 0;
+    const combinedBias = Math.max(-0.3, Math.min(0.3, refinementBias + packBias + capBias));
     const refinement = Math.max(0, Math.min(1, 0.5 + combinedBias * 3));
 
     const baseTotal =

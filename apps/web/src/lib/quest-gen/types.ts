@@ -1,5 +1,6 @@
 import type {
   AppLocale,
+  CapState,
   EscalationPhase,
   ExplorerAxis,
   HeavyQuestPreference,
@@ -35,6 +36,11 @@ export interface QuestGenInput {
   isReroll?: boolean;
   /** Mode après report : exiger une quête 100% faisable aujourd'hui. */
   substitutedInstantAfterDefer?: boolean;
+  /**
+   * Cap en cours : la quête du jour devient une étape de l'objectif long.
+   * Null / absent = génération inchangée.
+   */
+  capState?: CapState | null;
 }
 
 export interface GenerationProfile {

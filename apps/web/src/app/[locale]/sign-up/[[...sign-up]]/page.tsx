@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { SignUp } from '@clerk/nextjs';
 import { Link } from '@/i18n/navigation';
-import { Icon } from '@/components/Icons';
 import { AuthQuestShell } from '@/components/AuthQuestShell';
 import { clerkAuthAppearance } from '@/lib/clerk-auth-appearance';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -33,19 +32,15 @@ export default async function SignUpPage({
 
   return (
     <AuthQuestShell
-      badge={
-        <>
-          <Icon name="Rocket" size="sm" className="inline-block shrink-0 text-orange-700/95" aria-hidden /> {t('badge')}
-        </>
-      }
+      eyebrow={t('badge')}
       title={t('title')}
       subtitle={t('subtitle')}
       footer={
-        <p className="text-center text-sm text-slate-500">
+        <p className="text-sm text-[var(--muted)]">
           {t('footerPrompt')}{' '}
           <Link
             href="/sign-in"
-            className="font-bold text-cyan-700 hover:text-orange-600 underline decoration-cyan-300/50 underline-offset-[0.2em] transition-colors duration-200"
+            className="font-medium text-[var(--link-on-bg)] underline decoration-[color:color-mix(in_srgb,var(--link-on-bg)_35%,transparent)] underline-offset-[0.2em] transition-colors duration-200 hover:text-[var(--text)]"
           >
             {t('footerLink')}
           </Link>

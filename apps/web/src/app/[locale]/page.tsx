@@ -2,10 +2,10 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { Navbar } from '@/components/Navbar';
-import { QuestiaLogo } from '@/components/QuestiaLogo';
 import { QuestExamplesSlider, type ExampleQuestSlide } from '@/components/QuestExamplesSlider';
 import { AppStoreButtons } from '@/components/AppStoreButtons';
 import { LandingJsonLd } from '@/components/LandingJsonLd';
+import { SiteFooter } from '@/components/SiteFooter';
 import { hasAnyStoreLink, storeAvailability } from '@/config/marketing';
 import { canonicalUrlFor } from '@/lib/seo/alternates';
 
@@ -179,7 +179,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   aria-label={t('hero.examplesAsideLabel')}
                 >
                   <p className="carnet-eyebrow mb-3">{t('hero.examplesCaption')}</p>
-                  <QuestExamplesSlider quests={EXAMPLE_QUESTS} variant="embedded" nestedInPanel />
+                  <QuestExamplesSlider quests={EXAMPLE_QUESTS} />
                 </aside>
               </div>
 
@@ -337,70 +337,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </section>
         </main>
 
-        <footer className="landing-footer">
-          <div className={`${SHELL} py-12 sm:py-14`}>
-            <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between md:gap-12">
-              <div className="max-w-sm">
-                <div className="flex items-center gap-3">
-                  <QuestiaLogo variant="footer" />
-                  <p className="font-display text-lg font-semibold tracking-tight text-[var(--text)]">
-                    Questia
-                  </p>
-                </div>
-                <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">
-                  {t('footer.tagline')}
-                </p>
-              </div>
-              <nav
-                className="grid min-w-0 grid-cols-2 gap-x-8 gap-y-2.5 text-sm text-[var(--muted)] sm:grid-cols-3"
-                aria-label={t('footer.navLabel')}
-              >
-                <a href="#principe" className="transition-colors hover:text-[var(--text)]">
-                  {t('footer.how')}
-                </a>
-                <a href="#hero-examples" className="transition-colors hover:text-[var(--text)]">
-                  {t('footer.examples')}
-                </a>
-                <a href="#telecharger" className="transition-colors hover:text-[var(--text)]">
-                  {storesReady ? t('footer.download') : t('footer.downloadWeb')}
-                </a>
-                <a href="#faq" className="transition-colors hover:text-[var(--text)]">
-                  {t('footer.faq')}
-                </a>
-                <Link href="/generation-quetes" className="transition-colors hover:text-[var(--text)]">
-                  {t('footer.questGeneration')}
-                </Link>
-                <Link href="/sign-in" className="transition-colors hover:text-[var(--text)]">
-                  {t('footer.signIn')}
-                </Link>
-                <Link
-                  href="/legal/confidentialite"
-                  className="transition-colors hover:text-[var(--text)]"
-                >
-                  {t('footer.privacy')}
-                </Link>
-                <Link
-                  href="/legal/mentions-legales"
-                  className="transition-colors hover:text-[var(--text)]"
-                >
-                  {t('footer.legal')}
-                </Link>
-                <Link href="/legal/cgu" className="transition-colors hover:text-[var(--text)]">
-                  {t('footer.terms')}
-                </Link>
-                <Link href="/legal/cgv" className="transition-colors hover:text-[var(--text)]">
-                  {t('footer.sales')}
-                </Link>
-                <Link href="/legal/bien-etre" className="transition-colors hover:text-[var(--text)]">
-                  {t('footer.wellbeing')}
-                </Link>
-              </nav>
-            </div>
-            <p className="carnet-rule mt-12 pt-7 text-xs text-[var(--subtle)]">
-              {t('footer.copyright', { year: new Date().getFullYear() })}
-            </p>
-          </div>
-        </footer>
+        <SiteFooter />
       </div>
     </div>
   );

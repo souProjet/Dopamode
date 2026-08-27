@@ -115,16 +115,16 @@ export function ProfileRefinementModal({
         <div className="flex flex-col flex-1 min-h-0 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
           <div className="flex items-start justify-between gap-3 mb-4">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-100/90 to-amber-50/90 border border-cyan-200/30 shadow-[0_8px_24px_rgba(34,211,238,.12)]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--border-cyan)] bg-[color-mix(in_srgb,var(--violet)_8%,var(--card))]">
                 <Icon name="Sparkles" size="lg" className="text-[#0e7490]" />
               </div>
               <div className="min-w-0">
-                <p className="text-[11px] font-bold text-[var(--on-cream-muted)] tracking-wider uppercase truncate">
+                <p className="text-[11px] font-bold text-[var(--muted)] tracking-wider uppercase truncate">
                   Personnalisation
                 </p>
                 <h2
                   id={titleId}
-                  className="font-display font-black text-lg sm:text-xl text-gradient-pop leading-tight truncate"
+                  className="font-display font-bold text-lg sm:text-xl text-gradient-pop leading-tight truncate"
                 >
                   Tes préférences
                 </h2>
@@ -134,18 +134,18 @@ export function ProfileRefinementModal({
               type="button"
               onClick={() => void skip()}
               disabled={submitting}
-              className="shrink-0 text-xs font-semibold text-[var(--link-on-bg)] underline underline-offset-2 decoration-cyan-400/50 hover:opacity-90 disabled:opacity-40"
+              className="shrink-0 text-xs font-semibold text-[var(--link-on-bg)] underline underline-offset-2 decoration-[color:color-mix(in_srgb,var(--link-on-bg)_35%,transparent)] hover:opacity-90 disabled:opacity-40"
             >
               Plus tard
             </button>
           </div>
 
           <div className="mb-4">
-            <div className="flex justify-between text-[11px] font-semibold text-[var(--on-cream-muted)] mb-1.5">
+            <div className="flex justify-between text-[11px] font-semibold text-[var(--muted)] mb-1.5">
               <span>
                 {isConsentStep ? 'Dernière étape' : `Étape ${step + 1} sur ${totalSteps}`}
               </span>
-              <span className="tabular-nums text-[var(--on-cream)]">
+              <span className="tabular-nums text-[var(--text)]">
                 {step + 1} / {totalSteps}
               </span>
             </div>
@@ -154,7 +154,7 @@ export function ProfileRefinementModal({
               style={{ background: 'var(--progress-track)' }}
             >
               <div
-                className="h-full rounded-full bg-gradient-to-r from-cyan-500 via-teal-500 to-amber-400 transition-[width] duration-400 ease-out"
+                className="h-full rounded-full bg-[var(--violet)] transition-[width] duration-400 ease-out"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
@@ -164,16 +164,16 @@ export function ProfileRefinementModal({
             {!isConsentStep && currentQuestion ? (
               <div
                 key={currentQuestion.id}
-                className="motion-safe:animate-modal-fade motion-reduce:animate-none rounded-2xl p-4 sm:p-5 border border-[var(--border-ui)] bg-gradient-to-br from-white/95 via-white/90 to-cyan-50/35 shadow-[inset_0_1px_0_rgba(255,255,255,.9)]"
+                className="motion-safe:animate-modal-fade motion-reduce:animate-none rounded-2xl p-4 sm:p-5 border border-[var(--border-ui)] bg-[var(--card)] shadow-[inset_0_1px_0_rgba(255,255,255,.9)]"
               >
-                <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-cyan-800/80 bg-cyan-100/70 px-2 py-0.5 rounded-full border border-cyan-200/40 mb-3">
+                <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[var(--violet)] bg-[color-mix(in_srgb,var(--violet)_10%,transparent)] px-2 py-0.5 rounded-full border border-[var(--border-cyan)] mb-3">
                   Question {step + 1}
                 </span>
-                <p className="text-base sm:text-[17px] font-semibold text-[var(--on-cream)] leading-snug mb-2">
+                <p className="text-base sm:text-[17px] font-semibold text-[var(--text)] leading-snug mb-2">
                   {currentQuestion.prompt}
                 </p>
                 {currentQuestion.helpText ? (
-                  <p className="text-xs text-[var(--on-cream-muted)] mb-4 leading-relaxed">
+                  <p className="text-xs text-[var(--muted)] mb-4 leading-relaxed">
                     {currentQuestion.helpText}
                   </p>
                 ) : (
@@ -189,17 +189,17 @@ export function ProfileRefinementModal({
                         onClick={() => pickOption(currentQuestion.id, opt.id, step)}
                         className={[
                           'text-left text-sm px-4 py-3 rounded-xl border transition-all duration-200',
-                          'focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2',
+                          'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--violet)] focus-visible:ring-offset-2',
                           sel
-                            ? 'border-cyan-400/70 bg-gradient-to-br from-cyan-50/95 to-amber-50/50 text-[var(--on-cream)] shadow-[0_4px_14px_rgba(34,211,238,.18)] ring-1 ring-cyan-300/30'
-                            : 'border-[var(--border-ui)] bg-white/70 text-[var(--on-cream-muted)] hover:border-cyan-300/45 hover:bg-white/95 active:scale-[0.99]',
+                            ? 'border-[var(--border-cyan)] bg-[color-mix(in_srgb,var(--violet)_8%,var(--card))] text-[var(--text)]'
+                            : 'border-[var(--border-ui)] bg-[var(--card)] text-[var(--muted)] hover:border-[var(--border-cyan)] hover:bg-[var(--surface)]',
                         ].join(' ')}
                       >
                         <span className="flex items-start gap-3">
                           <span
                             className={[
                               'mt-0.5 flex h-5 w-5 shrink-0 rounded-full border-2 items-center justify-center',
-                              sel ? 'border-cyan-500 bg-cyan-500' : 'border-[var(--border-ui-strong)] bg-white',
+                              sel ? 'border-[var(--violet)] bg-[var(--violet)]' : 'border-[var(--border-ui-strong)] bg-[var(--input-bg)]',
                             ].join(' ')}
                           >
                             {sel ? <Icon name="Check" size="xs" className="text-white" /> : null}
@@ -210,23 +210,23 @@ export function ProfileRefinementModal({
                     );
                   })}
                 </div>
-                <p className="text-[11px] text-center text-[var(--on-cream-subtle)] mt-4">
+                <p className="text-[11px] text-center text-[var(--subtle)] mt-4">
                   Un choix t'emmène à l'étape suivante automatiquement
                 </p>
               </div>
             ) : (
               <div
                 key="consent"
-                className="motion-safe:animate-modal-fade motion-reduce:animate-none rounded-2xl p-5 sm:p-6 border border-[var(--border-ui)] bg-gradient-to-br from-white/95 to-cyan-50/25"
+                className="motion-safe:animate-modal-fade motion-reduce:animate-none rounded-2xl p-5 sm:p-6 border border-[var(--border-ui)] bg-[var(--card)]"
               >
                 <div className="text-center mb-4">
                   <span className="inline-flex justify-center" aria-hidden>
-                    <Icon name="Lock" size="2xl" className="text-cyan-900/85" />
+                    <Icon name="Lock" size="2xl" className="text-[var(--violet)]" />
                   </span>
-                  <p className="text-base font-semibold text-[var(--on-cream)] mt-3">
+                  <p className="text-base font-semibold text-[var(--text)] mt-3">
                     Presque fini
                   </p>
-                  <p className="text-sm text-[var(--on-cream-muted)] mt-1 leading-relaxed">
+                  <p className="text-sm text-[var(--muted)] mt-1 leading-relaxed">
                     Confirme que tu es d'accord pour qu'on utilise ces préférences pour tes quêtes.
                   </p>
                 </div>
@@ -235,9 +235,9 @@ export function ProfileRefinementModal({
                     type="checkbox"
                     checked={consent}
                     onChange={(e) => setConsent(e.target.checked)}
-                    className="mt-1 h-4 w-4 rounded border-[var(--border-ui-strong)] text-emerald-600 focus:ring-emerald-500/40"
+                    className="mt-1 h-4 w-4 rounded border-[var(--border-ui-strong)] text-[var(--green)] focus:ring-[var(--green)]"
                   />
-                  <span className="text-xs text-[var(--on-cream-muted)] leading-relaxed">{consentNotice}</span>
+                  <span className="text-xs text-[var(--muted)] leading-relaxed">{consentNotice}</span>
                 </label>
               </div>
             )}
@@ -287,7 +287,7 @@ export function ProfileRefinementModal({
                 )}
               </button>
             ) : (
-              <p className="flex-1 text-center text-xs text-[var(--on-cream-muted)] self-center py-2 px-2 leading-snug">
+              <p className="flex-1 text-center text-xs text-[var(--muted)] self-center py-2 px-2 leading-snug">
                 Réponds à la question ci-dessus pour passer à la suite
               </p>
             )}

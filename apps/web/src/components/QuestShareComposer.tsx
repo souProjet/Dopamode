@@ -77,9 +77,9 @@ function QuestShareCardFrame({
     );
   const panelDark = background.darkForeground && !photoUrl;
   const panelBorder = panelDark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.55)';
-  const panelBg = panelDark ? 'rgba(15,23,42,0.72)' : 'rgba(255,255,255,0.74)';
-  const titleColor = panelDark ? '#f8fafc' : '#0f172a';
-  const mutedColor = panelDark ? 'rgba(226,232,240,0.88)' : '#475569';
+  const panelBg = panelDark ? 'rgba(12,10,9,0.72)' : 'rgba(255,255,255,0.74)';
+  const titleColor = panelDark ? '#faf8f4' : '#1c1917';
+  const mutedColor = panelDark ? 'rgba(231,229,228,0.88)' : '#57534e';
   const accentColor = panelDark ? '#2dd4bf' : '#115e59';
   const dateLabel = formatQuestDateFr(payload.questDate);
   const fontSans = 'var(--font-inter), ui-sans-serif, system-ui, sans-serif';
@@ -93,7 +93,7 @@ function QuestShareCardFrame({
         position: 'relative',
         overflow: 'hidden',
         borderRadius: 24,
-        boxShadow: '0 24px 48px rgba(15,23,42,0.2)',
+        boxShadow: '0 24px 48px rgba(28,25,23,0.2)',
       }}
     >
       {/* Fond pleine carte (dégradé / photo continue sous l'overlay) */}
@@ -133,8 +133,8 @@ function QuestShareCardFrame({
                   -18deg,
                   transparent,
                   transparent 38px,
-                  rgba(34, 211, 238, 0.07) 38px,
-                  rgba(34, 211, 238, 0.07) 39px
+                  rgba(19, 78, 74, 0.07) 38px,
+                  rgba(19, 78, 74, 0.07) 39px
                 ),
                 radial-gradient(circle at 1px 1px, rgba(255,255,255,0.35) 1px, transparent 0)
               `,
@@ -151,8 +151,8 @@ function QuestShareCardFrame({
           pointerEvents: 'none',
           background:
             photoUrl != null
-              ? 'linear-gradient(to top, rgba(15,23,42,0.82) 0%, transparent 48%, rgba(15,23,42,0.18) 100%)'
-              : 'linear-gradient(180deg, rgba(15,23,42,0.1) 0%, transparent 30%, transparent 58%, rgba(15,23,42,0.2) 100%)',
+              ? 'linear-gradient(to top, rgba(28,25,23,0.82) 0%, transparent 48%, rgba(28,25,23,0.18) 100%)'
+              : 'linear-gradient(180deg, rgba(28,25,23,0.1) 0%, transparent 30%, transparent 58%, rgba(28,25,23,0.2) 100%)',
         }}
       />
 
@@ -205,7 +205,7 @@ function QuestShareCardFrame({
                       fontWeight: 800,
                       letterSpacing: '0.28em',
                       textTransform: 'uppercase',
-                      color: panelDark ? 'rgba(248,250,252,0.96)' : '#0f172a',
+                      color: panelDark ? 'rgba(250,248,244,0.96)' : '#1c1917',
                       textShadow: '0 1px 10px rgba(0,0,0,0.55)',
                     }}
                   >
@@ -217,7 +217,7 @@ function QuestShareCardFrame({
                       fontSize: 10,
                       fontWeight: 700,
                       letterSpacing: '0.04em',
-                      color: 'rgba(248,250,252,0.92)',
+                      color: 'rgba(250,248,244,0.92)',
                       textShadow: '0 1px 8px rgba(0,0,0,0.65)',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
@@ -235,7 +235,7 @@ function QuestShareCardFrame({
                   fontWeight: 600,
                   fontFeatureSettings: '"tnum"',
                   letterSpacing: '0.01em',
-                  color: panelDark ? 'rgba(248,250,252,0.92)' : '#334155',
+                  color: panelDark ? 'rgba(250,248,244,0.92)' : '#44403c',
                   textAlign: 'right',
                   maxWidth: 200,
                   lineHeight: 1.35,
@@ -253,7 +253,7 @@ function QuestShareCardFrame({
                 fontWeight: 600,
                 fontFeatureSettings: '"tnum"',
                 letterSpacing: '0.01em',
-                color: panelDark ? 'rgba(248,250,252,0.92)' : '#334155',
+                color: panelDark ? 'rgba(250,248,244,0.92)' : '#44403c',
                 textAlign: 'right',
                 flex: 1,
                 lineHeight: 1.35,
@@ -287,7 +287,7 @@ function QuestShareCardFrame({
                 fontWeight: 800,
                 letterSpacing: '0.28em',
                 textTransform: 'uppercase',
-                color: panelDark ? 'rgba(248,250,252,0.96)' : '#0f172a',
+                color: panelDark ? 'rgba(250,248,244,0.96)' : '#1c1917',
                 textShadow: '0 1px 0 rgba(255,255,255,0.4)',
               }}
             >
@@ -322,7 +322,7 @@ function QuestShareCardFrame({
             WebkitBackdropFilter: 'blur(14px) saturate(1.15)',
             boxShadow: panelDark
               ? '0 12px 36px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)'
-              : '0 14px 40px rgba(15,23,42,0.12), inset 0 1px 0 rgba(255,255,255,0.85)',
+              : '0 14px 40px rgba(28,25,23,0.12), inset 0 1px 0 rgba(255,255,255,0.85)',
           }}
         >
           {/* Mission = action accomplie (texte principal) ; titre = repère court */}
@@ -343,9 +343,11 @@ function QuestShareCardFrame({
                 justifyContent: 'center',
                 width: 40,
                 height: 40,
+                /* L'encre suit le panneau : `currentColor` porte l'icône. */
+                color: titleColor,
               }}
             >
-              <Icon name={questDisplayEmoji(payload.emoji)} className="h-9 w-9 text-slate-800" />
+              <Icon name={questDisplayEmoji(payload.emoji)} className="h-9 w-9" />
             </span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <p
@@ -355,7 +357,7 @@ function QuestShareCardFrame({
                   fontWeight: 800,
                   letterSpacing: '0.22em',
                   textTransform: 'uppercase',
-                  color: panelDark ? 'rgba(148,163,184,0.95)' : '#64748b',
+                  color: panelDark ? 'rgba(168,162,158,0.95)' : '#78716c',
                   marginBottom: 8,
                   lineHeight: 1.3,
                 }}
@@ -387,7 +389,7 @@ function QuestShareCardFrame({
               textAlign: 'left',
               marginBottom: 0,
               paddingTop: 10,
-              borderTop: `1px solid ${panelDark ? 'rgba(255,255,255,0.1)' : 'rgba(148,163,184,0.28)'}`,
+              borderTop: `1px solid ${panelDark ? 'rgba(255,255,255,0.1)' : 'rgba(120,113,108,0.28)'}`,
               marginTop: 2,
             }}
           >
@@ -396,7 +398,12 @@ function QuestShareCardFrame({
               <>
                 {' · '}
                 <span style={{ fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                  <Icon name="Flame" className="h-3.5 w-3.5 text-orange-600 shrink-0" />
+                  <span
+                    style={{ display: 'inline-flex', color: panelDark ? '#fb923c' : '#c2410c' }}
+                    aria-hidden
+                  >
+                    <Icon name="Flame" className="h-3.5 w-3.5 shrink-0" />
+                  </span>
                   {payload.streak} jour{payload.streak !== 1 ? 's' : ''} de suite
                 </span>
               </>
@@ -427,7 +434,7 @@ function QuestShareCardFrame({
               fontFamily: fontSans,
               fontSize: 12,
               fontStyle: 'italic',
-              color: panelDark ? 'rgba(226,232,240,0.82)' : '#64748b',
+              color: panelDark ? 'rgba(231,229,228,0.82)' : '#78716c',
               lineHeight: 1.5,
               marginTop: 12,
               marginBottom: 12,
@@ -690,7 +697,7 @@ export function QuestShareComposer({
             node.style.backdropFilter = 'none';
             node.style.setProperty('-webkit-backdrop-filter', 'none');
             if (mode === 'dark') {
-              node.style.background = 'rgba(15, 23, 42, 0.88)';
+              node.style.background = 'rgba(12, 10, 9, 0.88)';
             } else {
               node.style.background = 'rgba(255, 255, 255, 0.92)';
             }
@@ -786,41 +793,38 @@ export function QuestShareComposer({
       {/* Handle façon story / Instagram */}
       <div className="flex justify-center pt-2 pb-1 md:pt-0 md:pb-0 md:hidden">
         <div
-          className="h-1.5 w-12 rounded-full bg-gradient-to-r from-slate-300/90 via-slate-200 to-slate-300/90 shadow-[inset_0_1px_2px_rgba(255,255,255,0.9)]"
+          className="h-1.5 w-12 rounded-full bg-[var(--border-ui-strong)]"
           aria-hidden
         />
       </div>
 
         <div className="relative min-w-0 px-4 pb-7 pt-3 sm:px-5 sm:pb-8 md:px-7 md:pt-7 md:pb-9">
-        {/* Halo décoratif DA */}
-        <div
-          className="pointer-events-none absolute -top-24 left-1/2 h-48 w-[120%] -translate-x-1/2 rounded-[100%] bg-gradient-to-b from-cyan-300/25 via-orange-200/15 to-transparent blur-3xl motion-safe:animate-share-shimmer motion-reduce:animate-none"
-          aria-hidden
-        />
+        {/* Pas de halo néon : la DA proscrit les grands `blur` colorés (voir docs/direction-artistique.md §5). */}
 
         <div className="relative text-center mb-6">
           <h2
             id="share-card-title"
-            className="font-display text-[clamp(1.1rem,4.5vw,1.5rem)] sm:text-2xl font-black text-slate-900 tracking-tight px-1"
+            className="font-display text-[clamp(1.1rem,4.5vw,1.5rem)] sm:text-2xl font-bold text-[var(--text)] tracking-tight px-1"
           >
             Ta carte à partager
           </h2>
-          <p className="mt-2 text-sm text-slate-600 max-w-[min(20rem,100%)] mx-auto leading-relaxed px-0.5">
+          <p className="mt-2 text-sm text-[var(--muted)] max-w-[min(20rem,100%)] mx-auto leading-relaxed px-0.5">
             Fond ou photo, puis export — prêt pour Insta, Stories ou la galerie.
           </p>
         </div>
 
         <div className="mb-6 min-w-0 pt-1">
           <div className="mb-2 flex flex-wrap items-end justify-between gap-x-3 gap-y-1 px-0.5">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Fonds</p>
+            <p className="carnet-eyebrow">Fonds</p>
           </div>
-          <div className="relative w-full min-w-0 max-w-full rounded-2xl border border-slate-200/70 bg-gradient-to-b from-slate-50/95 to-white/90 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.95)]">
+          <div className="relative w-full min-w-0 max-w-full rounded-2xl border border-[var(--border-ui)] bg-[var(--surface)] p-1.5">
+            {/* Voiles de débordement : ils reprennent l'aplat du conteneur, pas un blanc arbitraire. */}
             <div
-              className="pointer-events-none absolute inset-y-2 left-1 z-[1] w-5 bg-gradient-to-r from-slate-50/95 to-transparent sm:w-7"
+              className="pointer-events-none absolute inset-y-2 left-1 z-[1] w-5 bg-gradient-to-r from-[var(--surface)] to-transparent sm:w-7"
               aria-hidden
             />
             <div
-              className="pointer-events-none absolute inset-y-2 right-1 z-[1] w-5 bg-gradient-to-l from-slate-50/95 to-transparent sm:w-7"
+              className="pointer-events-none absolute inset-y-2 right-1 z-[1] w-5 bg-gradient-to-l from-[var(--surface)] to-transparent sm:w-7"
               aria-hidden
             />
             <div
@@ -832,12 +836,12 @@ export function QuestShareComposer({
                   key={b.id}
                   type="button"
                   onClick={() => setBgId(b.id)}
-                  className={`flex h-10 min-w-[5.75rem] shrink-0 items-center justify-center rounded-xl border-2 px-3 text-[10px] font-extrabold uppercase tracking-wide transition-[border-color,box-shadow] duration-150 ${
+                  className={`flex h-10 min-w-[5.75rem] shrink-0 items-center justify-center rounded-xl border-2 px-3 text-[10px] font-bold uppercase tracking-wide transition-[border-color,box-shadow] duration-150 ${
                     bgId === b.id
-                      ? 'border-cyan-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]'
+                      ? 'border-[var(--violet)]'
                       : b.darkForeground
                         ? 'border-white/25 hover:border-white/50'
-                        : 'border-slate-900/[0.12] hover:border-slate-900/25'
+                        : 'border-black/[0.12] hover:border-black/25'
                   }`}
                   style={{
                     backgroundImage: b.cssGradient,
@@ -848,7 +852,8 @@ export function QuestShareComposer({
                 >
                   <span
                     className={
-                      b.darkForeground ? 'text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]' : 'text-slate-900'
+                      /* Encre littérale : la pastille porte un fond fixe, elle ne suit pas le thème. */
+                      b.darkForeground ? 'text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]' : 'text-[#1c1917]'
                     }
                   >
                     {b.label}
@@ -861,31 +866,27 @@ export function QuestShareComposer({
 
         <div className="mb-6 min-w-0">
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onPickFile} />
-          <div className="rounded-2xl border border-amber-200/55 bg-gradient-to-br from-amber-50/90 via-white to-cyan-50/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_8px_28px_-12px_rgba(249,115,22,0.12)] sm:p-5">
+          <div className="rounded-2xl border border-[var(--border-ui-strong)] bg-[color-mix(in_srgb,var(--gold)_7%,var(--card))] p-4 shadow-[0_1px_2px_color-mix(in_srgb,var(--text)_6%,transparent)] sm:p-5">
             <div className="flex min-w-0 flex-col gap-4">
               <div className="min-w-0 w-full">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Photo</p>
-                <p className="mt-1.5 text-sm font-semibold leading-relaxed text-slate-700">
+                <p className="carnet-eyebrow">Photo</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-[var(--text)]">
                   Mets un cliché de ton moment : ta carte raconte mieux ton histoire.
                 </p>
               </div>
               <div className="flex w-full min-w-0 flex-col gap-2">
                 <button
                   type="button"
-                  className="group relative inline-flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-2xl border-2 border-cyan-400/70 bg-gradient-to-r from-cyan-50 via-white to-amber-50 px-5 py-3.5 text-base font-black text-cyan-950 shadow-[0_10px_36px_-10px_rgba(34,211,238,0.5),inset_0_1px_0_rgba(255,255,255,0.95)] ring-1 ring-cyan-300/35 transition-all duration-200 hover:border-cyan-500/85 hover:shadow-[0_14px_44px_-10px_rgba(34,211,238,0.55)] motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.99]"
+                  className="inline-flex w-full items-center justify-center gap-2.5 rounded-2xl border border-[var(--border-cyan)] bg-[var(--card)] px-5 py-3.5 text-base font-semibold text-[var(--text)] transition-colors duration-200 hover:border-[var(--violet)] hover:bg-[var(--surface)]"
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <span
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 motion-reduce:opacity-0"
-                    aria-hidden
-                  />
-                  <Icon name="Camera" size="lg" className="relative shrink-0 text-cyan-700 drop-shadow-sm" />
-                  <span className="relative">Ajouter une photo</span>
+                  <Icon name="Camera" size="lg" className="shrink-0 text-[var(--violet)]" />
+                  <span>Ajouter une photo</span>
                 </button>
                 {photoUrl ? (
                   <button
                     type="button"
-                    className="py-1 text-center text-sm font-bold text-slate-500 underline decoration-slate-300 underline-offset-2 hover:text-slate-700"
+                    className="py-1 text-center text-sm text-[var(--link-on-bg)] underline decoration-[color:color-mix(in_srgb,var(--link-on-bg)_35%,transparent)] underline-offset-[0.2em] transition-colors duration-200 hover:text-[var(--text)]"
                     onClick={clearPhoto}
                   >
                     Retirer la photo
@@ -918,7 +919,7 @@ export function QuestShareComposer({
               >
                 <div
                   ref={captureRef}
-                  className="inline-block rounded-[24px] overflow-hidden shadow-[0_20px_50px_-12px_rgba(15,23,42,0.35),0_0_0_1px_rgba(255,255,255,0.12)] ring-1 ring-white/30"
+                  className="inline-block overflow-hidden rounded-[24px] shadow-[0_2px_8px_-2px_color-mix(in_srgb,var(--text)_18%,transparent)]"
                 >
                   <QuestShareCardFrame
                     payload={payload}
@@ -934,10 +935,11 @@ export function QuestShareComposer({
         </div>
 
         <div className="flex flex-col gap-3">
-          <p className="px-0.5 text-center text-xs font-semibold leading-relaxed text-slate-500">{sheetUi.optionalHint}</p>
+          <p className="px-0.5 text-center text-xs leading-relaxed text-[var(--subtle)]">{sheetUi.optionalHint}</p>
+          {/* Trois actions, trois niveaux : aplat orange (export), filet (lien), aplat violet (fin). */}
           <button
             type="button"
-            className="w-full overflow-hidden rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 py-4 text-base font-black text-white shadow-[0_12px_32px_-8px_rgba(249,115,22,0.55),inset_0_1px_0_rgba(255,255,255,0.25)] transition-all duration-300 enabled:hover:brightness-105 enabled:hover:shadow-[0_16px_40px_-8px_rgba(249,115,22,0.6)] enabled:active:scale-[0.99] disabled:opacity-60 motion-safe:hover:scale-[1.01]"
+            className="btn btn-cta w-full rounded-2xl py-4 text-base disabled:opacity-60"
             disabled={exporting}
             onClick={() => void exportPng()}
           >
@@ -954,7 +956,7 @@ export function QuestShareComposer({
           </button>
           <button
             type="button"
-            className="w-full rounded-2xl border border-cyan-300/70 bg-cyan-50/70 py-3.5 text-sm font-extrabold text-cyan-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] transition-all duration-200 hover:bg-cyan-100/80 hover:border-cyan-400/75 disabled:opacity-60"
+            className="w-full rounded-2xl border border-[var(--border-cyan)] bg-[var(--card)] py-3.5 text-sm font-semibold text-[var(--text)] transition-colors duration-200 hover:border-[var(--violet)] hover:bg-[var(--surface)] disabled:opacity-60"
             disabled={sharingLink}
             onClick={() => void shareLink()}
           >
@@ -970,7 +972,7 @@ export function QuestShareComposer({
           </button>
           <button
             type="button"
-            className="w-full rounded-2xl bg-gradient-to-r from-cyan-600 to-cyan-700 py-4 text-base font-black text-white shadow-[0_10px_28px_-8px_rgba(8,145,178,0.45),inset_0_1px_0_rgba(255,255,255,0.2)] transition-all duration-200 hover:brightness-105 enabled:active:scale-[0.99]"
+            className="btn btn-primary w-full rounded-2xl py-4 text-base"
             onClick={() => onOpenChange(false)}
           >
             {sheetUi.done}
@@ -987,17 +989,15 @@ export function QuestShareComposer({
       aria-modal
       aria-labelledby="share-card-title"
     >
-      {/* Barre gradient — même langage que les autres modales quête */}
+      {/* Filet d'accent — même langage que les autres modales quête */}
       <div className="quest-modal-panel-accent h-[3px] shrink-0 md:rounded-t-[1.85rem]" />
 
-      {/* Coque verre / papier — DA aventure */}
-      <div className="relative border-x border-b border-white/60 md:border border-white/50 bg-white bg-gradient-to-b from-white via-white/98 to-cyan-50/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] md:rounded-b-[1.85rem] rounded-b-[1.85rem] md:shadow-[0_28px_80px_-20px_rgba(15,23,42,0.28),0_0_0_1px_rgba(255,255,255,0.6)_inset]">
-        {/* Reflet coin */}
-        <div
-          className="pointer-events-none absolute inset-0 rounded-b-[1.85rem] bg-gradient-to-br from-white/40 via-transparent to-orange-100/20 md:rounded-[1.85rem]"
-          aria-hidden
-        />
-        <div className="relative">{panelInner}</div>
+      {/*
+        Coque : aplat opaque, filet 1px, ombre serrée. Pas de reflet ni de dégradé
+        (voir `docs/direction-artistique.md` §5). Le flou reste sur le voile de fond.
+      */}
+      <div className="relative rounded-b-[1.85rem] border-x border-b border-[var(--border-ui-strong)] bg-[var(--card)] shadow-[0_2px_8px_-2px_color-mix(in_srgb,var(--text)_14%,transparent)] md:rounded-b-[1.85rem] md:border">
+        {panelInner}
       </div>
     </div>
   );

@@ -75,6 +75,10 @@ export type HomeDashboardStrings = {
   ownedPacksEyebrow: string;
   ownedPacksSectionA11y: string;
   ownedPackA11y: (name: string) => string;
+  capMilestoneQuestChip: string;
+  capInvite: string;
+  capInviteCta: string;
+  capOpenA11y: (name: string) => string;
 };
 
 function fr(): HomeDashboardStrings {
@@ -156,6 +160,10 @@ function fr(): HomeDashboardStrings {
     ownedPacksEyebrow: 'Parcours',
     ownedPacksSectionA11y: 'Parcours possédés — faire défiler',
     ownedPackA11y: (name) => `Ouvrir le parcours ${name}`,
+    capMilestoneQuestChip: 'Quête de jalon',
+    capInvite: 'Choisis un objectif long',
+    capInviteCta: 'Cap',
+    capOpenA11y: (name) => `Ouvrir le Cap ${name}`,
   };
 }
 
@@ -235,6 +243,10 @@ function en(): HomeDashboardStrings {
     ownedPacksEyebrow: 'Paths',
     ownedPacksSectionA11y: 'Owned paths — scroll sideways',
     ownedPackA11y: (name) => `Open journey ${name}`,
+    capMilestoneQuestChip: 'Milestone quest',
+    capInvite: 'Pick a long-term goal',
+    capInviteCta: 'Cap',
+    capOpenA11y: (name) => `Open Cap ${name}`,
   };
 }
 

@@ -53,10 +53,11 @@ function pickQuestCopy(row: Row, locale: string) {
 }
 
 const inputClass =
-  'mt-2 w-full min-w-0 rounded-xl border-2 border-[color:color-mix(in_srgb,var(--cyan)_42%,transparent)] bg-white px-3 py-2.5 text-sm font-semibold text-[var(--text)] shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/40';
+  'mt-2 w-full min-w-0 rounded-xl border border-[var(--border-ui-strong)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--text)] focus:border-[var(--violet)] focus:outline-none focus:ring-1 focus:ring-[var(--violet)]';
 
+/** Panneau console : aplat opaque, filet 1px, ombre serrée (voir `docs/direction-artistique.md` §5). */
 const cardClass =
-  'relative overflow-hidden rounded-[1.75rem] border-2 border-orange-300/45 bg-gradient-to-br from-[#fffbeb] via-white/95 to-cyan-50/40 px-5 py-6 shadow-[0_10px_0_rgba(180,83,9,.08),0_22px_48px_rgba(249,115,22,.1)] sm:px-6';
+  'rounded-[1.75rem] border border-[var(--border-ui-strong)] bg-[var(--card)] px-5 py-6 shadow-[0_1px_2px_color-mix(in_srgb,var(--text)_6%,transparent)] sm:px-6';
 
 export function AdminQuestsPageClient() {
   const locale = useLocale();
@@ -219,20 +220,16 @@ export function AdminQuestsPageClient() {
   return (
     <div className="space-y-8">
       <section className={cardClass}>
-        <div
-          className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-gradient-to-br from-cyan-200/35 to-orange-200/25 blur-2xl"
-          aria-hidden
-        />
-        <div className="relative">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-[var(--muted)]">Archétypes</p>
-          <h2 className="font-display mt-1 text-xl font-black tracking-tight text-gradient-pop md:text-2xl">
+        <div>
+          <p className="carnet-eyebrow">Archétypes</p>
+          <h2 className="font-display mt-2 text-xl font-bold tracking-tight text-[var(--text)] md:text-2xl">
             Nouvelle quête
           </h2>
-          <p className="mt-2 max-w-2xl text-sm font-semibold leading-relaxed text-[var(--on-cream-muted)]">
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--muted)]">
             Colle le texte en français ou en anglais (consignes, idée, ton). L’autre langue est traduite automatiquement ; la taxonomie, la durée et les drapeaux sont aussi déduits avant enregistrement.
           </p>
 
-          <label className="mt-6 block text-xs font-black uppercase tracking-wide text-[var(--on-cream)]">
+          <label className="carnet-eyebrow mt-6 block">
             Contenu de la quête (FR ou EN)
             <textarea
               className={`${inputClass} min-h-[160px] resize-y leading-relaxed`}
@@ -243,12 +240,12 @@ export function AdminQuestsPageClient() {
             />
           </label>
 
-          <details className="mt-4 rounded-2xl border border-cyan-200/50 bg-white/50 px-4 py-3 text-sm">
-            <summary className="cursor-pointer font-black text-[var(--on-cream)]">Réglages optionnels</summary>
-            <p className="mt-2 text-xs font-semibold text-[var(--on-cream-muted)]">
+          <details className="mt-4 rounded-2xl border border-[var(--border-ui)] bg-[var(--surface)] px-4 py-3 text-sm">
+            <summary className="cursor-pointer font-semibold text-[var(--text)]">Réglages optionnels</summary>
+            <p className="mt-2 text-xs text-[var(--muted)]">
               Rarement utile : lier un archétype de secours si le moteur doit proposer un repli.
             </p>
-            <label className="mt-3 block text-xs font-bold uppercase tracking-wide text-[var(--muted)]">
+            <label className="carnet-eyebrow mt-3 block">
               ID archétype de secours
               <input
                 type="number"
@@ -265,7 +262,7 @@ export function AdminQuestsPageClient() {
           </details>
 
           {err ? (
-            <p className="mt-4 rounded-xl border border-amber-300/80 bg-amber-50/95 px-4 py-3 text-sm font-semibold text-amber-950">
+            <p className="mt-4 rounded-xl border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_8%,var(--card))] px-4 py-3 text-sm text-[var(--text)]">
               {err}
             </p>
           ) : null}
@@ -273,13 +270,13 @@ export function AdminQuestsPageClient() {
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <button
               type="button"
-              className="btn btn-cta btn-md font-black"
+              className="btn btn-cta btn-md"
               disabled={busy}
               onClick={() => void createFromContent()}
             >
               {busy ? 'Analyse et création…' : 'Créer la quête'}
             </button>
-            <span className="text-xs font-semibold text-[var(--on-cream-subtle)]">
+            <span className="text-xs text-[var(--subtle)]">
               Un appel IA puis enregistrement en base
             </span>
           </div>
@@ -287,29 +284,25 @@ export function AdminQuestsPageClient() {
       </section>
 
       <section className={cardClass}>
-        <div
-          className="pointer-events-none absolute -left-4 bottom-0 h-24 w-24 rounded-full bg-gradient-to-tr from-orange-200/20 to-transparent blur-2xl"
-          aria-hidden
-        />
-        <div className="relative">
-          <h2 className="font-display text-lg font-black text-[var(--on-cream)] md:text-xl">
+        <div>
+          <h2 className="font-display text-lg font-bold text-[var(--text)] md:text-xl">
             {listUi.archetypesTitle} ({rows?.length ?? '…'})
           </h2>
-          <p className="mt-1 text-sm font-semibold text-[var(--on-cream-muted)]">{listUi.archetypesHint}</p>
-          <div className="mt-5 overflow-x-auto rounded-2xl border border-cyan-200/40 bg-white/70">
+          <p className="mt-1 text-sm text-[var(--muted)]">{listUi.archetypesHint}</p>
+          <div className="mt-5 overflow-x-auto rounded-2xl border border-[var(--border-ui)] bg-[var(--card)]">
             <table className="w-full min-w-[900px] border-collapse text-left text-sm">
               <thead>
-                <tr className="border-b border-[var(--border)] bg-cyan-50/50">
-                  <th className="py-3 pl-4 pr-1 font-black text-[var(--on-cream)] w-10" />
-                  <th className="py-3 pr-2 font-black text-[var(--on-cream)]">ID</th>
-                  <th className="py-3 pr-2 font-black text-[var(--on-cream)] min-w-[10rem]">{listUi.colTitle}</th>
-                  <th className="py-3 pr-2 font-black text-[var(--on-cream)]">{listUi.colCategory}</th>
-                  <th className="py-3 pr-2 font-black text-[var(--on-cream)]">{listUi.colDuration}</th>
-                  <th className="py-3 pr-2 font-black text-[var(--on-cream)]">{listUi.colPace}</th>
-                  <th className="py-3 pr-2 font-black text-[var(--on-cream)]">{listUi.colComfort}</th>
-                  <th className="py-3 pr-2 font-black text-[var(--on-cream)]">{listUi.colExtSoc}</th>
-                  <th className="py-3 pr-2 font-black text-[var(--on-cream)]">{listUi.colPublished}</th>
-                  <th className="py-3 pr-4 font-black text-[var(--on-cream)]">{listUi.colActions}</th>
+                <tr className="border-b border-[var(--border-ui-strong)] bg-[var(--surface)]">
+                  <th className="py-3 pl-4 pr-1 font-semibold text-[var(--text)] w-10" />
+                  <th className="py-3 pr-2 font-semibold text-[var(--text)]">ID</th>
+                  <th className="py-3 pr-2 font-semibold text-[var(--text)] min-w-[10rem]">{listUi.colTitle}</th>
+                  <th className="py-3 pr-2 font-semibold text-[var(--text)]">{listUi.colCategory}</th>
+                  <th className="py-3 pr-2 font-semibold text-[var(--text)]">{listUi.colDuration}</th>
+                  <th className="py-3 pr-2 font-semibold text-[var(--text)]">{listUi.colPace}</th>
+                  <th className="py-3 pr-2 font-semibold text-[var(--text)]">{listUi.colComfort}</th>
+                  <th className="py-3 pr-2 font-semibold text-[var(--text)]">{listUi.colExtSoc}</th>
+                  <th className="py-3 pr-2 font-semibold text-[var(--text)]">{listUi.colPublished}</th>
+                  <th className="py-3 pr-4 font-semibold text-[var(--text)]">{listUi.colActions}</th>
                 </tr>
               </thead>
               <tbody>
@@ -320,12 +313,12 @@ export function AdminQuestsPageClient() {
                   return (
                     <Fragment key={r.id}>
                       <tr
-                        className="border-b border-[var(--border)]/50 transition hover:bg-cyan-50/30"
+                        className="border-b border-[var(--border-ui)] transition-colors hover:bg-[var(--surface)]"
                       >
                         <td className="py-2 pl-3 pr-1 align-middle">
                           <button
                             type="button"
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-200/70 bg-white text-cyan-900 shadow-sm transition hover:bg-cyan-50/90"
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--border-ui-strong)] bg-[var(--card)] text-[var(--text)] transition-colors hover:border-[var(--border-cyan)] hover:bg-[var(--surface)]"
                             aria-expanded={open}
                             aria-label={open ? listUi.expandHide : listUi.expandShow}
                             disabled={busy}
@@ -344,13 +337,13 @@ export function AdminQuestsPageClient() {
                             {copy.title}
                           </span>
                         </td>
-                        <td className="py-3 pr-2 text-xs font-medium text-[var(--on-cream-muted)] max-w-[9rem] break-words">
+                        <td className="py-3 pr-2 text-xs text-[var(--muted)] max-w-[9rem] break-words">
                           {r.category}
                         </td>
                         <td className="py-3 pr-2 tabular-nums text-[var(--text)]">{r.minimumDurationMinutes} min</td>
-                        <td className="py-3 pr-2 text-xs font-semibold uppercase text-slate-600">{r.questPace}</td>
-                        <td className="py-3 pr-2 text-xs font-semibold text-slate-600">{r.comfortLevel}</td>
-                        <td className="py-3 pr-2 text-xs font-semibold text-slate-700">
+                        <td className="py-3 pr-2 text-xs uppercase text-[var(--muted)]">{r.questPace}</td>
+                        <td className="py-3 pr-2 text-xs text-[var(--muted)]">{r.comfortLevel}</td>
+                        <td className="py-3 pr-2 text-xs text-[var(--text)]">
                           {r.requiresOutdoor ? 'ext.' : '—'}
                           {' · '}
                           {r.requiresSocial ? 'soc.' : '—'}
@@ -361,7 +354,7 @@ export function AdminQuestsPageClient() {
                         <td className="py-3 pr-4">
                           <button
                             type="button"
-                            className="rounded-xl border-2 border-cyan-300/60 bg-white px-3 py-1.5 text-xs font-black text-cyan-900 shadow-sm transition hover:border-cyan-400 hover:bg-cyan-50/80"
+                            className="rounded-xl border border-[var(--border-cyan)] bg-[var(--card)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:border-[var(--violet)] hover:bg-[var(--surface)]"
                             disabled={busy}
                             onClick={() => void togglePublished(r)}
                           >
@@ -370,15 +363,15 @@ export function AdminQuestsPageClient() {
                         </td>
                       </tr>
                       {open ? (
-                        <tr key={`${r.id}-detail`} className="border-b border-[var(--border)]/50 bg-gradient-to-b from-cyan-50/40 to-white/80">
+                        <tr key={`${r.id}-detail`} className="border-b border-[var(--border-ui)] bg-[var(--surface)]">
                           <td colSpan={10} className="px-4 py-5 sm:px-6">
                             <div className="grid gap-6 lg:grid-cols-2">
                               <div className="space-y-4">
                                 <div>
-                                  <p className="text-xs font-black uppercase tracking-wide text-[var(--muted)]">
+                                  <p className="text-xs font-bold uppercase tracking-wide text-[var(--muted)]">
                                     {listUi.detailTitle}
                                   </p>
-                                  <p className="mt-1 font-display text-base font-black text-[var(--on-cream)]">
+                                  <p className="mt-1 font-display text-base font-bold text-[var(--text)]">
                                     {copy.title}
                                   </p>
                                   <p className="mt-2 whitespace-pre-wrap text-sm font-medium leading-relaxed text-[var(--text)]">
@@ -388,7 +381,7 @@ export function AdminQuestsPageClient() {
                               </div>
                               <div className="space-y-4">
                                 <div>
-                                  <p className="text-xs font-black uppercase tracking-wide text-[var(--muted)]">
+                                  <p className="text-xs font-bold uppercase tracking-wide text-[var(--muted)]">
                                     {listUi.traitsHeading}
                                   </p>
                                   {traitRows.length ? (
@@ -396,15 +389,15 @@ export function AdminQuestsPageClient() {
                                       {traitRows.map(({ key, value }) => (
                                         <li
                                           key={key}
-                                          className="flex items-center justify-between gap-3 rounded-lg border border-slate-200/80 bg-white/90 px-3 py-2 text-xs font-semibold"
+                                          className="flex items-center justify-between gap-3 rounded-lg border border-[var(--border-ui)] bg-[var(--card)] px-3 py-2 text-xs"
                                         >
-                                          <span className="font-mono text-slate-600">{key}</span>
-                                          <span className="tabular-nums font-bold text-cyan-900">{value}</span>
+                                          <span className="font-mono text-[var(--muted)]">{key}</span>
+                                          <span className="tabular-nums font-semibold text-[var(--text)]">{value}</span>
                                         </li>
                                       ))}
                                     </ul>
                                   ) : (
-                                    <p className="mt-2 text-sm font-medium text-slate-500">{listUi.traitsEmpty}</p>
+                                    <p className="mt-2 text-sm text-[var(--subtle)]">{listUi.traitsEmpty}</p>
                                   )}
                                 </div>
                                 <dl className="grid gap-2 rounded-xl border border-orange-200/50 bg-white/60 px-4 py-3 text-sm">
@@ -416,11 +409,11 @@ export function AdminQuestsPageClient() {
                                   </div>
                                   <div className="flex flex-wrap justify-between gap-2">
                                     <dt className="font-bold text-[var(--muted)]">{listUi.createdLabel}</dt>
-                                    <dd className="font-semibold text-slate-700">{formatIsoDate(r.createdAt, locale)}</dd>
+                                    <dd className="text-[var(--text)]">{formatIsoDate(r.createdAt, locale)}</dd>
                                   </div>
                                   <div className="flex flex-wrap justify-between gap-2">
                                     <dt className="font-bold text-[var(--muted)]">{listUi.updatedLabel}</dt>
-                                    <dd className="font-semibold text-slate-700">{formatIsoDate(r.updatedAt, locale)}</dd>
+                                    <dd className="text-[var(--text)]">{formatIsoDate(r.updatedAt, locale)}</dd>
                                   </div>
                                 </dl>
                               </div>

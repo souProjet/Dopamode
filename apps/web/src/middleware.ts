@@ -110,9 +110,21 @@ async function handleRequest(auth: ClerkMiddlewareAuth | null, req: NextRequest)
     return NextResponse.redirect(url);
   }
 
+  /**
+   * `auth.protect()` réécrit vers une route interne inexistante quand la session
+   * manque : le visiteur non connecté recevait un 404 au lieu de la page de
+   * connexion. On redirige explicitement vers le `/sign-in` de l'app, en gardant
+   * la destination pour le retour après authentification.
+   */
   if (!isPublicPagePath(pathname)) {
     if (!auth) return authUnavailable();
-    await auth.protect();
+    if (!userId) {
+      const url = req.nextUrl.clone();
+      url.pathname = pathname === '/en' || pathname.startsWith('/en/') ? '/en/sign-in' : '/sign-in';
+      url.search = '';
+      url.searchParams.set('redirect_url', `${pathname}${req.nextUrl.search}`);
+      return NextResponse.redirect(url);
+    }
   }
 
   return intlResponse;

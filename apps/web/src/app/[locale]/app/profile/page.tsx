@@ -11,6 +11,8 @@ import {
   getBadgeCatalogForUi,
   getThemeIds,
   TITLES_REGISTRY,
+  isTitleEquippable,
+  titleUnlockLabel,
   type AppLocale,
   type BadgeCatalogEntry,
   type ExplorerAxis,
@@ -69,11 +71,11 @@ function SectionBlock({
 }) {
   return (
     <section className={`mb-8 ${className}`}>
-      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[var(--muted)] mb-1">
+      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--muted)] mb-1">
         {eyebrow}
       </p>
       {title && (
-        <h2 className="font-display font-black text-xl text-[var(--text)] mb-3">{title}</h2>
+        <h2 className="font-display font-bold text-xl text-[var(--text)] mb-3">{title}</h2>
       )}
       {children}
     </section>
@@ -264,7 +266,7 @@ export default function ProfilePage() {
 
         {!data && !error && (
           <div className="flex justify-center py-24">
-            <div className="h-10 w-10 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-[var(--orange)] border-t-transparent" />
           </div>
         )}
 
@@ -273,17 +275,17 @@ export default function ProfilePage() {
             {/* ══ 1. HERO — Niveau & XP ══════════════════════════════════ */}
             <section className="mb-8 app-profile-level-card p-6 sm:p-7">
               {/* Eyebrow */}
-              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[var(--muted)] mb-4">
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--muted)] mb-4">
                 {t('title')} · {quadrant}
               </p>
 
               {/* Niveau + XP bar */}
               <div className="flex items-end justify-between gap-4 mb-4">
                 <div>
-                  <p className="text-[11px] font-black uppercase tracking-[0.15em] text-[var(--muted)] mb-1">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[var(--muted)] mb-1">
                     {t('levelLabel')}
                   </p>
-                  <p className="font-display text-6xl font-black tabular-nums leading-none tracking-tight text-[var(--text)]">
+                  <p className="font-display text-6xl font-bold tabular-nums leading-none tracking-tight text-[var(--text)]">
                     {prog.level}
                   </p>
                 </div>
@@ -293,8 +295,8 @@ export default function ProfilePage() {
                     {t('dayChip', { day: data.currentDay })}
                   </span>
                   <span className="streak-badge text-xs shadow-sm inline-flex items-center gap-1.5">
-                    <Icon name="Flame" size="xs" className="text-orange-600" aria-hidden />
-                    <span className="font-black">{data.streakCount}</span>
+                    <Icon name="Flame" size="xs" className="text-[var(--orange)]" aria-hidden />
+                    <span className="font-bold">{data.streakCount}</span>
                     {' '}{t('streakChip')}
                   </span>
                 </div>
@@ -302,7 +304,7 @@ export default function ProfilePage() {
 
               <div className="h-2.5 rounded-full bg-[color:var(--progress-track)] overflow-hidden border border-[color:var(--border-ui-strong)] shadow-inner mb-2">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-orange-400 transition-all duration-700"
+                  className="h-full rounded-full bg-[var(--violet)] transition-all duration-700"
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -318,8 +320,8 @@ export default function ProfilePage() {
                   <div className="grid grid-cols-3 gap-3">
                     {/* Quest Coins */}
                     <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[color:var(--border-ui)] bg-[var(--surface)] p-3 text-center">
-                      <Icon name="Coins" size="md" className="text-amber-600" aria-hidden />
-                      <p className="font-display font-black text-xl tabular-nums text-[var(--text)] leading-none">
+                      <Icon name="Coins" size="md" className="text-[var(--gold)]" aria-hidden />
+                      <p className="font-display font-bold text-xl tabular-nums text-[var(--text)] leading-none">
                         {shop.coinBalance.toLocaleString(numLocale)}
                       </p>
                       <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">Quest Coins</p>
@@ -328,7 +330,7 @@ export default function ProfilePage() {
                     {/* Relances */}
                     <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[color:var(--border-ui)] bg-[var(--surface)] p-3 text-center">
                       <Icon name="RefreshCw" size="md" className={shop.bonusRerollCredits > 0 ? 'text-[var(--orange)]' : 'text-[var(--subtle)]'} aria-hidden />
-                      <p className={`font-display font-black text-xl tabular-nums leading-none ${shop.bonusRerollCredits > 0 ? 'text-[var(--orange)]' : 'text-[var(--muted)]'}`}>
+                      <p className={`font-display font-bold text-xl tabular-nums leading-none ${shop.bonusRerollCredits > 0 ? 'text-[var(--orange)]' : 'text-[var(--muted)]'}`}>
                         {shop.bonusRerollCredits}
                       </p>
                       <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">Relances</p>
@@ -337,7 +339,7 @@ export default function ProfilePage() {
                     {/* Surcharges XP */}
                     <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[color:var(--border-ui)] bg-[var(--surface)] p-3 text-center">
                       <Icon name="Zap" size="md" className={shop.xpBonusCharges > 0 ? 'text-[var(--green)]' : 'text-[var(--subtle)]'} aria-hidden />
-                      <p className={`font-display font-black text-xl tabular-nums leading-none ${shop.xpBonusCharges > 0 ? 'text-[var(--green)]' : 'text-[var(--muted)]'}`}>
+                      <p className={`font-display font-bold text-xl tabular-nums leading-none ${shop.xpBonusCharges > 0 ? 'text-[var(--green)]' : 'text-[var(--muted)]'}`}>
                         {shop.xpBonusCharges}
                       </p>
                       <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">Boosts XP</p>
@@ -345,7 +347,7 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="mt-3 pt-3 border-t border-[color:var(--border-ui)] text-center">
-                    <Link href="/app/shop" className="text-xs font-black text-[var(--orange)] hover:underline underline-offset-2">
+                    <Link href="/app/shop" className="text-xs font-bold text-[var(--orange)] hover:underline underline-offset-2">
                       Recharger ou acheter des boosts →
                     </Link>
                   </div>
@@ -359,7 +361,7 @@ export default function ProfilePage() {
                 <div className={`${card} p-5 sm:p-6`}>
                   <div className="grid gap-5 sm:grid-cols-2">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] font-black uppercase tracking-wider text-[var(--subtle)]">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--subtle)]">
                         {t('appearanceTheme')}
                       </label>
                       <select
@@ -377,7 +379,7 @@ export default function ProfilePage() {
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] font-black uppercase tracking-wider text-[var(--subtle)]">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--subtle)]">
                         {t('appearanceTitleEquip')}
                       </label>
                       <select
@@ -390,9 +392,14 @@ export default function ProfilePage() {
                         }}
                       >
                         <option value="">{t('noTitle')}</option>
-                        {Object.values(TITLES_REGISTRY).map((def) => (
-                          <option key={def.id} value={def.id}>{def.label}</option>
-                        ))}
+                        {Object.values(TITLES_REGISTRY).map((def) => {
+                          const owned = isTitleEquippable(def.id, shop.ownedTitleIds);
+                          return (
+                            <option key={def.id} value={def.id} disabled={!owned}>
+                              {owned ? def.label : `${def.label} — ${titleUnlockLabel(def, locale as AppLocale)}`}
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
                   </div>
@@ -425,30 +432,42 @@ export default function ProfilePage() {
                         <Icon name={b.placeholderIcon} size="lg" className="text-[var(--orange)]" />
                       </span>
                       {b.unlocked ? (
-                        <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-emerald-900 ring-1 ring-emerald-400/55">
+                        <span className="shrink-0 rounded-full border border-[var(--green)] bg-[color-mix(in_srgb,var(--green)_10%,transparent)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--green)]">
                           {t('badgeUnlocked')}
                         </span>
                       ) : (
-                        <span className="shrink-0 rounded-full border border-[color:var(--border-ui)] bg-[var(--card)] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-[var(--subtle)]">
+                        <span className="shrink-0 rounded-full border border-[color:var(--border-ui)] bg-[var(--card)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--subtle)]">
                           {t('badgeLocked')}
                         </span>
                       )}
                     </div>
-                    <span className={`inline-block mb-2 rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wider ${
+                    <span className={`inline-block mb-2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
                       b.unlocked
                         ? 'border border-[color:color-mix(in_srgb,var(--gold)_45%,transparent)] bg-[color:color-mix(in_srgb,var(--gold)_12%,var(--surface))] text-[var(--orange)]'
                         : 'border border-[color:var(--border-ui)] bg-[var(--card)] text-[var(--subtle)]'
                     }`}>
                       {badgeCat[b.category]}
                     </span>
-                    <p className={`font-black text-sm ${b.unlocked ? 'text-[var(--text)]' : 'text-[var(--muted)]'}`}>
+                    <p className={`font-bold text-sm ${b.unlocked ? 'text-[var(--text)]' : 'text-[var(--muted)]'}`}>
                       {b.title}
                     </p>
                     <p className={`text-xs mt-1 font-medium leading-relaxed ${b.unlocked ? 'text-[var(--muted)]' : 'text-[var(--subtle)]'}`}>
                       {b.criteria}
                     </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-[color:color-mix(in_srgb,var(--gold)_45%,transparent)] bg-[color:color-mix(in_srgb,var(--gold)_10%,var(--surface))] px-2 py-0.5 text-[10px] font-bold tabular-nums text-[var(--orange)]">
+                        <Icon name="Coins" size="xs" aria-hidden />
+                        +{b.rewardCoins} QC
+                      </span>
+                      {b.rewardTitleId && TITLES_REGISTRY[b.rewardTitleId] ? (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border-cyan)] bg-[var(--surface)] px-2 py-0.5 text-[10px] font-bold text-[var(--violet)]">
+                          <Icon name="Award" size="xs" aria-hidden />
+                          {TITLES_REGISTRY[b.rewardTitleId]!.label}
+                        </span>
+                      ) : null}
+                    </div>
                     {b.unlocked && b.unlockedAt ? (
-                      <p className="text-xs text-emerald-700 mt-2.5 font-bold">
+                      <p className="mt-2.5 text-xs font-bold text-[var(--green)]">
                         {new Date(b.unlockedAt).toLocaleDateString(dateLocale, { day: 'numeric', month: 'short', year: 'numeric' })}
                       </p>
                     ) : (
@@ -552,7 +571,7 @@ export default function ProfilePage() {
 
                 {/* Légal */}
                 <div className="p-5 sm:p-6">
-                  <p className="text-xs font-black uppercase tracking-widest text-[var(--muted)] mb-3">{t('legalTitle')}</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[var(--muted)] mb-3">{t('legalTitle')}</p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {(
                       [
@@ -577,7 +596,7 @@ export default function ProfilePage() {
 
                 {/* Export */}
                 <div className="p-5 sm:p-6">
-                  <p className="text-xs font-black uppercase tracking-widest text-[var(--muted)] mb-2">{t('dataTitle')}</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[var(--muted)] mb-2">{t('dataTitle')}</p>
                   <p className="text-sm text-[var(--muted)] mb-4 leading-relaxed">{t('dataSub')}</p>
                   <button
                     type="button"

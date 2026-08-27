@@ -33,6 +33,7 @@ import {
   type ShopCatalogEntry,
   type ShopMarketingBadge,
   type QuestPackKind,
+  DAILY_REROLL_TIERS,
 } from '@questia/shared';
 import { colorWithAlpha, shopBalanceGradient, UiLucideIcon, type ThemePalette } from '@questia/ui';
 import { AuraTabShell } from '../../components/AuraTabShell';
@@ -923,7 +924,20 @@ export default function ShopScreen() {
 
             <View style={styles.section}>
               <Text style={styles.h2}>{s.sectionRerolls}</Text>
-              {rerollItems.map(renderCatalogCard)}
+              <Text style={styles.sectionSub}>{s.rerollsFreeNote}</Text>
+              {rerollItems.length > 0 ? (
+                rerollItems.map(renderCatalogCard)
+              ) : (
+                <View style={styles.rerollTierRow}>
+                  {DAILY_REROLL_TIERS.map((tier) => (
+                    <View key={tier.minLevel} style={styles.rerollTierChip}>
+                      <UiLucideIcon name="RefreshCw" size={12} color={palette.cyan} />
+                      <Text style={styles.rerollTierValue}>{tier.rerolls}</Text>
+                      <Text style={styles.rerollTierLabel}>{s.rerollTierFrom(tier.minLevel)}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
             </View>
 
             {questPackItems.length > 0 ? (
@@ -1327,6 +1341,20 @@ function createShopStyles(p: ThemePalette, themeId: string) {
     textTransform: 'uppercase',
   },
   sectionSub: { fontSize: 11, color: C.muted, marginBottom: 10, lineHeight: 16 },
+  rerollTierRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  rerollTierChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colorWithAlpha(p.cyan, 0.45),
+    backgroundColor: colorWithAlpha(p.cyan, 0.1),
+  },
+  rerollTierValue: { fontSize: 12, fontWeight: '900', color: C.text },
+  rerollTierLabel: { fontSize: 11, fontWeight: '700', color: C.muted },
   featuredBox: {
     borderWidth: 2,
     borderColor: colorWithAlpha(p.cyan, 0.45),

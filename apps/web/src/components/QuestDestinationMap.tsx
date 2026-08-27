@@ -16,7 +16,7 @@ const QuestDestinationMapLeaflet = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className="flex h-full w-full items-center justify-center bg-gradient-to-b from-cyan-50/80 to-white text-xs font-medium text-[var(--muted)]"
+        className="flex h-full w-full items-center justify-center bg-[var(--surface)] text-xs font-medium text-[var(--muted)]"
         aria-hidden
       >
         Chargement de la carte…
@@ -115,16 +115,16 @@ export default function QuestDestinationMap({
 
   if (!dest) {
     return (
-      <div className="rounded-2xl border border-cyan-200/50 bg-gradient-to-br from-white via-cyan-50/30 to-white p-4 shadow-sm ring-1 ring-cyan-100/70">
-        <p className="flex items-start gap-2 text-sm font-semibold text-cyan-950">
-          <Icon name="MapPin" size="sm" className="mt-0.5 shrink-0 text-cyan-800" aria-hidden />
+      <div className="rounded-2xl border border-[var(--border-cyan)] bg-[var(--card)] p-4">
+        <p className="flex items-start gap-2 text-sm font-semibold text-[var(--text)]">
+          <Icon name="MapPin" size="sm" className="mt-0.5 shrink-0 text-[var(--violet)]" aria-hidden />
           <span>
             {!destination.label.trim() || /^null$/i.test(destination.label.trim())
               ? 'Lieu à préciser'
               : destination.label}
           </span>
         </p>
-        <p className="mt-2 text-xs leading-relaxed text-[var(--on-cream-muted)]">
+        <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">
           Le lieu n'a pas pu être placé sur la carte. Ouvre Google Maps pour t'orienter.
         </p>
         <a
@@ -145,7 +145,7 @@ export default function QuestDestinationMap({
 
   return (
     <div className="space-y-3 sm:space-y-4">
-      <div className="overflow-hidden rounded-2xl border border-cyan-200/45 bg-white/40 shadow-[0_8px_30px_-12px_rgba(34,211,238,0.25)] ring-1 ring-cyan-100/80">
+      <div className="overflow-hidden rounded-2xl border border-[var(--border-cyan)] bg-[var(--card)]">
         <div className={mapFrameClass}>
           <QuestDestinationMapLeaflet
             key={mapInstanceKey}
@@ -170,7 +170,7 @@ export default function QuestDestinationMap({
       </a>
 
       {routeError ? (
-        <p className="text-center text-xs text-amber-800/90">
+        <p className="text-center text-xs text-[var(--gold)]">
           L'itinéraire à pied n'a pas pu être calculé. Utilise le lien ci-dessus.
         </p>
       ) : null}

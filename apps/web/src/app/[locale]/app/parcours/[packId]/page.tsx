@@ -193,10 +193,10 @@ function SlotModal({
               <Icon name={slot.icon} size="lg" />
             </span>
             <div className="min-w-0">
-              <p className="text-[11px] font-black uppercase tracking-wider text-[var(--muted)]">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--muted)]">
                 {pickLocale(loc, chapter.title)}
               </p>
-              <h2 className="font-display text-lg font-black leading-tight text-[var(--text)]">
+              <h2 className="font-display text-lg font-bold leading-tight text-[var(--text)]">
                 {pickLocale(loc, slot.title)}
               </h2>
             </div>
@@ -248,7 +248,7 @@ function SlotModal({
             type="button"
             onClick={onComplete}
             disabled={busy || status !== 'available'}
-            className="btn btn-primary inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black disabled:opacity-50"
+            className="btn btn-primary inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold disabled:opacity-50"
           >
             <Icon name="Check" size="xs" aria-hidden />
             {status === 'completed'
@@ -286,10 +286,10 @@ function RewardBanner({
           <Icon name="Trophy" size="lg" />
         </span>
         <div className="min-w-0">
-          <p className="text-[11px] font-black uppercase tracking-wider text-[var(--gold)]">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--gold)]">
             {loc === 'en' ? 'Journey complete' : 'Parcours terminé'}
           </p>
-          <p className="font-display text-xl font-black text-[var(--text)]">
+          <p className="font-display text-xl font-bold text-[var(--text)]">
             {loc === 'en' ? 'Title unlocked + bonus QC' : 'Titre débloqué + bonus QC'}
           </p>
           <p className="mt-1.5 text-sm font-bold leading-snug text-[var(--text)]">
@@ -405,7 +405,7 @@ export default function ParcoursPage({ params }: RouteParams) {
           <p className="shop-flash-error rounded-xl p-4 text-sm font-bold text-[var(--text)]">
             {loc === 'en' ? 'Unknown pack.' : 'Pack inconnu.'}
           </p>
-          <Link href={backNav.href} className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-violet-700 hover:underline">
+          <Link href={backNav.href} className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-[var(--link-on-bg)] hover:underline">
             <Icon name="ChevronLeft" size="xs" /> {backNav.label}
           </Link>
         </main>
@@ -434,10 +434,10 @@ export default function ParcoursPage({ params }: RouteParams) {
               <Icon name={packMeta.icon} size="xl" />
             </span>
             <div className="min-w-0">
-              <p className="text-[11px] font-black uppercase tracking-widest text-[var(--muted)]">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--muted)]">
                 {loc === 'en' ? '10-quest journey' : 'Parcours de 10 quêtes'}
               </p>
-              <h1 className="font-display text-2xl font-black leading-tight text-[var(--text)] sm:text-3xl">
+              <h1 className="font-display text-2xl font-bold leading-tight text-[var(--text)] sm:text-3xl">
                 {loc === 'en' ? packMeta.labelEn : packMeta.label}
               </h1>
               <p className="mt-1.5 text-sm font-semibold leading-relaxed text-[var(--muted)]">
@@ -448,7 +448,7 @@ export default function ParcoursPage({ params }: RouteParams) {
 
           {data ? (
             <div className="mt-6">
-              <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-wider text-[var(--muted)]">
+              <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-[var(--muted)]">
                 <span>
                   {data.state.completedCount}/{data.state.totalSlots}{' '}
                   {loc === 'en' ? 'completed' : 'complétées'}
@@ -470,7 +470,7 @@ export default function ParcoursPage({ params }: RouteParams) {
         </header>
 
         {recentXp > 0 ? (
-          <p className="streak-badge mt-5 w-full justify-center text-sm font-black text-[var(--green)]">
+          <p className="streak-badge mt-5 w-full justify-center text-sm font-bold text-[var(--green)]">
             +{recentXp} XP {loc === 'en' ? 'awarded' : 'crédités'}
           </p>
         ) : null}
@@ -478,7 +478,7 @@ export default function ParcoursPage({ params }: RouteParams) {
         {recentReward ? <div className="mt-4"><RewardBanner reward={recentReward} loc={loc} /></div> : null}
 
         {data?.state.rewardClaimed && !recentReward ? (
-          <p className="streak-badge mt-5 w-full justify-center text-sm font-black text-[var(--text)]">
+          <p className="streak-badge mt-5 w-full justify-center text-sm font-bold text-[var(--text)]">
             {loc === 'en' ? 'Journey already completed — well done!' : 'Parcours déjà bouclé — bravo !'}
           </p>
         ) : null}
@@ -513,17 +513,17 @@ export default function ParcoursPage({ params }: RouteParams) {
                   <div className="mb-1 flex items-start justify-between gap-3 sm:gap-4">
                     <div className="flex shrink-0 items-start pt-0.5">
                       <span
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-[color:color-mix(in_srgb,var(--violet)_35%,var(--border-ui))] bg-[var(--card)] font-display text-sm font-black text-[var(--text)] shadow-sm"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-[color:color-mix(in_srgb,var(--violet)_35%,var(--border-ui))] bg-[var(--card)] font-display text-sm font-bold text-[var(--text)] shadow-sm"
                         aria-hidden
                       >
                         {i + 1}
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[11px] font-black uppercase tracking-wider text-[var(--muted)]">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--muted)]">
                         {loc === 'en' ? `Chapter ${i + 1}` : `Chapitre ${i + 1}`}
                       </p>
-                      <h2 className="font-display text-lg font-black leading-snug text-[var(--text)] sm:text-xl">
+                      <h2 className="font-display text-lg font-bold leading-snug text-[var(--text)] sm:text-xl">
                         {pickLocale(loc, c.title)}
                       </h2>
                       <p className="mt-1.5 text-xs font-semibold leading-relaxed text-[var(--muted)]">
@@ -531,7 +531,7 @@ export default function ParcoursPage({ params }: RouteParams) {
                       </p>
                     </div>
                     <span
-                      className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1.5 text-[10px] font-black uppercase tracking-wider ${badge.className}`}
+                      className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider ${badge.className}`}
                     >
                       <Icon name={badge.icon} size="xs" aria-hidden />
                       {badge.label}
@@ -558,7 +558,7 @@ export default function ParcoursPage({ params }: RouteParams) {
             })}
 
             <div className="app-shop-balance-card border-2 border-dashed border-[color:color-mix(in_srgb,var(--gold)_45%,var(--border-ui))] p-5">
-              <p className="flex items-center gap-2.5 text-xs font-black uppercase tracking-wider text-[var(--gold)]">
+              <p className="flex items-center gap-2.5 text-xs font-bold uppercase tracking-wider text-[var(--gold)]">
                 <Icon name="Trophy" size="xs" aria-hidden />
                 {loc === 'en' ? 'Final reward' : 'Récompense finale'}
               </p>

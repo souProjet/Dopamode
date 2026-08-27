@@ -147,6 +147,8 @@ model Profile {
   ownedQuestPackIds     Json            @default("[]") @map("owned_quest_pack_ids")
   /** Progression dans les parcours de packs (JSON: { [packId]: { completed, rewardClaimed } }) */
   questPackProgress     Json            @default("{}") @map("quest_pack_progress")
+  /** Cap en cours et Caps terminés (JSON CapState — cf. `packages/shared/src/engine/caps.ts`) */
+  capState              Json            @default("{}") @map("cap_state")
   /** Rappel push (app mobile) pour la quête du jour */
   reminderPushEnabled   Boolean         @default(false) @map("reminder_push_enabled")
   /** Rappel par e-mail */

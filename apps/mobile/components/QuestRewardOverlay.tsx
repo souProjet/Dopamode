@@ -13,9 +13,12 @@ import {
 } from 'react-native';
 import { elevationAndroidSafe } from '../lib/elevationAndroid';
 import { LinearGradient } from 'expo-linear-gradient';
-import type { DisplayBadge, XpBreakdown } from '@questia/shared';
+import type { CompletionCoinGain, DisplayBadge, LevelReward, XpBreakdown } from '@questia/shared';
 import {
+  coinBreakdownRowsFr,
   levelFromTotalXp,
+  levelRewardSummaryFr,
+  TITLES_REGISTRY,
   XP_PER_LEVEL,
   xpBarSegmentsFromTotals,
   xpBreakdownRowsFr,
@@ -47,6 +50,9 @@ export interface QuestRewardPayload {
     newTotal: number;
     previousTotal: number;
   };
+  coinGain?: CompletionCoinGain | null;
+  levelRewards?: LevelReward[];
+  titlesUnlocked?: string[];
   badgesUnlocked: DisplayBadge[];
 }
 
@@ -179,6 +185,28 @@ export function QuestRewardOverlay({ visible, payload, onContinue }: Props) {
     [payload],
   );
 
+  const coinRows = useMemo(
+    () =>
+      payload?.coinGain
+        ? coinBreakdownRowsFr(payload.coinGain.breakdown, {
+            fromBadges: payload.coinGain.fromBadges,
+            fromLevels: payload.coinGain.fromLevels,
+          })
+        : [],
+    [payload],
+  );
+  const paidLevels = useMemo(
+    () =>
+      (payload?.levelRewards ?? []).filter(
+        (r) => r.coins > 0 || r.titleId != null || r.dailyRerolls != null,
+      ),
+    [payload],
+  );
+  const newTitles = useMemo(
+    () => (payload?.titlesUnlocked ?? []).map((id) => TITLES_REGISTRY[id]).filter((d) => d != null),
+    [payload],
+  );
+
   const barAnim = useRef(new Animated.Value(0)).current;
   const [barLevel, setBarLevel] = useState(1);
   const [barXpIntoLabel, setBarXpIntoLabel] = useState(0);
@@ -234,7 +262,7 @@ export function QuestRewardOverlay({ visible, payload, onContinue }: Props) {
 
   if (!payload) return null;
 
-  const { xpGain, badgesUnlocked } = payload;
+  const { xpGain, coinGain, badgesUnlocked } = payload;
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onContinue}>
@@ -348,6 +376,19 @@ export function QuestRewardOverlay({ visible, payload, onContinue }: Props) {
                 Total {xpGain.previousTotal} → <Text style={styles.totalBold}>{xpGain.newTotal}</Text>
               </Text>
 
+              {coinGain && coinGain.gained > 0 ? (
+                <View style={styles.coinHero}>
+                  <UiLucideIcon name="Coins" size={22} color={palette.gold} />
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <Text style={styles.coinHeroValue}>+{coinGain.gained} QC</Text>
+                    <Text style={styles.coinHeroMeta}>
+                      Solde {coinGain.previousBalance} →{' '}
+                      <Text style={styles.coinHeroMetaStrong}>{coinGain.newBalance}</Text>
+                    </Text>
+                  </View>
+                </View>
+              ) : null}
+
               <View style={styles.progressBox} accessibilityRole="summary">
                 <View style={styles.progressHeader}>
                   <Text style={styles.progressLevelLabel}>Niveau {barLevel}</Text>
@@ -389,6 +430,59 @@ export function QuestRewardOverlay({ visible, payload, onContinue }: Props) {
                   </View>
                 ))}
               </View>
+
+              {coinRows.length > 0 ? (
+                <View style={styles.coinRulesBox}>
+                  <Text style={styles.coinRulesTitle}>Détail Quest Coins</Text>
+                  {coinRows.map((row) => (
+                    <View key={row.key} style={styles.coinRuleRow}>
+                      <Text style={styles.coinRuleLabel} numberOfLines={2}>
+                        {row.label}
+                      </Text>
+                      <Text style={styles.ruleCardValue}>{row.value}</Text>
+                    </View>
+                  ))}
+                </View>
+              ) : null}
+
+              {paidLevels.length > 0 ? (
+                <View style={styles.badgeBlock}>
+                  <Text style={styles.coinRulesTitle}>Paliers franchis</Text>
+                  {paidLevels.map((r) => (
+                    <View key={r.level} style={styles.badgeRow}>
+                      <View style={styles.levelIconWrap}>
+                        <Text style={styles.levelIconText}>{r.level}</Text>
+                      </View>
+                      <View style={{ flex: 1, minWidth: 0 }}>
+                        <Text style={styles.badgeTitle} numberOfLines={2}>
+                          {levelRewardSummaryFr(r)}
+                        </Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              ) : null}
+
+              {newTitles.length > 0 ? (
+                <View style={styles.badgeBlock}>
+                  <Text style={styles.badgeKicker}>Nouveaux titres</Text>
+                  {newTitles.map((def) => (
+                    <View key={def.id} style={styles.badgeRow}>
+                      <View style={styles.badgeIconWrap}>
+                        <UiLucideIcon name={def.icon} size={24} color={palette.orange} />
+                      </View>
+                      <View style={{ flex: 1, minWidth: 0 }}>
+                        <Text style={styles.badgeTitle} numberOfLines={2}>
+                          {def.label}
+                        </Text>
+                        <Text style={styles.badgeCrit} numberOfLines={2}>
+                          Équipable depuis ton profil.
+                        </Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              ) : null}
 
               {badgesUnlocked.length > 0 ? (
                 <View style={styles.badgeBlock}>
@@ -629,6 +723,67 @@ function buildRewardStyles(p: ThemePalette, themeId: string | null | undefined) 
       minWidth: 0,
     },
     ruleCardValue: { fontSize: 12, fontWeight: '900', color: panelText },
+    coinHero: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      marginTop: 10,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colorWithAlpha(p.gold, 0.45),
+      backgroundColor: colorWithAlpha(p.gold, 0.1),
+    },
+    coinHeroValue: { fontSize: 20, fontWeight: '900', color: panelText },
+    coinHeroMeta: { fontSize: 11, fontWeight: '700', color: panelMuted, marginTop: 2 },
+    coinHeroMetaStrong: { color: p.gold, fontWeight: '900' },
+    coinRulesBox: {
+      backgroundColor: themeId === 'midnight' ? p.surface : p.inputBg,
+      borderRadius: 14,
+      padding: 10,
+      borderWidth: 1,
+      borderColor: colorWithAlpha(p.gold, 0.35),
+      marginBottom: 10,
+      gap: 6,
+    },
+    coinRulesTitle: {
+      fontSize: 9,
+      fontWeight: '900',
+      letterSpacing: 1.4,
+      color: p.gold,
+      marginBottom: 4,
+    },
+    coinRuleRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      gap: 8,
+      paddingVertical: 8,
+      paddingHorizontal: 10,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colorWithAlpha(p.gold, 0.28),
+      backgroundColor: themeId === 'midnight' ? p.card : p.inputBg,
+    },
+    coinRuleLabel: {
+      fontSize: 11,
+      fontWeight: '800',
+      color: p.gold,
+      flex: 1,
+      minWidth: 0,
+    },
+    levelIconWrap: {
+      width: 36,
+      height: 36,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colorWithAlpha(p.gold, 0.12),
+      borderWidth: 1,
+      borderColor: colorWithAlpha(p.gold, 0.28),
+    },
+    levelIconText: { fontSize: 14, fontWeight: '900', color: p.gold },
     badgeBlock: { marginBottom: 4, gap: 8 },
     badgeKicker: {
       fontSize: 10,

@@ -88,10 +88,21 @@
         }
       ],
       "./plugins/withAdaptiveIconForegroundInset.js",
-      "./plugins/withAndroidReleaseSigning.js"
+      "./plugins/withAndroidReleaseSigning.js",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
     ],
     "autolinking": {
-      "searchPaths": ["../../node_modules", "./node_modules"]
+      "searchPaths": [
+        "../../node_modules",
+        "./node_modules"
+      ]
     },
     "experiments": {
       "typedRoutes": true,

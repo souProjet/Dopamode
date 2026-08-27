@@ -20,6 +20,7 @@ export default function Error({
   return (
     <AppErrorView
       reset={reset}
+      eyebrow={t('eyebrow')}
       title={t('title')}
       description={t('description')}
       retryLabel={t('retry')}

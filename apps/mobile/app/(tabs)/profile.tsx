@@ -23,6 +23,8 @@ import {
   getTitleDefinition,
   getThemeIds,
   TITLES_REGISTRY,
+  isTitleEquippable,
+  titleUnlockLabel,
   type ExplorerAxis,
   type RiskAxis,
   type EscalationPhase,
@@ -66,12 +68,13 @@ type ProfilePayload = {
   shop?: {
     activeThemeId: string;
     equippedTitleId: string | null;
+    ownedTitleIds?: string[];
   };
 };
 
 const TITLE_NONE = '__none__';
 
-type SelectOpt = { value: string; label: string };
+type SelectOpt = { value: string; label: string; disabled?: boolean };
 
 function AppearanceSelectSheet({
   visible,
@@ -128,6 +131,7 @@ function AppearanceSelectSheet({
               {options.map((o) => (
                 <Pressable
                   key={o.value}
+                  disabled={o.disabled}
                   onPress={() => { onSelect(o.value); onClose(); }}
                   style={{
                     flexDirection: 'row',
@@ -135,14 +139,17 @@ function AppearanceSelectSheet({
                     justifyContent: 'space-between',
                     paddingVertical: 12,
                     paddingHorizontal: 4,
+                    opacity: o.disabled ? 0.45 : 1,
                     borderBottomWidth: StyleSheet.hairlineWidth,
                     borderBottomColor: colorWithAlpha(palette.muted, 0.2),
                   }}
                 >
-                  <Text style={{ fontSize: 14, color: o.value === selectedValue ? palette.cyan : palette.text }}>
+                  <Text style={{ fontSize: 14, flex: 1, paddingRight: 8, color: o.value === selectedValue ? palette.cyan : palette.text }}>
                     {o.label}
                   </Text>
-                  {o.value === selectedValue ? (
+                  {o.disabled ? (
+                    <UiLucideIcon name="Lock" size={14} color={palette.muted} />
+                  ) : o.value === selectedValue ? (
                     <Text style={{ color: palette.cyan, fontWeight: '700' }}>✓</Text>
                   ) : null}
                 </Pressable>
@@ -195,6 +202,7 @@ export default function ProfileScreen() {
 
   const [activeThemeId, setActiveThemeId] = useState('default');
   const [equippedTitleId, setEquippedTitleId] = useState<string | null>(null);
+  const [ownedTitleIds, setOwnedTitleIds] = useState<string[]>([]);
   const [appearSelectKind, setAppearSelectKind] = useState<null | 'theme' | 'title'>(null);
   const [appearSaving, setAppearSaving] = useState(false);
 
@@ -217,6 +225,7 @@ export default function ProfileScreen() {
       if (data.shop) {
         setActiveThemeId(data.shop.activeThemeId ?? 'default');
         setEquippedTitleId(data.shop.equippedTitleId ?? null);
+        setOwnedTitleIds(data.shop.ownedTitleIds ?? []);
       }
       const c =
         data.reminderCadence === 'weekly' || data.reminderCadence === 'monthly'
@@ -333,13 +342,19 @@ export default function ProfileScreen() {
     return getThemeIds().map((id) => ({ value: id, label: s.themeLabel(id) }));
   }, [s]);
 
+  // Un titre verrouillé reste visible (c'est un objectif) mais non sélectionnable.
   const titleOptions = useMemo<SelectOpt[]>(() => {
     const opts: SelectOpt[] = [{ value: TITLE_NONE, label: s.noTitle }];
     for (const [id, def] of Object.entries(TITLES_REGISTRY)) {
-      opts.push({ value: id, label: def.label });
+      const unlocked = isTitleEquippable(id, ownedTitleIds);
+      opts.push({
+        value: id,
+        label: unlocked ? def.label : `${def.label} — ${titleUnlockLabel(def, appLocale)}`,
+        disabled: !unlocked,
+      });
     }
     return opts;
-  }, [s]);
+  }, [s, ownedTitleIds, appLocale]);
 
   const totalXp = profile?.totalXp ?? 0;
   const { level, xpIntoLevel, xpToNext, xpPerLevel } = levelFromTotalXp(totalXp);
@@ -759,6 +774,20 @@ export default function ProfileScreen() {
                     </View>
                     <Text style={[styles.badgeName, !b.unlocked && styles.badgeNameMuted]}>{b.title}</Text>
                     <Text style={[styles.badgeCrit, !b.unlocked && styles.badgeCritLocked]}>{b.criteria}</Text>
+                    <View style={styles.badgeRewardRow}>
+                      <View style={styles.badgeRewardChip}>
+                        <UiLucideIcon name="Coins" size={11} color={palette.orange} />
+                        <Text style={styles.badgeRewardChipText}>+{b.rewardCoins} QC</Text>
+                      </View>
+                      {b.rewardTitleId && TITLES_REGISTRY[b.rewardTitleId] ? (
+                        <View style={styles.badgeTitleChip}>
+                          <UiLucideIcon name="Award" size={11} color={palette.cyan} />
+                          <Text style={styles.badgeTitleChipText} numberOfLines={1}>
+                            {TITLES_REGISTRY[b.rewardTitleId]!.label}
+                          </Text>
+                        </View>
+                      ) : null}
+                    </View>
                     {b.unlocked && b.unlockedAt ? (
                       <Text style={styles.badgeDateUnlocked}>
                         {new Date(b.unlockedAt).toLocaleDateString(dateLocale, {
@@ -1053,6 +1082,32 @@ function createProfileStyles(p: ThemePalette, themeId: string) {
     badgeNameMuted: { color: p.muted },
     badgeCrit: { fontSize: 11, color: C.muted, fontWeight: '500', marginBottom: 6, lineHeight: 16 },
     badgeCritLocked: { color: p.muted },
+    badgeRewardRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 6 },
+    badgeRewardChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+      paddingHorizontal: 7,
+      paddingVertical: 2,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: colorWithAlpha(p.gold, 0.45),
+      backgroundColor: colorWithAlpha(p.gold, 0.1),
+    },
+    badgeRewardChipText: { fontSize: 10, fontWeight: '900', color: p.orange },
+    badgeTitleChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+      maxWidth: 160,
+      paddingHorizontal: 7,
+      paddingVertical: 2,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: colorWithAlpha(p.cyan, 0.45),
+      backgroundColor: colorWithAlpha(p.cyan, 0.1),
+    },
+    badgeTitleChipText: { fontSize: 10, fontWeight: '900', color: p.cyan, flexShrink: 1 },
     badgeDate: { fontSize: 10, color: p.muted, fontWeight: '600' },
     badgeDateUnlocked: { fontSize: 10, color: p.green, fontWeight: '800' },
 

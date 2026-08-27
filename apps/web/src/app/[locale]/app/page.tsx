@@ -16,7 +16,15 @@ import {
   ProfileRefinementModal,
   type RefinementQuestionUi,
 } from '@/components/ProfileRefinementModal';
-import type { AppLocale, DisplayBadge, EscalationPhase, XpBreakdown } from '@questia/shared';
+import type {
+  AppLocale,
+  CapProgressView,
+  CompletionCoinGain,
+  DisplayBadge,
+  EscalationPhase,
+  LevelReward,
+  XpBreakdown,
+} from '@questia/shared';
 import {
   questDisplayEmoji,
   questFamilyLabel,
@@ -35,7 +43,7 @@ const QuestDestinationMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-56 animate-pulse rounded-2xl bg-gradient-to-br from-stone-200/35 to-stone-100/50" />
+      <div className="h-56 animate-pulse rounded-2xl bg-[var(--surface)]" />
     ),
   },
 );
@@ -108,6 +116,8 @@ interface DailyQuest {
   };
   /** Packs de quêtes achetés — accès parcours depuis l’accueil. */
   ownedQuestPackIds?: string[];
+  /** Cap en cours — l'objectif long qui oriente la quête du jour. */
+  cap?: CapProgressView | null;
 }
 
 function cloneDailyQuestSnapshot(q: DailyQuest): DailyQuest {
@@ -164,9 +174,9 @@ function SafetySheet({
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 pb-4 pt-3 sm:p-7 sm:pt-6">
           <div className="text-center">
             <div className="mb-2 flex justify-center sm:mb-3">
-              <Icon name="Shield" size="2xl" className="text-orange-500" />
+              <Icon name="Shield" size="2xl" className="text-[var(--orange)]" />
             </div>
-            <h3 id="safety-sheet-title" className="font-display text-lg font-black text-[var(--text)] sm:text-xl">
+            <h3 id="safety-sheet-title" className="font-display text-lg font-bold text-[var(--text)] sm:text-xl">
               {t('safetyTitle')}
             </h3>
             <p className="mt-1 text-xs leading-snug text-[var(--muted)] sm:text-sm">
@@ -274,6 +284,9 @@ function AppPageContent() {
       newTotal: number;
       previousTotal: number;
     };
+    coinGain: CompletionCoinGain | null;
+    levelRewards: LevelReward[];
+    titlesUnlocked: string[];
     badgesUnlocked: DisplayBadge[];
   } | null>(null);
   /** Flash plein écran court après acceptation de la quête (feedback « jeu »). */
@@ -581,6 +594,9 @@ function AppPageContent() {
           newTotal: number;
           previousTotal: number;
         };
+        coinGain?: CompletionCoinGain;
+        levelRewards?: LevelReward[];
+        titlesUnlocked?: string[];
         badgesUnlocked?: DisplayBadge[];
         progression?: DailyQuest['progression'];
       };
@@ -602,6 +618,9 @@ function AppPageContent() {
       if (data.xpGain) {
         setXpCelebration({
           xpGain: data.xpGain,
+          coinGain: data.coinGain ?? null,
+          levelRewards: data.levelRewards ?? [],
+          titlesUnlocked: data.titlesUnlocked ?? [],
           badgesUnlocked: data.badgesUnlocked ?? [],
         });
       } else {
@@ -1159,7 +1178,7 @@ function AppPageContent() {
         <Navbar />
         <main id="main-content" tabIndex={-1} className="max-w-2xl mx-auto px-3 sm:px-5 pt-24 pb-20 flex flex-col items-center justify-center text-center gap-6 outline-none">
           <Icon name="Frown" size="2xl" className="text-[var(--subtle)] mx-auto" />
-          <h2 className="font-display font-black text-2xl text-[var(--text)]">{t('errorEmptyTitle')}</h2>
+          <h2 className="font-display font-bold text-2xl text-[var(--text)]">{t('errorEmptyTitle')}</h2>
           <p className="text-[var(--muted)] max-w-md">{error}</p>
           {error.includes('onboarding') && (
             <Link href="/onboarding" className="btn btn-primary btn-md">{t('ctaCreateProfile')}</Link>
@@ -1175,7 +1194,7 @@ function AppPageContent() {
 
       {acceptQuestFlash ? (
         <div
-          className="pointer-events-none fixed inset-0 z-[85] bg-emerald-400/30 motion-safe:animate-quest-accept-flash motion-reduce:hidden"
+          className="pointer-events-none fixed inset-0 z-[85] bg-[color-mix(in_srgb,var(--green)_22%,transparent)] motion-safe:animate-quest-accept-flash motion-reduce:hidden"
           aria-hidden
         />
       ) : null}
@@ -1201,15 +1220,67 @@ function AppPageContent() {
       >
         {quest ? (
           <div className="mb-4 flex w-full min-w-0 items-center justify-between gap-3 border-b border-[var(--border-ui)]/25 pb-3">
-            <span className="text-sm font-black tracking-wide text-[var(--muted)]">
+            <span className="text-sm font-bold tracking-wide text-[var(--muted)]">
               J.{quest.day ?? 1}
             </span>
             {(quest.streak ?? 0) > 0 ? (
-              <span className="text-base font-black text-[var(--orange)] tabular-nums">
+              <span className="text-base font-bold text-[var(--orange)] tabular-nums">
                 &#128293; {quest.streak}
               </span>
             ) : null}
           </div>
+        ) : null}
+
+        {quest?.cap ? (
+          <Link
+            href="/app/cap"
+            className="mb-3 flex w-full min-w-0 items-center gap-3 rounded-2xl border border-[color:color-mix(in_srgb,var(--orange)_38%,var(--border-ui))] bg-[color-mix(in_srgb,var(--orange)_8%,var(--card))] px-3 py-2.5 transition hover:border-[color:color-mix(in_srgb,var(--orange)_55%,var(--border-ui))] hover:bg-[color-mix(in_srgb,var(--orange)_14%,var(--card))] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange)] active:opacity-90"
+            aria-label={t('capOpenA11y', { name: quest.cap.label })}
+          >
+            <Icon name={quest.cap.icon} size="md" className="shrink-0 text-[var(--orange)]" aria-hidden />
+            <span className="min-w-0 flex-1">
+              <span className="flex items-baseline gap-2">
+                <span className="truncate text-xs font-extrabold text-[var(--text)]">{quest.cap.label}</span>
+                <span className="shrink-0 text-[10px] font-bold tabular-nums text-[var(--muted)]">
+                  {quest.cap.milestoneIndex + 1}/{quest.cap.milestoneCount}
+                </span>
+              </span>
+              <span
+                className="mt-1.5 block h-1.5 w-full overflow-hidden rounded-full bg-[var(--border-ui-strong)]"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={quest.cap.overallPercent}
+                aria-label={t('capEyebrow')}
+              >
+                <span
+                  className="block h-full rounded-full bg-[var(--orange)] transition-[width] duration-500"
+                  style={{ width: `${quest.cap.overallPercent}%` }}
+                />
+              </span>
+              <span className="mt-1 block truncate text-[11px] text-[var(--muted)]">
+                {quest.cap.milestoneTitle}
+              </span>
+            </span>
+            {quest.cap.milestoneQuestNext ? (
+              <span className="shrink-0 rounded-full border border-[color-mix(in_srgb,var(--violet)_28%,transparent)] bg-[color-mix(in_srgb,var(--violet)_10%,var(--card))] px-2 py-1 text-[10px] font-bold text-[var(--violet)]">
+                {t('capMilestoneQuestChip')}
+              </span>
+            ) : null}
+          </Link>
+        ) : quest ? (
+          <Link
+            href="/app/cap"
+            className="mb-3 flex w-full min-w-0 items-center gap-2 rounded-2xl border border-dashed border-[var(--border-ui-strong)] bg-[var(--card)] px-3 py-2 text-left transition hover:border-[color:color-mix(in_srgb,var(--orange)_45%,var(--border-ui))] hover:bg-[color-mix(in_srgb,var(--orange)_7%,var(--card))] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange)] active:opacity-90"
+          >
+            <Icon name="Compass" size="sm" className="shrink-0 text-[var(--orange)]" aria-hidden />
+            <span className="min-w-0 flex-1 truncate text-xs font-bold text-[var(--text)]">
+              {t('capInvite')}
+            </span>
+            <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-[0.1em] text-[var(--orange)]">
+              {t('capInviteCta')}
+            </span>
+          </Link>
         ) : null}
 
         {ownedPacksChips.length > 0 ? (
@@ -1234,7 +1305,7 @@ function AppPageContent() {
                     <Link
                       key={id}
                       href={`/app/parcours/${id}?from=home`}
-                      className="inline-flex max-w-[11.5rem] shrink-0 items-center gap-1.5 rounded-full border border-[color:color-mix(in_srgb,var(--violet)_38%,var(--border-ui))] bg-[color-mix(in_srgb,var(--violet)_10%,var(--card))] px-2.5 py-1.5 text-left transition hover:border-[color:color-mix(in_srgb,var(--violet)_52%,var(--border-ui))] hover:bg-[color-mix(in_srgb,var(--violet)_16%,var(--card))] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 active:opacity-90 sm:max-w-[13rem] sm:py-1"
+                      className="inline-flex max-w-[11.5rem] shrink-0 items-center gap-1.5 rounded-full border border-[color:color-mix(in_srgb,var(--violet)_38%,var(--border-ui))] bg-[color-mix(in_srgb,var(--violet)_10%,var(--card))] px-2.5 py-1.5 text-left transition hover:border-[color:color-mix(in_srgb,var(--violet)_52%,var(--border-ui))] hover:bg-[color-mix(in_srgb,var(--violet)_16%,var(--card))] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--violet)] active:opacity-90 sm:max-w-[13rem] sm:py-1"
                       aria-label={t('ownedPackOpenA11y', { name: label })}
                     >
                       <Icon name={icon} size="xs" className="shrink-0 text-[var(--violet)]" />
@@ -1293,10 +1364,10 @@ function AppPageContent() {
                 : 'motion-safe:animate-quest-card-enter motion-reduce:animate-none [animation-fill-mode:backwards]'
             } ${questCardSwipeInteractive ? '' : 'transition-all duration-300'} ${
               isAbandoned
-                ? 'border-slate-400/35'
+                ? 'border-[var(--border-ui-strong)]'
                 : isAccepted || isCompleted
-                  ? 'border-emerald-400/40 shadow-emerald-500/15'
-                  : 'border-[var(--orange)]/30 shadow-orange-500/10'
+                  ? 'border-[var(--green)]/40'
+                  : 'border-[var(--orange)]/30'
             } bg-[var(--card)] ${rerolling ? 'pointer-events-none opacity-50 scale-[0.97]' : ''} ${
               questCardSwipeInteractive
                 ? questSwipeDragging
@@ -1313,14 +1384,14 @@ function AppPageContent() {
           >
             {isAbandoned ? (
               <div className="py-16 px-8 text-center">
-                <p className="text-lg font-black text-[var(--muted)]">{t('abandonedTitle')}</p>
+                <p className="text-lg font-bold text-[var(--muted)]">{t('abandonedTitle')}</p>
                 <p className="mt-2 text-sm text-[var(--muted)]">{t('abandonedSubtitle')}</p>
               </div>
             ) : (
               <>
                 <div className="relative z-0 flex flex-col px-5 pb-1 pt-5 sm:px-6">
                   <div className="flex flex-col items-center text-center">
-                    <h2 className="font-display flex max-w-[24ch] items-center justify-center gap-2 px-1 text-xl font-black leading-snug text-[var(--text)] sm:text-[22px]">
+                    <h2 className="font-display flex max-w-[24ch] items-center justify-center gap-2 px-1 text-xl font-bold leading-snug text-[var(--text)] sm:text-[22px]">
                       <Icon
                         name={questDisplayEmoji(quest.emoji)}
                         size="lg"
@@ -1361,7 +1432,7 @@ function AppPageContent() {
 
                     {quest.isOutdoor && quest.destination ? (
                       <section className="mt-4">
-                        <p className="text-[10px] font-black uppercase tracking-[0.12em] text-[var(--orange)] sm:text-[11px]">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--orange)] sm:text-[11px]">
                           {t('mapHeading')}
                         </p>
                         <p className="mt-1 text-[11px] leading-snug text-[var(--muted)] sm:text-xs">{t('mapDescription')}</p>
@@ -1373,7 +1444,7 @@ function AppPageContent() {
 
                     {quest.safetyNote && isPending ? (
                       <section className="mt-4 rounded-xl border border-[var(--orange)]/30 bg-[var(--orange)]/[0.06] p-3 sm:p-4">
-                        <p className="text-[10px] font-black uppercase tracking-[0.12em] text-[var(--orange)] sm:text-[11px]">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--orange)] sm:text-[11px]">
                           {t('safetyTitle')}
                         </p>
                         <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{quest.safetyNote}</p>
@@ -1403,7 +1474,7 @@ function AppPageContent() {
                     <button
                       type="button"
                       onClick={() => void doComplete()}
-                      className="btn btn-primary btn-lg w-full text-base font-black inline-flex items-center justify-center gap-2"
+                      className="btn btn-primary btn-lg w-full text-base font-bold inline-flex items-center justify-center gap-2"
                     >
                       <Icon name="Check" size="md" className="shrink-0" aria-hidden />
                       {t('validateQuest')}
@@ -1420,12 +1491,12 @@ function AppPageContent() {
 
                 {isCompleted && (
                   <div className="px-5 pb-5 text-center space-y-2">
-                    <p className="text-lg font-black text-[var(--green)]">{t('completedTitle')}</p>
+                    <p className="text-lg font-bold text-[var(--green)]">{t('completedTitle')}</p>
                     <p className="text-sm text-[var(--muted)]">{t('completedSubtitle')}</p>
                     <button
                       type="button"
                       onClick={() => setShowShareCard(true)}
-                      className="quest-actions-share-btn btn btn-md w-full font-black mt-2"
+                      className="quest-actions-share-btn btn btn-md w-full font-bold mt-2"
                     >
                       {t('shareVictory')}
                     </button>
@@ -1450,14 +1521,14 @@ function AppPageContent() {
                       type="button"
                       onClick={confirmReroll}
                       disabled={rerolling || !canReroll}
-                      className="w-full py-3 rounded-xl border-2 border-[var(--orange)]/40 bg-[var(--orange)]/5 text-sm font-black text-[var(--orange)] hover:bg-[var(--orange)]/10 transition-colors disabled:opacity-40"
+                      className="w-full py-3 rounded-xl border-2 border-[var(--orange)]/40 bg-[var(--orange)]/5 text-sm font-bold text-[var(--orange)] hover:bg-[var(--orange)]/10 transition-colors disabled:opacity-40"
                     >
                       {rerolling ? '\u2026' : t('changeQuest', { label: rerollLabel })}
                     </button>
                     <button
                       type="button"
                       onClick={handleAccept}
-                      className="btn btn-cta btn-lg w-full text-base font-black inline-flex items-center justify-center gap-2"
+                      className="btn btn-cta btn-lg w-full text-base font-bold inline-flex items-center justify-center gap-2"
                     >
                       <Icon name="Swords" size="md" className="shrink-0" aria-hidden />
                       {t('acceptChallenge')}
@@ -1478,18 +1549,18 @@ function AppPageContent() {
                     aria-hidden
                   >
                     <div
-                      className="absolute inset-0 flex items-center justify-center rounded-[28px] bg-emerald-500/25"
+                      className="absolute inset-0 flex items-center justify-center rounded-[28px] bg-[color-mix(in_srgb,var(--green)_20%,transparent)]"
                       style={{ opacity: swipeOverlayOpacity.acceptOp }}
                     >
-                      <span className="-rotate-12 text-2xl font-black tracking-[0.2em] text-emerald-700">
+                      <span className="-rotate-12 text-2xl font-bold tracking-[0.2em] text-[var(--green)]">
                         {t('swipeOverlayAccept')}
                       </span>
                     </div>
                     <div
-                      className="absolute inset-0 flex items-center justify-center rounded-[28px] bg-orange-500/25"
+                      className="absolute inset-0 flex items-center justify-center rounded-[28px] bg-[color-mix(in_srgb,var(--orange)_20%,transparent)]"
                       style={{ opacity: swipeOverlayOpacity.changeOp }}
                     >
-                      <span className="rotate-12 text-2xl font-black tracking-[0.2em] text-orange-800">
+                      <span className="rotate-12 text-2xl font-bold tracking-[0.2em] text-[var(--orange)]">
                         {t('swipeOverlayChange')}
                       </span>
                     </div>
@@ -1501,10 +1572,10 @@ function AppPageContent() {
                     aria-hidden
                   >
                     <div
-                      className="absolute inset-0 flex items-center justify-center rounded-[28px] bg-emerald-500/25"
+                      className="absolute inset-0 flex items-center justify-center rounded-[28px] bg-[color-mix(in_srgb,var(--green)_20%,transparent)]"
                       style={{ opacity: swipeOverlayOpacity.acceptOp }}
                     >
-                      <span className="-rotate-12 text-2xl font-black tracking-[0.2em] text-emerald-700">
+                      <span className="-rotate-12 text-2xl font-bold tracking-[0.2em] text-[var(--green)]">
                         {t('swipeOverlayValidate')}
                       </span>
                     </div>
@@ -1550,11 +1621,11 @@ function AppPageContent() {
           <div className="quest-modal-panel relative z-10 w-full">
             <div className="quest-modal-panel-accent" />
             <div className="quest-modal-panel-body">
-              <h3 id="reroll-confirm-title" className="font-display text-lg font-black text-[var(--text)]">{t('rerollConfirmTitle')}</h3>
+              <h3 id="reroll-confirm-title" className="font-display text-lg font-bold text-[var(--text)]">{t('rerollConfirmTitle')}</h3>
               <p className="mt-2 text-sm text-[var(--muted)] leading-relaxed">{t('rerollConfirmBody')}</p>
               <div className="mt-5 flex gap-2">
                 <button type="button" className="btn btn-ghost btn-md flex-1" onClick={() => setShowRerollConfirm(false)}>{t('cancel')}</button>
-                <button type="button" className="btn btn-cta btn-md flex-[2] font-black" onClick={() => void handleReroll()}>{t('rerollConfirmAction')}</button>
+                <button type="button" className="btn btn-cta btn-md flex-[2] font-bold" onClick={() => void handleReroll()}>{t('rerollConfirmAction')}</button>
               </div>
             </div>
           </div>
@@ -1567,13 +1638,13 @@ function AppPageContent() {
           <div className="quest-modal-panel relative z-10 w-full">
             <div className="quest-modal-panel-accent" />
             <div className="quest-modal-panel-body">
-              <h3 id="report-title" className="font-display text-lg font-black text-[var(--text)]">{t('reportModalTitle')}</h3>
+              <h3 id="report-title" className="font-display text-lg font-bold text-[var(--text)]">{t('reportModalTitle')}</h3>
               <p className="mt-2 text-sm text-[var(--muted)] leading-relaxed">{t('reportModalBody', { maxDays: REPORT_DEFER_MAX_DAYS })}</p>
               <label className="mt-4 block text-xs font-bold uppercase tracking-wide text-[var(--subtle)]" htmlFor="report-date">{t('reportDateLabel')}</label>
               <input id="report-date" type="date" className="mt-1 w-full rounded-xl border border-[color:var(--border-ui)] bg-[var(--input-bg)] px-3 py-2 text-[var(--text)]" min={calendarDay} max={reportDateMax} value={reportDeferredDate} onChange={(e) => setReportDeferredDate(e.target.value)} />
               <div className="mt-5 flex gap-2">
                 <button type="button" className="btn btn-ghost btn-md flex-1" onClick={() => setShowReportModal(false)}>{t('cancel')}</button>
-                <button type="button" className="btn btn-primary btn-md flex-[2] font-black" onClick={() => void handleReportConfirm()} disabled={!canReroll}>{t('confirm')}</button>
+                <button type="button" className="btn btn-primary btn-md flex-[2] font-bold" onClick={() => void handleReportConfirm()} disabled={!canReroll}>{t('confirm')}</button>
               </div>
             </div>
           </div>
@@ -1586,11 +1657,11 @@ function AppPageContent() {
           <div className="quest-modal-panel relative z-10 w-full">
             <div className="quest-modal-panel-accent" />
             <div className="quest-modal-panel-body">
-              <h3 id="abandon-title" className="font-display text-lg font-black text-[var(--text)]">{t('abandonModalTitle')}</h3>
+              <h3 id="abandon-title" className="font-display text-lg font-bold text-[var(--text)]">{t('abandonModalTitle')}</h3>
               <p className="mt-2 text-sm text-[var(--muted)] leading-relaxed">{t('abandonModalBody')}</p>
               <div className="mt-5 flex gap-2">
                 <button type="button" className="btn btn-ghost btn-md flex-1" onClick={() => setShowAbandonConfirm(false)}>{t('back')}</button>
-                <button type="button" className="btn btn-md flex-[2] border border-[color:var(--border-ui)] bg-[color:color-mix(in_srgb,var(--text)_10%,var(--card))] font-black text-[var(--text)]" onClick={() => void confirmAbandon()}>{t('confirm')}</button>
+                <button type="button" className="btn btn-md flex-[2] border border-[color:var(--border-ui)] bg-[color:color-mix(in_srgb,var(--text)_10%,var(--card))] font-bold text-[var(--text)]" onClick={() => void confirmAbandon()}>{t('confirm')}</button>
               </div>
             </div>
           </div>
@@ -1602,6 +1673,9 @@ function AppPageContent() {
           key={`${xpCelebration.xpGain.previousTotal}-${xpCelebration.xpGain.newTotal}`}
           open
           xpGain={xpCelebration.xpGain}
+          coinGain={xpCelebration.coinGain}
+          levelRewards={xpCelebration.levelRewards}
+          titlesUnlocked={xpCelebration.titlesUnlocked}
           badgesUnlocked={xpCelebration.badgesUnlocked}
           onOpenChange={(open) => { if (!open) setXpCelebration(null); }}
           onContinue={() => { setXpCelebration(null); setShowShareCard(true); }}

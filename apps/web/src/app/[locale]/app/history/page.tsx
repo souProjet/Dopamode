@@ -323,8 +323,8 @@ function HistoryPageInner() {
       <Navbar />
       <main id="main-content" tabIndex={-1} className="relative z-10 max-w-4xl mx-auto px-3 sm:px-5 pt-24 pb-20 outline-none">
         <header className="mb-8">
-          <p className="text-xs font-black uppercase tracking-widest text-[var(--orange)] mb-2">{t('eyebrow')}</p>
-          <h1 className="font-display font-black text-3xl text-[var(--text)]">{t('title')}</h1>
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--orange)] mb-2">{t('eyebrow')}</p>
+          <h1 className="font-display font-bold text-3xl text-[var(--text)]">{t('title')}</h1>
           <p className="mt-2 text-sm font-medium text-[var(--muted)] max-w-xl">{t('subtitle')}</p>
         </header>
 
@@ -355,7 +355,7 @@ function HistoryPageInner() {
 
         {loading ? (
           <div className="flex justify-center py-16">
-            <div className="h-10 w-10 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-[var(--orange)] border-t-transparent" />
           </div>
         ) : tab === 'quests' ? (
           <section aria-labelledby="hist-quests-heading">
@@ -482,11 +482,11 @@ function HistoryPageInner() {
                             <Icon
                               name={questDisplayEmoji(q.emoji)}
                               size="xl"
-                              className="shrink-0 text-orange-800/95"
+                              className="shrink-0 text-[var(--orange)]"
                               aria-hidden
                             />
                             <div className="min-w-0">
-                              <p className="font-display font-black text-lg text-[var(--text)] leading-tight">{q.title}</p>
+                              <p className="font-display font-bold text-lg text-[var(--text)] leading-tight">{q.title}</p>
                               <p className="mt-1 text-xs font-semibold text-[var(--subtle)]">
                                 {new Date(q.questDate).toLocaleDateString(dateLocale, {
                                   weekday: 'long',
@@ -529,7 +529,7 @@ function HistoryPageInner() {
                           {q.duration ? <span>⏱ {q.duration}</span> : null}
                           {q.destinationLabel ? (
                             <span className="inline-flex items-center gap-1">
-                              <Icon name="MapPin" size="xs" className="text-cyan-800 shrink-0" aria-hidden />
+                              <Icon name="MapPin" size="xs" className="shrink-0 text-[var(--violet)]" aria-hidden />
                               {q.destinationLabel}
                             </span>
                           ) : null}
@@ -551,7 +551,7 @@ function HistoryPageInner() {
                 <div ref={loadMoreRef} className="h-px w-full" aria-hidden />
                 <div className="flex min-h-[3rem] flex-col items-center justify-center gap-2 py-4">
                   {questLoadingMore ? (
-                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--orange)] border-t-transparent" />
                   ) : null}
                   {!questHasMore && !questLoadingMore ? (
                     <p className="text-xs font-semibold text-[var(--subtle)]">{t('allLoaded')}</p>
@@ -673,7 +673,7 @@ function HistoryPageInner() {
                       <div className="text-right">
                         {tx.coinsDelta != null ? (
                           <span
-                            className={`font-black tabular-nums ${
+                            className={`font-bold tabular-nums ${
                               tx.coinsDelta >= 0 ? 'text-[var(--green)]' : 'text-[var(--orange)]'
                             }`}
                           >
@@ -704,7 +704,7 @@ function HistoryPageInner() {
                 <div ref={loadMoreRef} className="h-px w-full" aria-hidden />
                 <div className="flex min-h-[3rem] flex-col items-center justify-center gap-2 py-4">
                   {txLoadingMore ? (
-                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--orange)] border-t-transparent" />
                   ) : null}
                   {!txHasMore && !txLoadingMore ? (
                     <p className="text-xs font-semibold text-[var(--subtle)]">{t('allLoaded')}</p>
@@ -734,7 +734,7 @@ export default function HistoryPage() {
         <div className="min-h-screen bg-adventure">
           <Navbar />
           <main id="main-content" tabIndex={-1} className="relative z-10 max-w-4xl mx-auto px-3 sm:px-5 pt-24 pb-24 flex justify-center outline-none">
-            <div className="h-10 w-10 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-[var(--orange)] border-t-transparent" />
           </main>
         </div>
       }

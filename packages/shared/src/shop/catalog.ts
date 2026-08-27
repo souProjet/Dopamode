@@ -4,7 +4,8 @@
  * **Ajouter un produit sans toucher au CSS :**
  * 1. Titres : ajouter l'id dans `shop/titles.ts` (TITLES_REGISTRY), puis une entrée `kind: 'title'` avec `grants: { titles: ['id'] }`.
  * 2. Bonus XP : `kind: 'xp_booster'` et `grants: { xpBonusCharges: N }` (consommé à chaque quête validée).
- * 3. Relances : `grants.bonusRerolls`.
+ * 3. Relances : `grants.bonusRerolls` — plus vendu, les relances quotidiennes sont offertes
+ *    et montent avec le niveau (`engine/levelRewards.ts`). Le champ reste pour les octrois manuels.
  * 4. Thèmes d'interface : tous gratuits (`getThemeIds` / `data-theme` dans `globals.css`) — plus de vente boutique.
  */
 import { XP_SHOP_BONUS_PER_CHARGE } from './constants';
@@ -56,6 +57,7 @@ export const SHOP_CATALOG: ShopCatalogEntry[] = [
     includedItems: [
       `+${XP_SHOP_BONUS_PER_CHARGE} XP bonus par quête validée`,
       '5 utilisations — une charge par quête validée',
+      'Chaque niveau franchi rapporte des Quest Coins et parfois un titre',
     ],
     contentsDetail:
       "Le bonus se déclenche uniquement quand tu marques une quête comme faite. Si tu abandonnes ou ignores, la charge n'est pas utilisée.",
@@ -71,7 +73,7 @@ export const SHOP_CATALOG: ShopCatalogEntry[] = [
     grants: { xpBonusCharges: 12 },
     includedItems: [
       `+${XP_SHOP_BONUS_PER_CHARGE} XP bonus par quête validée`,
-      '12 utilisations — ~60 QC par charge au lieu de 60',
+      '12 utilisations — 54 QC par charge au lieu de 60',
     ],
     contentsDetail:
       'Même règle que le pack ×5 : une charge brûlée par quête cochée terminée. Meilleur prix par charge que le petit pack.',
@@ -82,48 +84,6 @@ export const SHOP_CATALOG: ShopCatalogEntry[] = [
       compareAtCoins: 720,
     },
   },
-  {
-    sku: 'pack_reroll_3',
-    kind: 'reroll_pack',
-    name: 'Pack 3 relances',
-    description:
-      'Trois fois, tu peux demander une autre quête à la place de celle proposée — en plus de la relance gratuite du jour.',
-    priceCoins: 400,
-    icon: 'Dices',
-    grants: { bonusRerolls: 3 },
-    includedItems: [
-      '3 relances stockées sur ton compte',
-      "N'expirent pas — tu les utilises quand tu veux",
-      "S'ajoutent à ta relance quotidienne incluse",
-    ],
-    contentsDetail:
-      "Utile si la quête du jour ne te convient pas : une relance consomme un crédit et en génère une nouvelle. Les crédits restent jusqu'à utilisation.",
-  },
-  {
-    sku: 'bundle_explorer',
-    kind: 'bundle',
-    name: 'Bundle Explorateur',
-    description: `5 charges de bonus XP (+${XP_SHOP_BONUS_PER_CHARGE} XP par quête) et 3 relances bonus — en un seul achat, moins cher que séparément.`,
-    priceCoins: 600,
-    icon: 'Compass',
-    grants: {
-      xpBonusCharges: 5,
-      bonusRerolls: 3,
-    },
-    includedItems: [
-      `5× bonus +${XP_SHOP_BONUS_PER_CHARGE} XP à chaque quête validée`,
-      '3 relances bonus stockées sur ton compte',
-    ],
-    contentsDetail:
-      "Ce bundle regroupe le pack XP ×5 (300 QC) et le pack 3 relances (400 QC) en un seul achat à 600 QC — soit 100 QC d'économie.",
-    marketing: {
-      badge: 'featured',
-      hook: '100 QC économisés vs achat séparé.',
-      savingsCoins: 100,
-      compareAtCoins: 700,
-    },
-  },
-
   // ── Packs de quêtes — Ambiances (vibes) ────────────────────────────────
   {
     sku: 'pack_couple',

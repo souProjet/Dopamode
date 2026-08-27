@@ -408,6 +408,89 @@ describe('/api/quest/daily', () => {
     expect(res.status).toBe(200);
   });
 
+  it('POST complete verse des Quest Coins et fait monter la série', async () => {
+    vi.mocked(auth).mockResolvedValue({ userId: 'u1' } as never);
+    prismaMock.profile.findUnique.mockResolvedValue({
+      ...profileRow,
+      streakCount: 4,
+      currentDay: 5,
+      badgesEarned: [],
+      totalXp: 100,
+      coinBalance: 10,
+    });
+    // La veille a été validée : la chaîne tient, la série passe de 4 à 5.
+    prismaMock.questLog.findUnique.mockImplementation(
+      ({ where }: { where: { profileId_questDate: { questDate: string } } }) =>
+        Promise.resolve(
+          where.profileId_questDate.questDate === '2026-03-23'
+            ? { ...logRow, questDate: '2026-03-23', status: 'completed' }
+            : {
+                ...logRow,
+                questDate: '2026-03-24',
+                status: 'accepted',
+                phaseAtAssignment: 'expansion',
+                isOutdoor: true,
+              },
+        ),
+    );
+    prismaMock.questLog.count.mockResolvedValue(0);
+    prismaMock.$transaction.mockResolvedValue([
+      { id: 'log1' },
+      { ...profileRow, totalXp: 150, badgesEarned: [] },
+    ]);
+
+    const res = await POST(
+      new NextRequest('http://localhost/api/quest/daily', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'complete', questDate: '2026-03-24' }),
+      }),
+    );
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as {
+      streak: number;
+      coinGain: { gained: number; fromQuest: number; previousBalance: number; newBalance: number };
+    };
+
+    expect(body.streak).toBe(5);
+    // 18 (expansion) + 2×5 (série) + 5 (extérieur)
+    expect(body.coinGain.fromQuest).toBe(33);
+    expect(body.coinGain.gained).toBeGreaterThanOrEqual(body.coinGain.fromQuest);
+    expect(body.coinGain.previousBalance).toBe(10);
+    expect(body.coinGain.newBalance).toBe(10 + body.coinGain.gained);
+
+    const updateArgs = prismaMock.profile.update.mock.calls.at(-1)?.[0] as {
+      data: { coinBalance: number; streakCount: number };
+    };
+    expect(updateArgs.data.coinBalance).toBe(body.coinGain.newBalance);
+    expect(updateArgs.data.streakCount).toBe(5);
+  });
+
+  it('GET ne fait pas monter la série : générer une quête ne vaut pas la faire', async () => {
+    vi.mocked(auth).mockResolvedValue({ userId: 'u1' } as never);
+    prismaMock.profile.findUnique.mockResolvedValue({
+      ...profileRow,
+      streakCount: 7,
+      lastQuestDate: '2026-03-23',
+      currentDay: 7,
+    });
+    prismaMock.questLog.findUnique.mockResolvedValue(null);
+    prismaMock.questLog.findMany.mockResolvedValue([
+      { ...logRow, questDate: '2026-03-23', status: 'completed' },
+    ]);
+    prismaMock.questLog.create.mockResolvedValue({ ...logRow, id: 'newlog' });
+    prismaMock.$transaction.mockImplementation(async (ops: unknown) =>
+      Array.isArray(ops) ? Promise.all(ops as Promise<unknown>[]) : ops,
+    );
+    prismaMock.profile.update.mockResolvedValue({ ...profileRow, streakCount: 7 });
+
+    const res = await GET(new NextRequest('http://localhost/api/quest/daily'));
+    expect(res.status).toBe(201);
+    const updateArgs = prismaMock.profile.update.mock.calls.at(-1)?.[0] as {
+      data: { streakCount: number };
+    };
+    expect(updateArgs.data.streakCount).toBe(7);
+  });
+
   it('POST report consomme une relance et pose les flags', async () => {
     vi.mocked(auth).mockResolvedValue({ userId: 'u1' } as never);
     prismaMock.profile.findUnique.mockResolvedValue({
@@ -964,5 +1047,165 @@ describe('/api/quest/daily', () => {
     );
     expect(res.status).toBe(200);
     expect(prismaMock.questLog.update).toHaveBeenCalled();
+  });
+  // ── Cap ────────────────────────────────────────────────────────────────────
+  // La quête de test porte l'archétype 9 (`temporal_projection`), qui est une
+  // des familles du premier jalon de « Laisser une trace ».
+
+  it('POST complete fait avancer le jalon de Cap et verse sa prime', async () => {
+    vi.mocked(auth).mockResolvedValue({ userId: 'u1' } as never);
+    prismaMock.profile.findUnique.mockResolvedValue({
+      ...profileRow,
+      coinBalance: 10,
+      // 2/3 du premier jalon : cette validation le referme.
+      capState: {
+        active: {
+          capId: 'laisser_une_trace',
+          startedAt: '2026-03-20',
+          milestoneIndex: 0,
+          progress: 2,
+        },
+        completed: [],
+      },
+    });
+    prismaMock.questLog.findUnique.mockResolvedValue({
+      ...logRow,
+      questDate: '2026-03-24',
+      status: 'accepted',
+    });
+    prismaMock.$transaction.mockResolvedValue([
+      { id: 'log1' },
+      { ...profileRow, totalXp: 20, badgesEarned: [] },
+    ]);
+
+    const res = await POST(
+      new NextRequest('http://localhost/api/quest/daily', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'complete', questDate: '2026-03-24' }),
+      }),
+    );
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as {
+      coinGain: { gained: number; fromQuest: number; fromBadges: number; fromLevels: number };
+      capGain: {
+        capId: string;
+        coins: number;
+        milestoneCompleted: { slug: string; rewardCoins: number } | null;
+        capCompleted: unknown;
+      } | null;
+    };
+
+    expect(body.capGain?.capId).toBe('laisser_une_trace');
+    expect(body.capGain?.milestoneCompleted?.slug).toBe('commencer_quelque_chose');
+    expect(body.capGain?.coins).toBe(40);
+    expect(body.capGain?.capCompleted).toBeNull();
+    const { fromQuest, fromBadges, fromLevels } = body.coinGain;
+    expect(body.coinGain.gained).toBe(fromQuest + fromBadges + fromLevels + 40);
+
+    const updateArgs = prismaMock.profile.update.mock.calls.at(-1)?.[0] as {
+      data: { capState?: { active: { milestoneIndex: number; progress: number } } };
+    };
+    expect(updateArgs.data.capState?.active).toMatchObject({ milestoneIndex: 1, progress: 0 });
+  });
+
+  it('POST complete ne touche pas au Cap si la quête est hors jalon', async () => {
+    vi.mocked(auth).mockResolvedValue({ userId: 'u1' } as never);
+    prismaMock.profile.findUnique.mockResolvedValue({
+      ...profileRow,
+      coinBalance: 10,
+      // « Reprendre corps » : jalon physique, l'archétype 9 n'en fait pas partie.
+      capState: {
+        active: {
+          capId: 'reprendre_corps',
+          startedAt: '2026-03-20',
+          milestoneIndex: 0,
+          progress: 1,
+        },
+        completed: [],
+      },
+    });
+    prismaMock.questLog.findUnique.mockResolvedValue({
+      ...logRow,
+      questDate: '2026-03-24',
+      status: 'accepted',
+    });
+    prismaMock.$transaction.mockResolvedValue([
+      { id: 'log1' },
+      { ...profileRow, totalXp: 20, badgesEarned: [] },
+    ]);
+
+    const res = await POST(
+      new NextRequest('http://localhost/api/quest/daily', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'complete', questDate: '2026-03-24' }),
+      }),
+    );
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as {
+      capGain: unknown;
+      coinGain: { gained: number; fromQuest: number; fromBadges: number; fromLevels: number };
+    };
+    expect(body.capGain).toBeNull();
+    const { fromQuest, fromBadges, fromLevels } = body.coinGain;
+    // Rien du Cap : le gain se réduit à la quête, aux insignes et aux paliers.
+    expect(body.coinGain.gained).toBe(fromQuest + fromBadges + fromLevels);
+
+    const updateArgs = prismaMock.profile.update.mock.calls.at(-1)?.[0] as {
+      data: Record<string, unknown>;
+    };
+    expect(updateArgs.data).not.toHaveProperty('capState');
+  });
+
+  it('POST complete termine le Cap : prime finale et titre exclusif', async () => {
+    vi.mocked(auth).mockResolvedValue({ userId: 'u1' } as never);
+    prismaMock.profile.findUnique.mockResolvedValue({
+      ...profileRow,
+      coinBalance: 0,
+      // Dernier jalon (4 quêtes requises), 3 déjà faites.
+      capState: {
+        active: {
+          capId: 'laisser_une_trace',
+          startedAt: '2026-03-01',
+          milestoneIndex: 3,
+          progress: 3,
+        },
+        completed: [],
+      },
+    });
+    prismaMock.questLog.findUnique.mockResolvedValue({
+      ...logRow,
+      questDate: '2026-03-24',
+      status: 'accepted',
+    });
+    prismaMock.$transaction.mockResolvedValue([
+      { id: 'log1' },
+      { ...profileRow, totalXp: 20, badgesEarned: [] },
+    ]);
+
+    const res = await POST(
+      new NextRequest('http://localhost/api/quest/daily', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'complete', questDate: '2026-03-24' }),
+      }),
+    );
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as {
+      titlesUnlocked: string[];
+      capGain: { coins: number; capCompleted: { id: string; rewardTitleId: string } | null } | null;
+      cap: unknown;
+    };
+
+    // 120 (dernier jalon) + 200 (prime de fin)
+    expect(body.capGain?.coins).toBe(320);
+    expect(body.capGain?.capCompleted?.id).toBe('laisser_une_trace');
+    expect(body.titlesUnlocked).toContain('cap_batisseur');
+    expect(body.cap).toBeNull();
+
+    const updateArgs = prismaMock.profile.update.mock.calls.at(-1)?.[0] as {
+      data: { capState?: { active: unknown; completed: string[] }; ownedTitleIds?: string[] };
+    };
+    expect(updateArgs.data.capState?.active).toBeNull();
+    expect(updateArgs.data.capState?.completed).toEqual(['laisser_une_trace']);
+    expect(updateArgs.data.ownedTitleIds).toContain('cap_batisseur');
   });
 });

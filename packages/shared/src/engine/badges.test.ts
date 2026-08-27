@@ -6,6 +6,7 @@ import {
   displayEarnedBadges,
   getBadgeCatalogForUi,
   evaluateNewBadges,
+  aggregateBadgeRewards,
   type BadgeEvaluationStats,
 } from './badges';
 
@@ -128,5 +129,42 @@ describe('evaluateNewBadges', () => {
       'iso',
     );
     expect(out.some((b) => b.id === 'quadrant_homebody_risktaker')).toBe(true);
+  });
+});
+
+
+describe('récompenses d\'insignes', () => {
+  it('chaque insigne paie quelque chose : un insigne n\'est pas un autocollant', () => {
+    for (const def of BADGE_DEFINITIONS) {
+      expect(def.rewardCoins, def.id).toBeGreaterThan(0);
+    }
+  });
+
+  it('les insignes rares paient plus que les premiers pas', () => {
+    const premier = BADGE_DEFINITIONS.find((d) => d.id === 'premiere_quete')!;
+    const cent = BADGE_DEFINITIONS.find((d) => d.id === 'cent_quetes')!;
+    expect(cent.rewardCoins).toBeGreaterThan(premier.rewardCoins);
+  });
+
+  it('aggregateBadgeRewards additionne coins et titres', () => {
+    const ids = ['premiere_quete', 'cent_quetes'];
+    const expected = ids.reduce(
+      (n, id) => n + BADGE_DEFINITIONS.find((d) => d.id === id)!.rewardCoins,
+      0,
+    );
+    const agg = aggregateBadgeRewards(ids);
+    expect(agg.coins).toBe(expected);
+    expect(agg.titleIds).toContain(BADGE_DEFINITIONS.find((d) => d.id === 'cent_quetes')!.rewardTitleId);
+  });
+
+  it('ignore un identifiant inconnu', () => {
+    expect(aggregateBadgeRewards(['nawak'])).toEqual({ coins: 0, titleIds: [] });
+  });
+
+  it('expose la récompense au catalogue UI', () => {
+    const entry = getBadgeCatalogForUi([]).find((b) => b.id === 'premiere_quete')!;
+    expect(entry.rewardCoins).toBe(
+      BADGE_DEFINITIONS.find((d) => d.id === 'premiere_quete')!.rewardCoins,
+    );
   });
 });

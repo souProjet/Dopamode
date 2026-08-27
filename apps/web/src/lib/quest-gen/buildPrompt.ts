@@ -1,5 +1,6 @@
 import type { AppLocale } from '@questia/shared';
 import { QUEST_SYSTEM_GUARDRAILS, QUEST_SYSTEM_GUARDRAILS_EN, QUEST_SYSTEM_LANG_FR } from '../ai/promptGuardrails';
+import { buildCapBrief } from './buildCapBrief';
 import { buildCreativeConstraints } from './buildCreativeConstraints';
 import { buildEnvironmentalBrief } from './buildEnvironmentalBrief';
 import { buildHistoryBrief } from './buildHistoryBrief';
@@ -63,6 +64,8 @@ export function buildUserPrompt(input: QuestGenInput, repairHint: string | null 
   const historyBrief = buildHistoryBrief(history, locale);
   const creativeBrief = buildCreativeConstraints(questParameters, locale, context, profile.phase);
   const environmentalBrief = buildEnvironmentalBrief(context.questDateIso, locale);
+  const capBrief = buildCapBrief(input.capState, locale);
+  const capBlock = capBrief ? `\n${capBrief}\n` : '';
 
   const expectedCategory = questParameters.primaryCategory;
 
@@ -116,7 +119,7 @@ ${profileBrief}
 ${historyBrief}
 
 ${creativeBrief}
-
+${capBlock}
 ${environmentalBrief}
 
 YOUR JOB:
@@ -166,7 +169,7 @@ ${profileBrief}
 ${historyBrief}
 
 ${creativeBrief}
-
+${capBlock}
 ${environmentalBrief}
 
 TON TRAVAIL :

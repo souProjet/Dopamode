@@ -1,5 +1,6 @@
 {
   "ErrorPage": {
+    "eyebrow": "Technical incident",
     "title": "Something went wrong",
     "description": "An unexpected error occurred. You can retry or go back to the homepage.",
     "retry": "Retry",
@@ -110,7 +111,8 @@
     "navSections": "Site sections",
     "navApp": "App navigation",
     "adminConsole": "Admin console",
-    "adminLabel": "Console"
+    "adminLabel": "Console",
+    "cap": "Cap"
   },
   "HomeMetadata": {
     "titleStoresBoth": "Questia — Daily IRL quest app (iOS, Android & Web)",
@@ -158,6 +160,10 @@
       "continueBrowser": "Continue in your browser",
       "examplesAsideLabel": "Example quests",
       "examplesCaption": "Three quests from the notebook",
+      "examplePrev": "Previous quest",
+      "exampleNext": "Next quest",
+      "exampleGoTo": "Go to quest {index} of {total}",
+      "exampleOutdoor": "Outdoors",
       "facts": [
         {
           "value": "1",
@@ -369,6 +375,11 @@
     "ownedPacksEyebrow": "Paths",
     "ownedPacksSectionA11y": "Owned paths — scroll sideways",
     "ownedPackOpenA11y": "Journey {name} — open",
+    "capEyebrow": "Cap",
+    "capOpenA11y": "Cap \"{name}\": open",
+    "capMilestoneQuestChip": "Milestone quest",
+    "capInvite": "Pick a long-term goal",
+    "capInviteCta": "Cap",
     "questOfDay": "Today's quest",
     "detailCloseLabel": "Close",
     "detailEyebrow": "Details",
@@ -435,6 +446,31 @@
     "safetyNotToday": "Not today",
     "safetyLetsGo": "Let's go!",
     "shareDefaultName": "Adventurer"
+  },
+  "AppCap": {
+    "back": "← Back to the quest",
+    "eyebrow": "Long-term objective",
+    "title": "Your Cap",
+    "intro": "A Cap is a life objective split into four milestones. It does not replace the daily quest: it chooses it. Every quest you complete in a milestone family brings you closer, and the last one of each milestone is a bigger quest.",
+    "inProgress": "Cap in progress",
+    "milestoneOf": "Milestone {index}/{count}",
+    "progressLabel": "Cap progress",
+    "questsInMilestone": "{done} of {total} quests in this milestone",
+    "milestoneQuestNext": "Next up: milestone quest",
+    "finalReward": "When the Cap ends: +{coins} QC and the title « {title} ».",
+    "abandon": "Abandon this Cap",
+    "abandonWarning": "This Cap's progress will be lost.",
+    "abandonConfirm": "Confirm abandon",
+    "cancel": "Cancel",
+    "chooseTitle": "Choose your Cap",
+    "chooseIntro": "One Cap at a time. You can switch whenever you like, but the progress of the Cap you leave is lost.",
+    "changeTitle": "Change Cap",
+    "changeIntro": "Starting another Cap replaces the current one and erases its progress.",
+    "capSummary": "{quests} quests · {coins} QC total",
+    "start": "Take this Cap",
+    "switchTo": "Switch to this Cap",
+    "done": "Completed",
+    "errorGeneric": "Something went wrong."
   },
   "AppProfile": {
     "backToQuest": "← Back to today's quest",
@@ -613,6 +649,8 @@
     "sectionThemes": "Themes",
     "sectionTitles": "Titles",
     "sectionRerolls": "Rerolls",
+    "rerollsFreeNote": "Daily rerolls are no longer for sale: they come free and grow with your level.",
+    "rerollTierFrom": "from level {level}",
     "txJournal": "Transaction log",
     "txHistoryLink": "Full history (filters & search)",
     "noTx": "No activity yet.",

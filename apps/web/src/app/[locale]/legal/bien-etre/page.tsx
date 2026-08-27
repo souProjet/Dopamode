@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Link } from '@/i18n/navigation';
 import { siteUrl } from '@/config/marketing';
+import { SiteFooter } from '@/components/SiteFooter';
 
 export const metadata: Metadata = {
   title: 'Bien-être et limites',
@@ -11,26 +12,30 @@ export const metadata: Metadata = {
 
 export default function BienEtrePage() {
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="max-w-3xl mx-auto px-4 py-16 sm:py-20">
-        <p className="text-sm font-semibold text-slate-500 mb-2">
-          <Link href="/" className="text-orange-600 hover:underline">
+    <div className="flex min-h-screen flex-col">
+      <div className="mx-auto w-full max-w-6xl flex-1 px-5 py-12 sm:px-8 sm:py-16">
+        <div className="max-w-[46rem]">
+        <p className="carnet-eyebrow">
+          <Link href="/" className="transition-colors hover:text-[var(--text)]">
             ← Accueil
           </Link>
         </p>
-        <h1 className="font-display text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-2">
+        <h1 className="mt-4 font-display text-[clamp(1.9rem,3.4vw+1rem,2.75rem)] font-semibold leading-[1.08] tracking-[-0.025em] text-balance text-[var(--text)]">
           Bien-être et limites d'usage
         </h1>
-        <p className="text-sm text-slate-600 mb-10">
-          Page d'information —{' '}
-          <a href={siteUrl} className="text-orange-600 hover:underline">
+        <p className="carnet-rule mt-8 pt-4 text-xs text-[var(--subtle)]">
+          Page d'information :{' '}
+          <a
+            href={siteUrl}
+            className="text-[var(--link-on-bg)] underline decoration-[color:color-mix(in_srgb,var(--link-on-bg)_35%,transparent)] underline-offset-[0.2em] transition-colors duration-200 hover:text-[var(--text)]"
+          >
             {siteUrl}
           </a>
         </p>
 
-        <div className="prose prose-slate max-w-none space-y-8 text-slate-800">
+        <div className="legal-prose mt-12">
           <section>
-            <h2 className="text-xl font-black text-slate-900 mt-0">Nature du service</h2>
+            <h2>Nature du service</h2>
             <p>
               Questia est une application de <strong>divertissement et de motivation</strong> dans la vie quotidienne. Les
               quêtes proposées sont des <strong>jeux de rôle légers</strong> et des défis personnels, pas des traitements,
@@ -39,7 +44,7 @@ export default function BienEtrePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">Pas de conseil médical ou psychologique</h2>
+            <h2>Pas de conseil médical ou psychologique</h2>
             <p>
               Rien dans Questia ne remplace un avis de <strong>médecin</strong>, de{' '}
               <strong>psychologue</strong>, de psychiatre ou d'un autre professionnel de santé qualifié. En cas de douleur,
@@ -50,7 +55,7 @@ export default function BienEtrePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">Contenu généré par intelligence artificielle</h2>
+            <h2>Contenu généré par intelligence artificielle</h2>
             <p>
               Des textes (missions, accroches) peuvent être <strong>générés automatiquement</strong>. Ils peuvent être
               imprécis, mal adaptés à ta situation ou à un moment donné. Tu restes responsable de tes choix dans la vie
@@ -60,7 +65,7 @@ export default function BienEtrePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">Utilisation responsable</h2>
+            <h2>Utilisation responsable</h2>
             <p>
               Respecte la loi, le droit d'autrui et les règles des lieux publics. Les quêtes extérieures supposent une
               appréciation de ta forme et des conditions (météo, visibilité, sécurité). Ne te mets pas en situation
@@ -69,10 +74,10 @@ export default function BienEtrePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-slate-900">Liens utiles</h2>
+            <h2>Liens utiles</h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <Link href="/legal/confidentialite" className="text-orange-600 font-semibold hover:underline">
+                <Link href="/legal/confidentialite">
                   Politique de confidentialité
                 </Link>
               </li>
@@ -83,7 +88,9 @@ export default function BienEtrePage() {
             </ul>
           </section>
         </div>
+        </div>
       </div>
+      <SiteFooter />
     </div>
   );
 }

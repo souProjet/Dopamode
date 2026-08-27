@@ -52,7 +52,7 @@ export function AppStoreButtons({ variant = 'default', className = '' }: Props) 
           href={appStoreUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className={`${linkClass} focus-visible:ring-cyan-600`}
+          className={`${linkClass} focus-visible:ring-[var(--violet)]`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- badges officiels Apple */}
           <img
@@ -72,7 +72,7 @@ export function AppStoreButtons({ variant = 'default', className = '' }: Props) 
           href={playStoreUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className={`${linkClass} focus-visible:ring-emerald-600`}
+          className={`${linkClass} focus-visible:ring-[var(--violet)]`}
         >
           {/*
             PNG Google = logo + marges intégrées ; hauteur légèrement supérieure à Apple pour un rendu visuel équivalent.
@@ -92,7 +92,7 @@ export function AppStoreButtons({ variant = 'default', className = '' }: Props) 
       ) : null}
 
       {!ios && !android && (
-        <p className="text-sm font-bold text-slate-700 text-center sm:text-left px-2 max-w-md leading-relaxed">
+        <p className="max-w-md px-2 text-sm leading-relaxed text-[var(--muted)]">
           {t('webOnly')}
         </p>
       )}

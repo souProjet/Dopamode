@@ -14,6 +14,8 @@ import {
   getQuestPackArc,
   isArcFullyCompleted,
   parseQuestPackProgress,
+  levelRewardsBetween,
+  aggregateLevelRewards,
 } from '@questia/shared';
 import { parseStringArray } from '@/lib/shop/parse';
 
@@ -134,22 +136,30 @@ export async function POST(req: NextRequest, ctx: RouteContext) {
   const titles = parseStringArray(
     (profile as { ownedTitleIds?: unknown }).ownedTitleIds,
   );
-  const updatedTitles = claimReward && !titles.includes(arc.rewardTitleId)
-    ? [...titles, arc.rewardTitleId]
-    : titles;
+  const packTitleAdded = claimReward && !titles.includes(arc.rewardTitleId);
+  const updatedTitles = packTitleAdded ? [...titles, arc.rewardTitleId] : titles;
+  const previousTotalXp = profile.totalXp ?? 0;
+  const updatedTotalXp = previousTotalXp + xpEarned;
+
+  // L'XP d'un pack fait franchir des niveaux comme n'importe quel XP : mêmes
+  // primes, mêmes titres (voir `engine/levelRewards.ts`).
+  const crossedLevels = levelRewardsBetween(previousTotalXp, updatedTotalXp);
+  const levelReward = aggregateLevelRewards(crossedLevels);
+  const levelTitles = levelReward.titleIds.filter((id) => !updatedTitles.includes(id));
+  const finalTitles = levelTitles.length > 0 ? [...updatedTitles, ...levelTitles] : updatedTitles;
+  const titlesChanged = packTitleAdded || levelTitles.length > 0;
+
   const updatedCoinBalance =
-    (profile.coinBalance ?? 0) + (claimReward ? arc.rewardCoins : 0);
-  const updatedTotalXp = (profile.totalXp ?? 0) + xpEarned;
+    (profile.coinBalance ?? 0) + (claimReward ? arc.rewardCoins : 0) + levelReward.coins;
+  const coinsChanged = claimReward || levelReward.coins > 0;
 
   const updateData: Prisma.ProfileUpdateInput = {
     questPackProgress: newProgress as unknown as Prisma.InputJsonValue,
     ...(xpEarned > 0 ? { totalXp: updatedTotalXp } : {}),
-    ...(claimReward
-      ? {
-          ownedTitleIds: updatedTitles as unknown as Prisma.InputJsonValue,
-          coinBalance: updatedCoinBalance,
-        }
+    ...(titlesChanged
+      ? { ownedTitleIds: finalTitles as unknown as Prisma.InputJsonValue }
       : {}),
+    ...(coinsChanged ? { coinBalance: updatedCoinBalance } : {}),
   } as unknown as Prisma.ProfileUpdateInput;
 
   await prisma.profile.update({ where: { id: profile.id }, data: updateData });
@@ -169,6 +179,8 @@ export async function POST(req: NextRequest, ctx: RouteContext) {
     rewardJustClaimed: claimReward
       ? { titleId: arc.rewardTitleId, coins: arc.rewardCoins }
       : null,
+    levelRewards: crossedLevels,
+    titlesUnlocked: levelTitles,
     coinBalance: refreshed?.coinBalance ?? 0,
     totalXp: refreshed?.totalXp ?? 0,
   });
