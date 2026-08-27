@@ -22,3 +22,6 @@ generated/
 
 # Réglages locaux Claude Code (par machine)
 .claude/
+
+# Rapport de migration écrit au build (transitoire, jamais commité)
+apps/web/public/_deploy-check.html
