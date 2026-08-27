@@ -15,6 +15,7 @@ const isPublicApiRoute = createRouteMatcher([
   '/api/cron(.*)',
   '/api/shop/catalog',
   '/api/shop(.*)',
+  '/api/cap',
 ]);
 
 /** Sans préfixe `/en` pour comparer aux routes « logiques » (as-needed). */

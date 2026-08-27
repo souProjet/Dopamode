@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3000",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && node prisma/deploy-migrations.mjs && next build",
     "start": "next start",
     "test:e2e": "playwright test",
     "test:e2e:local": "cross-env PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_WEB_SERVER_PORT=3000 playwright test",
