@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Navbar } from '@/components/Navbar';
+import { MapBand } from '@/components/PageMasthead';
 import { Icon } from '@/components/Icons';
 import {
   getQuestPack,
@@ -92,7 +93,7 @@ function SlotLine({
   const isDone = status === 'completed';
   return (
     <li
-      className={`group flex items-center gap-3 rounded-xl border px-3 py-2.5 transition ${
+      className={`group flex items-center gap-3 rounded-[2px] border px-3 py-2.5 transition ${
         isDone
           ? 'border-[color:color-mix(in_srgb,var(--green)_32%,var(--border-ui))] bg-[color-mix(in_srgb,var(--green)_8%,var(--card))]'
           : isLocked
@@ -111,7 +112,7 @@ function SlotLine({
       }}
     >
       <span
-        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[2px] border ${
           isDone
             ? 'border-[color:color-mix(in_srgb,var(--green)_35%,transparent)] bg-[color-mix(in_srgb,var(--green)_16%,var(--card))] text-[var(--green)]'
             : isLocked
@@ -187,7 +188,7 @@ function SlotModal({
         <header className="flex shrink-0 items-start justify-between gap-3 border-b border-[color:var(--border-ui)] px-5 py-4 sm:px-6">
           <div className="flex min-w-0 items-center gap-3">
             <span
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-2 border-[color:color-mix(in_srgb,var(--orange)_30%,var(--border-ui))] bg-[color-mix(in_srgb,var(--violet)_9%,var(--card))] text-[var(--violet)]"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[2px] border-2 border-[color:color-mix(in_srgb,var(--orange)_30%,var(--border-ui))] bg-[color-mix(in_srgb,var(--violet)_9%,var(--card))] text-[var(--violet)]"
               aria-hidden
             >
               <Icon name={slot.icon} size="lg" />
@@ -229,7 +230,7 @@ function SlotModal({
             <span>+{slot.xp} XP</span>
           </div>
           {safety ? (
-            <p className="flex items-start gap-2 rounded-xl border-2 border-[color:color-mix(in_srgb,var(--gold)_40%,var(--border-ui))] bg-[color-mix(in_srgb,var(--gold)_14%,var(--card))] p-3.5 text-xs font-semibold leading-relaxed text-[var(--text)]">
+            <p className="flex items-start gap-2 rounded-[2px] border-2 border-[color:color-mix(in_srgb,var(--gold)_40%,var(--border-ui))] bg-[color-mix(in_srgb,var(--gold)_14%,var(--card))] p-3.5 text-xs font-semibold leading-relaxed text-[var(--text)]">
               <Icon name="ShieldAlert" size="xs" className="mt-0.5 shrink-0 text-[var(--gold)]" aria-hidden />
               <span>{safety}</span>
             </p>
@@ -240,7 +241,7 @@ function SlotModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl px-3 py-2.5 text-sm font-bold text-[var(--muted)] transition hover:bg-[var(--surface)] hover:text-[var(--text)]"
+            className="rounded-lg px-3 py-2.5 text-sm font-bold text-[var(--muted)] transition hover:bg-[var(--surface)] hover:text-[var(--text)]"
           >
             {loc === 'en' ? 'Later' : 'Plus tard'}
           </button>
@@ -248,7 +249,7 @@ function SlotModal({
             type="button"
             onClick={onComplete}
             disabled={busy || status !== 'available'}
-            className="btn btn-primary inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold disabled:opacity-50"
+            className="btn btn-primary inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold disabled:opacity-50"
           >
             <Icon name="Check" size="xs" aria-hidden />
             {status === 'completed'
@@ -280,7 +281,7 @@ function RewardBanner({
     <div className="app-shop-balance-card p-5 motion-safe:animate-fade-up">
       <div className="flex items-start gap-4">
         <span
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-2 border-[color:color-mix(in_srgb,var(--gold)_50%,var(--border-ui))] bg-[color-mix(in_srgb,var(--gold)_18%,var(--card))] text-[var(--gold)]"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[2px] border-2 border-[color:color-mix(in_srgb,var(--gold)_50%,var(--border-ui))] bg-[color-mix(in_srgb,var(--gold)_18%,var(--card))] text-[var(--gold)]"
           aria-hidden
         >
           <Icon name="Trophy" size="lg" />
@@ -402,7 +403,7 @@ export default function ParcoursPage({ params }: RouteParams) {
       <div className="min-h-screen bg-adventure">
         <Navbar />
         <main className="relative z-10 mx-auto max-w-3xl px-4 pt-24 pb-24">
-          <p className="shop-flash-error rounded-xl p-4 text-sm font-bold text-[var(--text)]">
+          <p className="shop-flash-error rounded-[2px] p-4 text-sm font-bold text-[var(--text)]">
             {loc === 'en' ? 'Unknown pack.' : 'Pack inconnu.'}
           </p>
           <Link href={backNav.href} className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-[var(--link-on-bg)] hover:underline">
@@ -416,19 +417,21 @@ export default function ParcoursPage({ params }: RouteParams) {
   return (
     <div className="min-h-screen bg-adventure">
       <Navbar />
-      <main className="relative z-10 mx-auto max-w-2xl px-4 pt-24 pb-28">
+      {/* Le parcours est un relevé : sa fiche de tête est posée sur la carte, comme
+          le cartouche des autres pages. */}
+      <MapBand className="max-w-2xl" bandClassName="page-masthead--app">
         <Link
           href={backNav.href}
-          className="mb-5 inline-flex items-center gap-2 text-sm font-bold text-[var(--link-on-bg)] transition hover:underline"
+          className="mb-3 inline-flex items-center gap-2 text-sm font-semibold text-[var(--link-on-bg)] transition-colors hover:text-[var(--text)]"
         >
           <Icon name="ChevronLeft" size="xs" />
           {backNav.label}
         </Link>
 
-        <header className="app-app-hero-band p-6 sm:p-7">
+        <header className="cartouche">
           <div className="flex items-start gap-4">
             <span
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-2 border-[color:color-mix(in_srgb,var(--orange)_38%,var(--border-ui))] bg-[var(--card)] text-[var(--violet)] shadow-sm"
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[2px] border-2 border-[color:color-mix(in_srgb,var(--orange)_38%,var(--border-ui))] bg-[var(--card)] text-[var(--violet)] shadow-sm"
               aria-hidden
             >
               <Icon name={packMeta.icon} size="xl" />
@@ -468,6 +471,9 @@ export default function ParcoursPage({ params }: RouteParams) {
             </div>
           ) : null}
         </header>
+      </MapBand>
+
+      <main className="relative z-10 mx-auto max-w-2xl px-4 pb-28 pt-8">
 
         {recentXp > 0 ? (
           <p className="streak-badge mt-5 w-full justify-center text-sm font-bold text-[var(--green)]">
@@ -489,7 +495,7 @@ export default function ParcoursPage({ params }: RouteParams) {
           </p>
         ) : null}
         {error ? (
-          <p className="shop-flash-error mt-4 rounded-xl px-4 py-3 text-sm font-bold text-[var(--text)]">
+          <p className="shop-flash-error mt-4 rounded-[2px] px-4 py-3 text-sm font-bold text-[var(--text)]">
             {error}
           </p>
         ) : null}

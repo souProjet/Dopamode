@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Navbar } from '@/components/Navbar';
+import { AppMasthead } from '@/components/PageMasthead';
 import { Icon } from '@/components/Icons';
 import {
   TITLES_REGISTRY,
@@ -118,24 +119,23 @@ export default function CapPage() {
   return (
     <div className="min-h-screen bg-adventure">
       <Navbar />
+      <AppMasthead
+        back={
+          <Link href="/app" className="text-[var(--link-on-bg)] transition-colors hover:text-[var(--text)]">
+            {t('back')}
+          </Link>
+        }
+        eyebrow={t('eyebrow')}
+        title={t('title')}
+        lead={t('intro')}
+      />
       <main
         id="main-content"
         tabIndex={-1}
-        className="relative z-10 mx-auto max-w-4xl px-3 pb-24 pt-24 outline-none sm:px-5"
+        className="relative z-10 mx-auto max-w-4xl px-3 pb-24 pt-10 outline-none sm:px-5"
       >
-        <Link
-          href="/app"
-          className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-[var(--link-on-bg)] hover:underline"
-        >
-          {t('back')}
-        </Link>
-
-        <p className="carnet-eyebrow">{t('eyebrow')}</p>
-        <h1 className="font-display mb-2 mt-2 text-3xl font-bold text-[var(--text)]">{t('title')}</h1>
-        <p className="mb-8 max-w-2xl text-sm leading-relaxed text-[var(--muted)]">{t('intro')}</p>
-
         {error ? (
-          <p className="mb-6 rounded-2xl border border-[var(--red)] bg-[color-mix(in_srgb,var(--red)_7%,var(--card))] px-4 py-3 text-sm font-semibold text-[var(--text)]">
+          <p className="mb-6 rounded-[2px] border border-[var(--red)] bg-[color-mix(in_srgb,var(--red)_7%,var(--card))] px-4 py-3 text-sm font-semibold text-[var(--text)]">
             {error}
           </p>
         ) : null}
@@ -150,7 +150,7 @@ export default function CapPage() {
         {!loading && active && detail ? (
           <section className={`${CARD} mb-10 border-[var(--border-cyan)]`} aria-labelledby="cap-active">
             <div className="flex items-start gap-4">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[var(--border-ui-strong)] bg-[var(--surface)]">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[2px] border border-[var(--border-ui-strong)] bg-[var(--surface)]">
                 <Icon name={active.icon} size="lg" className="text-[var(--orange)]" aria-hidden />
               </span>
               <div className="min-w-0 flex-1">
@@ -216,7 +216,7 @@ export default function CapPage() {
                 return (
                   <li
                     key={m.slug}
-                    className={`flex items-start gap-3 rounded-2xl border px-4 py-3 ${
+                    className={`flex items-start gap-3 rounded-[2px] border px-4 py-3 ${
                       current
                         ? 'border-[var(--border-cyan)] bg-[var(--surface)]'
                         : 'border-[var(--border-ui)]'
@@ -299,7 +299,7 @@ export default function CapPage() {
               {others.map((c) => (
                 <li key={c.id} className={`${CARD} flex flex-col`}>
                   <div className="flex items-start gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border-ui-strong)] bg-[var(--surface)]">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[2px] border border-[var(--border-ui-strong)] bg-[var(--surface)]">
                       <Icon name={c.icon} size="md" className="text-[var(--orange)]" aria-hidden />
                     </span>
                     <div className="min-w-0 flex-1">

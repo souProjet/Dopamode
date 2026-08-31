@@ -142,7 +142,7 @@ function VoteButton({
             }
       }
       className={[
-        'relative inline-flex h-12 w-12 items-center justify-center rounded-2xl border transition-colors duration-200',
+        'relative inline-flex h-12 w-12 items-center justify-center rounded-lg border transition-colors duration-200',
         active
           ? activeBg
           : 'border-[var(--border-ui-strong)] bg-[var(--card)] hover:border-[var(--border-cyan)] hover:bg-[var(--surface)]',

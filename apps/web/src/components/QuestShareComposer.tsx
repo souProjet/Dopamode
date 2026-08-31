@@ -817,7 +817,7 @@ export function QuestShareComposer({
           <div className="mb-2 flex flex-wrap items-end justify-between gap-x-3 gap-y-1 px-0.5">
             <p className="carnet-eyebrow">Fonds</p>
           </div>
-          <div className="relative w-full min-w-0 max-w-full rounded-2xl border border-[var(--border-ui)] bg-[var(--surface)] p-1.5">
+          <div className="relative w-full min-w-0 max-w-full rounded-[2px] border border-[var(--border-ui)] bg-[var(--surface)] p-1.5">
             {/* Voiles de débordement : ils reprennent l'aplat du conteneur, pas un blanc arbitraire. */}
             <div
               className="pointer-events-none absolute inset-y-2 left-1 z-[1] w-5 bg-gradient-to-r from-[var(--surface)] to-transparent sm:w-7"
@@ -836,7 +836,7 @@ export function QuestShareComposer({
                   key={b.id}
                   type="button"
                   onClick={() => setBgId(b.id)}
-                  className={`flex h-10 min-w-[5.75rem] shrink-0 items-center justify-center rounded-xl border-2 px-3 text-[10px] font-bold uppercase tracking-wide transition-[border-color,box-shadow] duration-150 ${
+                  className={`flex h-10 min-w-[5.75rem] shrink-0 items-center justify-center rounded-lg border-2 px-3 text-[10px] font-bold uppercase tracking-wide transition-[border-color,box-shadow] duration-150 ${
                     bgId === b.id
                       ? 'border-[var(--violet)]'
                       : b.darkForeground
@@ -866,7 +866,7 @@ export function QuestShareComposer({
 
         <div className="mb-6 min-w-0">
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onPickFile} />
-          <div className="rounded-2xl border border-[var(--border-ui-strong)] bg-[color-mix(in_srgb,var(--gold)_7%,var(--card))] p-4 shadow-[0_1px_2px_color-mix(in_srgb,var(--text)_6%,transparent)] sm:p-5">
+          <div className="rounded-[2px] border border-[var(--border-ui-strong)] bg-[color-mix(in_srgb,var(--gold)_7%,var(--card))] p-4 shadow-[0_1px_2px_color-mix(in_srgb,var(--text)_6%,transparent)] sm:p-5">
             <div className="flex min-w-0 flex-col gap-4">
               <div className="min-w-0 w-full">
                 <p className="carnet-eyebrow">Photo</p>
@@ -877,7 +877,7 @@ export function QuestShareComposer({
               <div className="flex w-full min-w-0 flex-col gap-2">
                 <button
                   type="button"
-                  className="inline-flex w-full items-center justify-center gap-2.5 rounded-2xl border border-[var(--border-cyan)] bg-[var(--card)] px-5 py-3.5 text-base font-semibold text-[var(--text)] transition-colors duration-200 hover:border-[var(--violet)] hover:bg-[var(--surface)]"
+                  className="inline-flex w-full items-center justify-center gap-2.5 rounded-lg border border-[var(--border-cyan)] bg-[var(--card)] px-5 py-3.5 text-base font-semibold text-[var(--text)] transition-colors duration-200 hover:border-[var(--violet)] hover:bg-[var(--surface)]"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <Icon name="Camera" size="lg" className="shrink-0 text-[var(--violet)]" />
@@ -939,7 +939,7 @@ export function QuestShareComposer({
           {/* Trois actions, trois niveaux : aplat orange (export), filet (lien), aplat violet (fin). */}
           <button
             type="button"
-            className="btn btn-cta w-full rounded-2xl py-4 text-base disabled:opacity-60"
+            className="btn btn-cta w-full rounded-lg py-4 text-base disabled:opacity-60"
             disabled={exporting}
             onClick={() => void exportPng()}
           >
@@ -956,7 +956,7 @@ export function QuestShareComposer({
           </button>
           <button
             type="button"
-            className="w-full rounded-2xl border border-[var(--border-cyan)] bg-[var(--card)] py-3.5 text-sm font-semibold text-[var(--text)] transition-colors duration-200 hover:border-[var(--violet)] hover:bg-[var(--surface)] disabled:opacity-60"
+            className="w-full rounded-lg border border-[var(--border-cyan)] bg-[var(--card)] py-3.5 text-sm font-semibold text-[var(--text)] transition-colors duration-200 hover:border-[var(--violet)] hover:bg-[var(--surface)] disabled:opacity-60"
             disabled={sharingLink}
             onClick={() => void shareLink()}
           >
@@ -972,7 +972,7 @@ export function QuestShareComposer({
           </button>
           <button
             type="button"
-            className="btn btn-primary w-full rounded-2xl py-4 text-base"
+            className="btn btn-primary w-full rounded-lg py-4 text-base"
             onClick={() => onOpenChange(false)}
           >
             {sheetUi.done}

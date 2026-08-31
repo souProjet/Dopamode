@@ -550,6 +550,34 @@
     }
   }
 
+  /* Espace connecté : la navbar est fixe, donc c'est le bandeau qui porte sa
+     garde. Les pages n'ont plus de `pt-24` : la carte passe sous la barre et
+     le titre commence dessous. */
+  .page-masthead--app {
+    /* Même plan que le `main` de l'espace connecté : sous `/app` le calque d'aura
+       monte en intensité une fois la personnalité chargée, et il laverait la
+       carte s'il passait par-dessus. */
+    z-index: 10;
+    padding-block: calc(4rem + env(safe-area-inset-top, 0px) + 1.5rem) 2rem;
+  }
+  @media (min-width: 640px) {
+    .page-masthead--app {
+      padding-block: calc(4.25rem + env(safe-area-inset-top, 0px) + 1.75rem) 2.5rem;
+    }
+  }
+
+  /* L'accueil des quêtes ne pose pas de cartouche sur la carte, seulement son
+     relevé du jour : la bande n'est qu'un filet de registre, pas un bandeau de
+     titre. */
+  .page-masthead--ledger {
+    padding-bottom: 0.85rem;
+  }
+  @media (min-width: 640px) {
+    .page-masthead--ledger {
+      padding-bottom: 1rem;
+    }
+  }
+
   /* Le bandeau du relevé : bord à bord, la carte reste visible dessous. */
   .hero-band {
     background: color-mix(in srgb, var(--card) 88%, transparent);
@@ -1628,20 +1656,20 @@
     position: relative;
     border: 1px solid var(--border-cyan);
     border-top: 3px solid var(--violet);
-    border-radius: 1.5rem;
+    border-radius: 2px;
     background: var(--card);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
   }
 
   .shop-pref-field {
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     border: 1px solid color-mix(in srgb, var(--violet) 26%, var(--border-ui));
     background: var(--input-bg);
   }
 
   .shop-pref-select {
     width: 100%;
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
     border: 1px solid color-mix(in srgb, var(--text) 10%, var(--border-ui));
     background-color: var(--input-bg);
     color: var(--text);
@@ -1665,7 +1693,7 @@
   .app-app-hero-band {
     position: relative;
     isolation: isolate;
-    border-radius: 1.75rem;
+    border-radius: 2px;
     background: color-mix(in srgb, var(--gold) 7%, var(--card));
     border: 1px solid var(--border-ui-strong);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
@@ -1674,7 +1702,7 @@
   .app-shop-balance-card {
     position: relative;
     isolation: isolate;
-    border-radius: 1.5rem;
+    border-radius: 2px;
     background: color-mix(in srgb, var(--gold) 7%, var(--card));
     border: 1px solid var(--border-ui-strong);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
@@ -1683,7 +1711,7 @@
   .app-shop-featured-card {
     position: relative;
     isolation: isolate;
-    border-radius: 1.5rem;
+    border-radius: 2px;
     background: var(--card);
     border: 1px solid var(--border-cyan);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
@@ -1693,7 +1721,7 @@
   .app-profile-level-card {
     position: relative;
     isolation: isolate;
-    border-radius: 1.5rem;
+    border-radius: 2px;
     background: var(--card);
     border: 1px solid var(--border-cyan);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
@@ -1702,7 +1730,7 @@
   .app-profile-badge-unlocked {
     position: relative;
     isolation: isolate;
-    border-radius: 1rem;
+    border-radius: 2px;
     background: color-mix(in srgb, var(--gold) 8%, var(--card));
     border: 1px solid var(--border-ui-strong);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
@@ -1712,7 +1740,7 @@
   .app-quest-day-strip {
     position: relative;
     isolation: isolate;
-    border-radius: 1rem;
+    border-radius: 2px;
     background: color-mix(in srgb, var(--orange) 5%, var(--card));
     border: 1px solid var(--border-ui-strong);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
@@ -1721,7 +1749,7 @@
   .app-quest-xp-strip {
     position: relative;
     isolation: isolate;
-    border-radius: 1rem;
+    border-radius: 2px;
     background: var(--card);
     border: 1px solid var(--border-cyan);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
@@ -1730,7 +1758,7 @@
   .quest-mission-panel {
     position: relative;
     isolation: isolate;
-    border-radius: 1rem;
+    border-radius: 2px;
     background: var(--card);
     border: 1px solid var(--border-cyan);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
@@ -1739,7 +1767,7 @@
   .quest-map-panel {
     position: relative;
     isolation: isolate;
-    border-radius: 1rem;
+    border-radius: 2px;
     background: var(--card);
     border: 1px solid var(--border-cyan);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
@@ -1764,7 +1792,7 @@
     width: 100%;
     max-width: 28rem;
     overflow: hidden;
-    border-radius: 1.5rem;
+    border-radius: 2px;
     /* Filet 1px, pas de bordure épaisse colorée : l'élévation vient du voile, pas d'une ombre. */
     border: 1px solid var(--border-ui-strong);
     background: color-mix(in srgb, var(--card) 92%, transparent);
@@ -1788,8 +1816,8 @@
    */
   .quest-modal-sheet > .quest-modal-panel-accent:first-child,
   .quest-modal-panel > .quest-modal-panel-accent:first-child {
-    border-top-left-radius: 1.5rem;
-    border-top-right-radius: 1.5rem;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
   }
 
   .quest-modal-panel-body {
@@ -1803,7 +1831,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border-radius: 1.5rem 1.5rem 0 0;
+    border-radius: 2px 2px 0 0;
     border: 1px solid color-mix(in srgb, var(--border-ui-strong) 70%, transparent);
     background: color-mix(in srgb, var(--card) 92%, transparent);
     box-shadow: 0 -2px 8px color-mix(in srgb, var(--text) 12%, transparent);
@@ -1813,7 +1841,7 @@
   }
   @media (min-width: 640px) {
     .quest-modal-sheet {
-      border-radius: 1.5rem;
+      border-radius: 2px;
       border: 1px solid var(--border-ui-strong);
       box-shadow: 0 2px 8px -2px color-mix(in srgb, var(--text) 14%, transparent);
     }
@@ -1926,8 +1954,11 @@
   }
 
   /* ── Buttons ── */
+  /* Le rayon des contrôles est celui de la landing (`rounded-lg`) et du tunnel
+     Clerk : un bouton est le seul objet arrondi de la DA, les surfaces sont
+     coupées franc. */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 font-bold rounded-2xl transition-all duration-200 cursor-pointer select-none no-underline;
+    @apply inline-flex items-center justify-center gap-2 font-bold rounded-lg transition-all duration-200 cursor-pointer select-none no-underline;
   }
   .btn-lg { @apply px-8 py-4 text-base; }
   .btn-md { @apply px-6 py-3 text-sm; }
@@ -2056,7 +2087,7 @@
   .quest-actions-secondary {
     margin-top: 0.125rem;
     width: 100%;
-    border-radius: 1rem;
+    border-radius: 2px;
     border: 1px solid color-mix(in srgb, var(--text) 12%, var(--border-ui));
     background: color-mix(in srgb, var(--text) 4%, var(--card));
     padding: 0.5rem;
@@ -2200,7 +2231,7 @@
     flex-wrap: wrap;
     gap: 0.25rem;
     padding: 0.25rem;
-    border-radius: 1rem;
+    border-radius: 2px;
     background: var(--surface);
     border: 1px solid var(--border-ui-strong);
   }
@@ -2215,7 +2246,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
     font-weight: 700;
@@ -2250,7 +2281,7 @@
   .hist-filters-panel {
     position: relative;
     isolation: isolate;
-    border-radius: 1.5rem;
+    border-radius: 2px;
     background: var(--surface);
     border: 1px solid var(--border-ui-strong);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
@@ -2274,7 +2305,7 @@
 
   .hist-input {
     width: 100%;
-    border-radius: 0.875rem;
+    border-radius: 0.5rem;
     border: 1px solid color-mix(in srgb, var(--text) 10%, var(--border-ui));
     background: var(--input-bg);
     color: var(--text);
@@ -2377,7 +2408,7 @@
   .hist-quest-card {
     position: relative;
     isolation: isolate;
-    border-radius: 1.5rem;
+    border-radius: 2px;
     overflow: hidden;
     background: var(--card);
     border: 1px solid var(--border-ui-strong);
@@ -2409,7 +2440,7 @@
   .hist-mission {
     margin-top: 0.75rem;
     padding: 0.875rem 1rem;
-    border-radius: 1rem;
+    border-radius: 2px;
     border: 1px solid var(--border-ui-strong);
     background: var(--surface);
     font-size: 0.875rem;
@@ -2443,7 +2474,7 @@
   }
 
   .hist-empty {
-    border-radius: 1.25rem;
+    border-radius: 2px;
     border: 1px dashed var(--border-ui-strong);
     padding: 2.25rem 1rem;
     text-align: center;
@@ -2454,7 +2485,7 @@
   }
 
   .hist-tx-list {
-    border-radius: 1.5rem;
+    border-radius: 2px;
     overflow: hidden;
     border: 1px solid var(--border-ui);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
@@ -2502,7 +2533,7 @@
   .app-quest-surface {
     position: relative;
     isolation: isolate;
-    border-radius: 1.5rem;
+    border-radius: 2px;
     background: var(--card);
     border: 1px solid var(--border-ui-strong);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
@@ -2526,7 +2557,7 @@
   .quest-hook-card {
     position: relative;
     isolation: isolate;
-    border-radius: 1rem;
+    border-radius: 2px;
     padding: 0.875rem 1rem 1rem;
     max-width: 36rem;
     margin-left: auto;

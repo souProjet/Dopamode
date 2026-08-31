@@ -69,7 +69,7 @@ export function InAppAnnouncementGate() {
         <div className="flex flex-col flex-1 min-h-0 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--border-cyan)] bg-[color-mix(in_srgb,var(--violet)_8%,var(--card))]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[2px] border border-[var(--border-cyan)] bg-[color-mix(in_srgb,var(--violet)_8%,var(--card))]">
                 <Icon name="Sparkles" size="lg" className="text-[var(--violet)]" />
               </div>
               <h2 id={titleId} className="font-display text-lg font-bold text-[var(--text)] leading-tight">
@@ -79,7 +79,7 @@ export function InAppAnnouncementGate() {
             <button
               type="button"
               onClick={dismiss}
-              className="shrink-0 rounded-xl border border-[var(--border-ui-strong)] bg-[var(--card)] px-2.5 py-2 text-sm font-medium text-[var(--muted)] transition-colors hover:bg-[var(--surface)] hover:text-[var(--text)]"
+              className="shrink-0 rounded-lg border border-[var(--border-ui-strong)] bg-[var(--card)] px-2.5 py-2 text-sm font-medium text-[var(--muted)] transition-colors hover:bg-[var(--surface)] hover:text-[var(--text)]"
               aria-label="Fermer"
             >
               <Icon name="X" size="md" />

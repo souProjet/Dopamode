@@ -183,7 +183,7 @@ export function QuestXpCelebration({
       ) : null}
       <div className="motion-safe:animate-quest-modal-shake motion-reduce:animate-none relative z-[60] flex w-full max-w-md justify-center">
         <div
-          className="relative isolate w-full overflow-hidden rounded-3xl border border-[var(--border-ui-strong)] bg-[var(--card)] shadow-[0_2px_8px_-2px_color-mix(in_srgb,var(--text)_14%,transparent)] motion-safe:animate-quest-modal-pop motion-reduce:animate-none"
+          className="relative isolate w-full overflow-hidden rounded-[2px] border border-[var(--border-ui-strong)] bg-[var(--card)] shadow-[0_2px_8px_-2px_color-mix(in_srgb,var(--text)_14%,transparent)] motion-safe:animate-quest-modal-pop motion-reduce:animate-none"
           role="dialog"
           aria-modal="true"
           aria-labelledby="xp-celebration-title"
@@ -200,7 +200,7 @@ export function QuestXpCelebration({
         {/* Confettis */}
         {!reducedMotion && particles.length > 0 ? (
           <div
-            className="pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-3xl motion-reduce:hidden"
+            className="pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-[2px] motion-reduce:hidden"
             aria-hidden
           >
             {particles.map((p) => (
@@ -238,7 +238,7 @@ export function QuestXpCelebration({
 
           {levelInfo.leveledUp ? (
             <div
-              className="relative mt-4 flex flex-col items-center justify-center rounded-2xl border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_8%,var(--card))] px-4 py-4 text-center motion-safe:animate-level-banner-in motion-reduce:animate-none [animation-delay:90ms] [animation-fill-mode:backwards]"
+              className="relative mt-4 flex flex-col items-center justify-center rounded-[2px] border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_8%,var(--card))] px-4 py-4 text-center motion-safe:animate-level-banner-in motion-reduce:animate-none [animation-delay:90ms] [animation-fill-mode:backwards]"
             >
               <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[var(--gold)]">Niveau atteint</span>
               <p className="mt-1 font-display text-4xl font-bold tabular-nums tracking-tight text-[var(--text)] motion-safe:animate-xp-number-pop motion-reduce:animate-none [animation-delay:180ms] [animation-fill-mode:backwards]">
@@ -267,7 +267,7 @@ export function QuestXpCelebration({
           </p>
 
           {coinGain && coinGain.gained > 0 ? (
-            <div className="mt-4 flex items-center justify-center gap-3 rounded-2xl border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_9%,var(--card))] px-4 py-3 motion-safe:animate-xp-number-pop motion-reduce:animate-none [animation-delay:150ms] [animation-fill-mode:backwards]">
+            <div className="mt-4 flex items-center justify-center gap-3 rounded-[2px] border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_9%,var(--card))] px-4 py-3 motion-safe:animate-xp-number-pop motion-reduce:animate-none [animation-delay:150ms] [animation-fill-mode:backwards]">
               <Icon name="Coins" size="lg" className="text-[var(--gold)]" />
               <div className="text-left">
                 <p className="font-display text-2xl font-bold tabular-nums leading-none text-[var(--text)]">
@@ -282,7 +282,7 @@ export function QuestXpCelebration({
           ) : null}
 
           <div
-            className="mt-5 rounded-2xl border border-[var(--border-cyan)] bg-[var(--surface)] px-4 py-3 motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:160ms] [animation-fill-mode:backwards]"
+            className="mt-5 rounded-[2px] border border-[var(--border-cyan)] bg-[var(--surface)] px-4 py-3 motion-safe:animate-modal-fade motion-reduce:opacity-100 [animation-delay:160ms] [animation-fill-mode:backwards]"
             role="group"
             aria-label="Progression dans le niveau actuel"
           >
@@ -316,7 +316,7 @@ export function QuestXpCelebration({
               {breakdownRows.map((row) => (
                 <li
                   key={row.key}
-                  className="rounded-xl border border-[var(--border-ui)] bg-[var(--surface)] px-3 py-2.5"
+                  className="rounded-[2px] border border-[var(--border-ui)] bg-[var(--surface)] px-3 py-2.5"
                 >
                   <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
                     <span className="text-[11px] font-bold uppercase tracking-wide text-[var(--violet)]">{row.label}</span>
@@ -339,7 +339,7 @@ export function QuestXpCelebration({
                 {coinRows.map((row) => (
                   <li
                     key={row.key}
-                    className="rounded-xl border border-[var(--border-ui)] bg-[var(--surface)] px-3 py-2.5"
+                    className="rounded-[2px] border border-[var(--border-ui)] bg-[var(--surface)] px-3 py-2.5"
                   >
                     <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
                       <span className="text-[11px] font-bold uppercase tracking-wide text-[var(--gold)]">{row.label}</span>
@@ -359,9 +359,9 @@ export function QuestXpCelebration({
                 {paidLevels.map((r) => (
                   <li
                     key={r.level}
-                    className="flex items-center gap-3 rounded-xl border border-[var(--border-ui)] bg-[var(--surface)] px-3 py-2.5"
+                    className="flex items-center gap-3 rounded-[2px] border border-[var(--border-ui)] bg-[var(--surface)] px-3 py-2.5"
                   >
-                    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_10%,transparent)] font-display text-sm font-bold tabular-nums text-[var(--gold)]">
+                    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[2px] border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_10%,transparent)] font-display text-sm font-bold tabular-nums text-[var(--gold)]">
                       {r.level}
                     </span>
                     <p className="text-xs font-semibold text-[var(--text)]">{levelRewardSummaryFr(r)}</p>
@@ -378,7 +378,7 @@ export function QuestXpCelebration({
                 {newTitles.map((def) => (
                   <li
                     key={def.id}
-                    className="flex items-center gap-3 rounded-xl border border-[var(--border-cyan)] bg-[var(--surface)] px-3 py-2.5"
+                    className="flex items-center gap-3 rounded-[2px] border border-[var(--border-cyan)] bg-[var(--surface)] px-3 py-2.5"
                   >
                     <Icon name={def.icon} size="md" className="text-[var(--violet)]" />
                     <div className="min-w-0">
@@ -400,14 +400,14 @@ export function QuestXpCelebration({
                 {badgesUnlocked.map((b, i) => (
                   <li
                     key={b.id}
-                    className="flex gap-3 rounded-2xl border border-[var(--border-ui-strong)] bg-[var(--surface)] p-3 motion-safe:animate-badge-reveal motion-reduce:opacity-100"
+                    className="flex gap-3 rounded-[2px] border border-[var(--border-ui-strong)] bg-[var(--surface)] p-3 motion-safe:animate-badge-reveal motion-reduce:opacity-100"
                     style={{
                       animationDelay: reducedMotion ? '0ms' : `${280 + i * 95}ms`,
                       animationFillMode: 'backwards',
                     }}
                   >
                     <span
-                      className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_10%,transparent)] motion-safe:animate-xp-number-pop motion-reduce:animate-none"
+                      className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-[2px] border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_10%,transparent)] motion-safe:animate-xp-number-pop motion-reduce:animate-none"
                       style={{ animationDelay: reducedMotion ? '0ms' : `${300 + i * 95}ms` }}
                       aria-hidden
                     >

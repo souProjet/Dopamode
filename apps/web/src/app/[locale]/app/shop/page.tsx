@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import { Navbar } from '@/components/Navbar';
+import { AppMasthead } from '@/components/PageMasthead';
 import {
   SHOP_CATALOG,
   COIN_PACKS,
@@ -96,7 +97,7 @@ function RechargeModalContent({
             return (
               <li
                 key={pack.sku}
-                className={`flex flex-col rounded-2xl border-2 p-4 ${
+                className={`flex flex-col rounded-[2px] border-2 p-4 ${
                   isBest
                     ? 'border-[var(--green)] bg-[color-mix(in_srgb,var(--green)_7%,var(--card))]'
                     : 'border-[color:var(--border-ui)] bg-[var(--card)]'
@@ -443,14 +444,14 @@ function ShopPageInner() {
     return (
       <li
         key={item.sku}
-        className={`shop-elevated-surface rounded-2xl border p-5 flex flex-col gap-3 transition-shadow duration-300 ${
+        className={`shop-elevated-surface rounded-[2px] border p-5 flex flex-col gap-3 transition-shadow duration-300 ${
           m?.badge === 'best_value'
             ? 'border-[var(--green)]'
             : 'border-[color:var(--border-ui)]'
         } ${bump ? 'motion-safe:animate-shop-card-bump motion-reduce:ring-2 motion-reduce:ring-[var(--gold)]' : ''}`}
       >
         <div className="flex items-start justify-between gap-2 flex-wrap">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--surface)] ring-1 ring-[color:var(--border-ui)]" aria-hidden>
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[2px] bg-[var(--surface)] ring-1 ring-[color:var(--border-ui)]" aria-hidden>
             <Icon name={item.icon} size="lg" className="text-[var(--orange)]" />
           </span>
           <div className="flex flex-wrap items-center gap-1 justify-end">
@@ -501,7 +502,7 @@ function ShopPageInner() {
             item.kind === 'quest_pack' && item.grants.questPackIds?.[0] ? (
               <Link
                 href={`/app/parcours/${item.grants.questPackIds[0]}?from=shop`}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--violet)] px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[var(--card)] transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--violet)] px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[var(--card)] transition-opacity hover:opacity-90"
               >
                 <Icon name="Compass" size="xs" aria-hidden />
                 {locale === 'en' ? 'View journey' : 'Voir le parcours'}
@@ -533,23 +534,21 @@ function ShopPageInner() {
   return (
     <div className="min-h-screen bg-adventure">
       <Navbar />
-      <main id="main-content" tabIndex={-1} className="relative z-10 max-w-4xl mx-auto px-3 sm:px-5 pt-24 pb-24 outline-none">
-
-        <Link
-          href="/app"
-          className="inline-flex items-center gap-2 text-sm font-bold text-[var(--link-on-bg)] hover:underline mb-6"
-        >
-          {t('back')}
-        </Link>
-
-        <h1 className="font-display font-bold text-3xl text-[var(--text)] mb-6">{t('title')}</h1>
-
+      <AppMasthead
+        back={
+          <Link href="/app" className="text-[var(--link-on-bg)] transition-colors hover:text-[var(--text)]">
+            {t('back')}
+          </Link>
+        }
+        title={t('title')}
+      />
+      <main id="main-content" tabIndex={-1} className="relative z-10 max-w-4xl mx-auto px-3 sm:px-5 pt-10 pb-24 outline-none">
         {/* Messages flash */}
         {flash ? (
           <div
             role={flash.kind === 'error' ? 'alert' : 'status'}
             key={flash.message}
-            className={`mb-6 rounded-2xl px-4 py-3 text-sm font-semibold text-[var(--text)] motion-safe:animate-fade-up motion-reduce:animate-none ${
+            className={`mb-6 rounded-[2px] px-4 py-3 text-sm font-semibold text-[var(--text)] motion-safe:animate-fade-up motion-reduce:animate-none ${
               flash.kind === 'success' ? 'shop-flash-success' : flash.kind === 'error' ? 'shop-flash-error' : 'shop-flash-info'
             }`}
           >
@@ -558,7 +557,7 @@ function ShopPageInner() {
         ) : null}
 
         {error && (
-          <p className="shop-flash-error rounded-2xl px-4 py-3 text-sm font-semibold text-[var(--text)]">
+          <p className="shop-flash-error rounded-[2px] px-4 py-3 text-sm font-semibold text-[var(--text)]">
             {error}
           </p>
         )}
@@ -620,7 +619,7 @@ function ShopPageInner() {
               >
                 <div className="flex flex-wrap items-center justify-between gap-4 sm:gap-6">
                   <div className="min-w-0 flex items-center gap-4">
-                    <span className="hidden sm:flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[color-mix(in_srgb,var(--gold)_12%,transparent)] ring-1 ring-[var(--gold)]" aria-hidden>
+                    <span className="hidden sm:flex h-14 w-14 shrink-0 items-center justify-center rounded-[2px] bg-[color-mix(in_srgb,var(--gold)_12%,transparent)] ring-1 ring-[var(--gold)]" aria-hidden>
                       <Icon name="Coins" size="xl" className="text-[var(--gold)]" />
                     </span>
                     <div>
@@ -652,7 +651,7 @@ function ShopPageInner() {
                   </div>
                   <button
                     type="button"
-                    className="shrink-0 rounded-2xl bg-[var(--green)] px-5 py-3.5 text-sm font-bold uppercase tracking-wide text-[var(--card)] transition-opacity duration-200 hover:opacity-90 active:opacity-80 sm:min-w-[200px]"
+                    className="shrink-0 rounded-lg bg-[var(--green)] px-5 py-3.5 text-sm font-bold uppercase tracking-wide text-[var(--card)] transition-opacity duration-200 hover:opacity-90 active:opacity-80 sm:min-w-[200px]"
                     onClick={() => setRechargeOpen(true)}
                   >
                     {t('addQc')}
@@ -681,7 +680,7 @@ function ShopPageInner() {
                   >
                     <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
                       <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--surface)] ring-1 ring-[var(--gold)]" aria-hidden>
+                        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[2px] bg-[var(--surface)] ring-1 ring-[var(--gold)]" aria-hidden>
                           <Icon name={bundleItem.icon} size="xl" className="text-[var(--orange)]" />
                         </span>
                         <div className="min-w-0 flex-1">
@@ -880,11 +879,11 @@ function ShopPageInner() {
                 </Link>
               </div>
               {transactions.length === 0 ? (
-                <p className="text-sm font-semibold text-[var(--subtle)] rounded-2xl border border-dashed border-[color:var(--border-ui)] px-4 py-8 text-center">
+                <p className="text-sm font-semibold text-[var(--subtle)] rounded-[2px] border border-dashed border-[color:var(--border-ui)] px-4 py-8 text-center">
                   {t('noTx')}
                 </p>
               ) : (
-                <ul className="shop-elevated-surface rounded-2xl border border-[color:var(--border-ui)] divide-y divide-[color:var(--border-ui)] overflow-hidden">
+                <ul className="shop-elevated-surface rounded-[2px] border border-[color:var(--border-ui)] divide-y divide-[color:var(--border-ui)] overflow-hidden">
                   {transactions.map((tx) => (
                     <li key={tx.id} className="px-4 py-3 flex flex-wrap items-baseline justify-between gap-2 text-sm">
                       <div className="min-w-0 flex-1">

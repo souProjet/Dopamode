@@ -115,7 +115,7 @@ export function ProfileRefinementModal({
         <div className="flex flex-col flex-1 min-h-0 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
           <div className="flex items-start justify-between gap-3 mb-4">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--border-cyan)] bg-[color-mix(in_srgb,var(--violet)_8%,var(--card))]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[2px] border border-[var(--border-cyan)] bg-[color-mix(in_srgb,var(--violet)_8%,var(--card))]">
                 <Icon name="Sparkles" size="lg" className="text-[#0e7490]" />
               </div>
               <div className="min-w-0">
@@ -164,7 +164,7 @@ export function ProfileRefinementModal({
             {!isConsentStep && currentQuestion ? (
               <div
                 key={currentQuestion.id}
-                className="motion-safe:animate-modal-fade motion-reduce:animate-none rounded-2xl p-4 sm:p-5 border border-[var(--border-ui)] bg-[var(--card)] shadow-[inset_0_1px_0_rgba(255,255,255,.9)]"
+                className="motion-safe:animate-modal-fade motion-reduce:animate-none rounded-[2px] p-4 sm:p-5 border border-[var(--border-ui)] bg-[var(--card)] shadow-[inset_0_1px_0_rgba(255,255,255,.9)]"
               >
                 <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[var(--violet)] bg-[color-mix(in_srgb,var(--violet)_10%,transparent)] px-2 py-0.5 rounded-full border border-[var(--border-cyan)] mb-3">
                   Question {step + 1}
@@ -188,7 +188,7 @@ export function ProfileRefinementModal({
                         type="button"
                         onClick={() => pickOption(currentQuestion.id, opt.id, step)}
                         className={[
-                          'text-left text-sm px-4 py-3 rounded-xl border transition-all duration-200',
+                          'text-left text-sm px-4 py-3 rounded-lg border transition-all duration-200',
                           'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--violet)] focus-visible:ring-offset-2',
                           sel
                             ? 'border-[var(--border-cyan)] bg-[color-mix(in_srgb,var(--violet)_8%,var(--card))] text-[var(--text)]'
@@ -217,7 +217,7 @@ export function ProfileRefinementModal({
             ) : (
               <div
                 key="consent"
-                className="motion-safe:animate-modal-fade motion-reduce:animate-none rounded-2xl p-5 sm:p-6 border border-[var(--border-ui)] bg-[var(--card)]"
+                className="motion-safe:animate-modal-fade motion-reduce:animate-none rounded-[2px] p-5 sm:p-6 border border-[var(--border-ui)] bg-[var(--card)]"
               >
                 <div className="text-center mb-4">
                   <span className="inline-flex justify-center" aria-hidden>
@@ -230,7 +230,7 @@ export function ProfileRefinementModal({
                     Confirme que tu es d'accord pour qu'on utilise ces préférences pour tes quêtes.
                   </p>
                 </div>
-                <label className="flex items-start gap-3 p-4 rounded-2xl cursor-pointer border border-[var(--border-ui)] bg-white/55 backdrop-blur-sm">
+                <label className="flex items-start gap-3 p-4 rounded-[2px] cursor-pointer border border-[var(--border-ui)] bg-white/55 backdrop-blur-sm">
                   <input
                     type="checkbox"
                     checked={consent}

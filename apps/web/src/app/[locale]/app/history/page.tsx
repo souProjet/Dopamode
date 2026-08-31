@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import { Navbar } from '@/components/Navbar';
+import { AppMasthead } from '@/components/PageMasthead';
 import { Icon } from '@/components/Icons';
 import { HISTORY_PAGE_SIZE, questDisplayEmoji, type EscalationPhase } from '@questia/shared';
 
@@ -321,13 +322,12 @@ function HistoryPageInner() {
   return (
     <div className="min-h-screen bg-adventure">
       <Navbar />
-      <main id="main-content" tabIndex={-1} className="relative z-10 max-w-4xl mx-auto px-3 sm:px-5 pt-24 pb-20 outline-none">
-        <header className="mb-8">
-          <p className="text-xs font-bold uppercase tracking-widest text-[var(--orange)] mb-2">{t('eyebrow')}</p>
-          <h1 className="font-display font-bold text-3xl text-[var(--text)]">{t('title')}</h1>
-          <p className="mt-2 text-sm font-medium text-[var(--muted)] max-w-xl">{t('subtitle')}</p>
-        </header>
-
+      <AppMasthead
+        eyebrow={t('eyebrow')}
+        title={t('title')}
+        lead={t('subtitle')}
+      />
+      <main id="main-content" tabIndex={-1} className="relative z-10 max-w-4xl mx-auto px-3 sm:px-5 pt-10 pb-20 outline-none">
         <nav className="hist-tabs mb-8" aria-label={t('navAria')}>
           <Link
             href="/app/history?tab=quests"
@@ -348,7 +348,7 @@ function HistoryPageInner() {
         </nav>
 
         {loadError ? (
-          <div className="shop-flash-error rounded-2xl px-4 py-4 text-sm font-semibold text-[var(--text)]">
+          <div className="shop-flash-error rounded-[2px] px-4 py-4 text-sm font-semibold text-[var(--text)]">
             {loadError}
           </div>
         ) : null}

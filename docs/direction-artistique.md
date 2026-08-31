@@ -99,6 +99,10 @@ Trois règles la tiennent :
 
 **La carte ne s'arrête pas à l'accueil.** Toutes les pages publiques la reprennent en bandeau de titre (`MapBand`) : légales, `/aura`, `/generation-quetes`, 404, tunnel d'authentification, quête partagée. La règle est la même partout — la carte court bord à bord, le titre est un cartouche posé dessus, le corps redescend sur papier nu. Sans ça, chaque page secondaire redevenait un titre sur fond blanc, c'est-à-dire n'importe quel site.
 
+**Elle ne s'arrête pas non plus à la connexion.** L'espace connecté reprend le même sol (`AppMasthead`) : `/app/cap`, `/app/history`, `/app/profile`, `/app/shop`, `/app/parcours/[packId]`, et le squelette de chargement partagé. Une seule différence de mécanique : la navbar y est fixe, donc c'est le bandeau qui porte sa garde (`page-masthead--app`) et plus le `pt-24` de chaque page. Ce bandeau monte aussi en `z-index: 10`, sur le même plan que le `main` : sous `/app` le calque d'aura gagne en intensité une fois la personnalité chargée, et il laverait la carte s'il passait par-dessus.
+
+**L'accueil des quêtes n'a pas de cartouche.** Sa fiche du jour est déjà l'objet posé sur la carte ; un titre par-dessus ferait deux objets pour un seul écran. Ce qui coiffe l'écran est un **relevé** : jour et série en chasse fixe, bord à bord sur la carte, comme le `.hero-ledger` de l'accueil public. La bande n'est alors qu'un filet de registre (`page-masthead--ledger`), et elle est rendue même sans quête puisqu'elle porte la garde de navbar.
+
 Deux choses **ne se répètent pas**, sinon la signature s'use à la troisième page :
 
 - **Le relevé au clip-path** (`terrain-survey`) reste le geste d'ouverture de l'accueil. Ailleurs, la carte arrive déjà tracée : la règle est portée par `.hero-terrain .terrain-ink`, pas par `.terrain-ink`.
@@ -156,6 +160,20 @@ Les surfaces de contenu sont **opaques**, comme les `Card` du mobile :
 
 Le nom `.landing-glass-card` est conservé pour ne pas casser les usages ; le rendu n'est plus vitré.
 
+### Rayons : les surfaces sont coupées franc
+
+Une carte d'état-major n'a pas de coins arrondis. Deux valeurs, pas trois :
+
+| Objet | Rayon |
+|---|---|
+| Surface posée (fiche, panneau, encart, modale, onglets) | `2px` |
+| Contrôle (bouton, champ, select, onglet) | `0.5rem` / `rounded-lg` |
+| Objet réellement rond (pastille, jauge, avatar, tampon) | `rounded-full` |
+
+Les deux valeurs ne sont pas inventées : `2px` est celui des fiches de l'accueil (`.quest-slide`, `.voice-card`, `.quest-stack-ghost`), `0.5rem` celui du CTA du hero et des boutons du tunnel Clerk. Le contraste entre les deux est ce qui rend un bouton lisible **comme** bouton sur une surface franche : c'est le seul objet arrondi de la page.
+
+`.btn` porte donc `rounded-lg` et non `rounded-2xl`, ce qui vaut partout : landing, espace connecté, admin, onboarding.
+
 ### Verre natif (mobile)
 
 Même règle qu'au web : le verre habille le **chrome**, jamais le contenu. Les cartes restent en papier opaque.
@@ -202,7 +220,7 @@ Règles :
 
 | Classe | Style |
 |---|---|
-| `.btn` | Base : flex, bold, `rounded-2xl`, transitions |
+| `.btn` | Base : flex, bold, `rounded-lg`, transitions |
 | `.btn-primary` | Aplat `var(--violet)` (teal), bordure assombrie 1px, **sans ombre** |
 | `.btn-cta` | Aplat `var(--orange)`, bordure assombrie 1px, **sans ombre** |
 | `.btn-ghost` | Fond clair semi-transparent, bordure neutre |
@@ -294,7 +312,8 @@ Un bloc `@media (prefers-reduced-transparency: reduce)` neutralise les `backdrop
 | `apps/web/tailwind.config.ts` | Fonts, animations, keyframes |
 | `apps/web/src/app/layout.tsx` | Chargement IBM Plex Sans / Serif / Mono |
 | `apps/web/src/components/LandingTerrain.tsx` | La carte (quatre reliefs, courbes maîtresses / intercalaires) |
-| `apps/web/src/components/PageMasthead.tsx` | `MapBand` (la carte bord à bord) et le bandeau de titre des pages secondaires |
+| `apps/web/src/components/PageMasthead.tsx` | `MapBand` (la carte bord à bord), `PageMasthead` (pages publiques) et `AppMasthead` (espace connecté) |
+| `apps/web/src/components/AppRouteSkeleton.tsx` | Squelette des `loading.tsx` de `/app` : même bandeau, pour que le segment chargé ne fasse pas sauter la page |
 | `apps/web/src/components/LandingTopo.tsx` | Filigrane topographique (`feTurbulence` + `feDisplacementMap`) |
 | `apps/web/src/components/LandingTrail.tsx` | Tracé de l'itinéraire (route prévue + route parcourue) |
 | `apps/web/src/components/aura/AuraOrbsLayer.tsx` | Pilotage des variables `--aura-*` |

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Navbar } from '@/components/Navbar';
+import { AppMasthead } from '@/components/PageMasthead';
 import { Icon } from '@/components/Icons';
 import {
   BADGE_CATEGORY_LABEL_EN,
@@ -71,9 +72,7 @@ function SectionBlock({
 }) {
   return (
     <section className={`mb-8 ${className}`}>
-      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--muted)] mb-1">
-        {eyebrow}
-      </p>
+      <p className="carnet-eyebrow mb-1">{eyebrow}</p>
       {title && (
         <h2 className="font-display font-bold text-xl text-[var(--text)] mb-3">{title}</h2>
       )}
@@ -231,35 +230,38 @@ export default function ProfilePage() {
   }
 
   /* Classe partagée pour toutes les "cartes" de contenu */
-  const card = 'rounded-2xl border border-[color:var(--border-ui)] bg-[var(--card)] shadow-sm';
+  const card = 'rounded-[2px] border border-[color:var(--border-ui)] bg-[var(--card)] shadow-sm';
 
   /* Bouton toggle sélectionné / non sélectionné */
   const toggleBtn = (active: boolean) =>
-    `rounded-xl border px-3 py-2 text-sm font-bold transition-colors ${
+    `rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${
       active
         ? 'border-[color:var(--cyan)] bg-[color:color-mix(in_srgb,var(--cyan)_14%,var(--surface))] text-[var(--text)] ring-1 ring-[color:color-mix(in_srgb,var(--cyan)_32%,transparent)]'
         : 'border-[color:var(--border-ui)] bg-[var(--surface)] text-[var(--text)] hover:border-[color:color-mix(in_srgb,var(--cyan)_45%,var(--border-ui))]'
     }`;
 
   return (
-    <div className="min-h-screen bg-adventure overflow-x-hidden">
+    <div className="min-h-screen bg-adventure overflow-x-clip">
       <Navbar />
-      <main id="main-content" tabIndex={-1} className="relative z-10 max-w-2xl mx-auto px-3 sm:px-5 pt-24 pb-24 outline-none">
-
-        {/* Navigation haut */}
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-8">
-          <Link href="/app" className="inline-flex items-center gap-1.5 text-sm font-bold text-[var(--link-on-bg)] hover:underline">
-            <Icon name="Home" size="xs" aria-hidden />
-            {t('backToQuest')}
-          </Link>
-          <Link href="/app/shop" className="inline-flex items-center gap-1.5 text-sm font-bold text-[var(--orange)] hover:underline">
-            <Icon name="ShoppingCart" size="xs" aria-hidden />
-            {t('linkShop')}
-          </Link>
-        </div>
-
+      <AppMasthead
+        width="max-w-2xl"
+        back={
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <Link href="/app" className="inline-flex items-center gap-1.5 text-[var(--link-on-bg)] transition-colors hover:text-[var(--text)]">
+              <Icon name="Home" size="xs" aria-hidden />
+              {t('backToQuest')}
+            </Link>
+            <Link href="/app/shop" className="inline-flex items-center gap-1.5 text-[var(--orange)] transition-colors hover:text-[var(--text)]">
+              <Icon name="ShoppingCart" size="xs" aria-hidden />
+              {t('linkShop')}
+            </Link>
+          </div>
+        }
+        title={t('title')}
+      />
+      <main id="main-content" tabIndex={-1} className="relative z-10 max-w-2xl mx-auto px-3 sm:px-5 pt-10 pb-24 outline-none">
         {error && (
-          <p className="shop-flash-error rounded-2xl px-4 py-3 text-sm font-semibold text-[var(--text)] mb-6">
+          <p className="shop-flash-error rounded-[2px] px-4 py-3 text-sm font-semibold text-[var(--text)] mb-6">
             {error}
           </p>
         )}
@@ -319,7 +321,7 @@ export default function ProfilePage() {
                 <div className={`${card} p-5 sm:p-6`}>
                   <div className="grid grid-cols-3 gap-3">
                     {/* Quest Coins */}
-                    <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[color:var(--border-ui)] bg-[var(--surface)] p-3 text-center">
+                    <div className="flex flex-col items-center gap-1.5 rounded-[2px] border border-[color:var(--border-ui)] bg-[var(--surface)] p-3 text-center">
                       <Icon name="Coins" size="md" className="text-[var(--gold)]" aria-hidden />
                       <p className="font-display font-bold text-xl tabular-nums text-[var(--text)] leading-none">
                         {shop.coinBalance.toLocaleString(numLocale)}
@@ -328,7 +330,7 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Relances */}
-                    <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[color:var(--border-ui)] bg-[var(--surface)] p-3 text-center">
+                    <div className="flex flex-col items-center gap-1.5 rounded-[2px] border border-[color:var(--border-ui)] bg-[var(--surface)] p-3 text-center">
                       <Icon name="RefreshCw" size="md" className={shop.bonusRerollCredits > 0 ? 'text-[var(--orange)]' : 'text-[var(--subtle)]'} aria-hidden />
                       <p className={`font-display font-bold text-xl tabular-nums leading-none ${shop.bonusRerollCredits > 0 ? 'text-[var(--orange)]' : 'text-[var(--muted)]'}`}>
                         {shop.bonusRerollCredits}
@@ -337,7 +339,7 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Surcharges XP */}
-                    <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[color:var(--border-ui)] bg-[var(--surface)] p-3 text-center">
+                    <div className="flex flex-col items-center gap-1.5 rounded-[2px] border border-[color:var(--border-ui)] bg-[var(--surface)] p-3 text-center">
                       <Icon name="Zap" size="md" className={shop.xpBonusCharges > 0 ? 'text-[var(--green)]' : 'text-[var(--subtle)]'} aria-hidden />
                       <p className={`font-display font-bold text-xl tabular-nums leading-none ${shop.xpBonusCharges > 0 ? 'text-[var(--green)]' : 'text-[var(--muted)]'}`}>
                         {shop.xpBonusCharges}
@@ -365,7 +367,7 @@ export default function ProfilePage() {
                         {t('appearanceTheme')}
                       </label>
                       <select
-                        className="w-full rounded-xl border border-[color:var(--border-ui)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold text-[var(--text)] disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/40"
+                        className="w-full rounded-lg border border-[color:var(--border-ui)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold text-[var(--text)] disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/40"
                         value={shop.activeThemeId}
                         disabled={appearSaving === 'theme'}
                         onChange={(e) => void saveAppearance({ activeThemeId: e.target.value })}
@@ -383,7 +385,7 @@ export default function ProfilePage() {
                         {t('appearanceTitleEquip')}
                       </label>
                       <select
-                        className="w-full rounded-xl border border-[color:var(--border-ui)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold text-[var(--text)] disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/40"
+                        className="w-full rounded-lg border border-[color:var(--border-ui)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold text-[var(--text)] disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/40"
                         value={shop.equippedTitleId ?? ''}
                         disabled={appearSaving === 'title'}
                         onChange={(e) => {
@@ -418,7 +420,7 @@ export default function ProfilePage() {
                 {catalog.map((b) => (
                   <div
                     key={b.id}
-                    className={`rounded-2xl p-4 border-2 transition-all ${
+                    className={`rounded-[2px] p-4 border-2 transition-all ${
                       b.unlocked
                         ? 'app-profile-badge-unlocked'
                         : 'bg-[var(--surface)] border-[color:var(--border-ui)] opacity-70 grayscale-[0.6]'
@@ -426,7 +428,7 @@ export default function ProfilePage() {
                   >
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <span
-                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--card)] ring-1 ring-[color:color-mix(in_srgb,var(--text)_8%,transparent)] ${!b.unlocked ? 'opacity-50' : ''}`}
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[2px] bg-[var(--card)] ring-1 ring-[color:color-mix(in_srgb,var(--text)_8%,transparent)] ${!b.unlocked ? 'opacity-50' : ''}`}
                         aria-hidden
                       >
                         <Icon name={b.placeholderIcon} size="lg" className="text-[var(--orange)]" />
@@ -528,7 +530,7 @@ export default function ProfilePage() {
                       <select
                         value={prefsDurMin}
                         onChange={(e) => { const v = Number(e.target.value); setPrefsDurMin(v); if (v > prefsDurMax) setPrefsDurMax(v); }}
-                        className="w-full rounded-xl border border-[color:var(--border-ui)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/40"
+                        className="w-full rounded-lg border border-[color:var(--border-ui)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/40"
                       >
                         {minDurOptions.map((m) => <option key={m} value={m}>{m} min</option>)}
                       </select>
@@ -538,7 +540,7 @@ export default function ProfilePage() {
                       <select
                         value={prefsDurMax}
                         onChange={(e) => { const v = Number(e.target.value); setPrefsDurMax(v); if (v < prefsDurMin) setPrefsDurMin(v); }}
-                        className="w-full rounded-xl border border-[color:var(--border-ui)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/40"
+                        className="w-full rounded-lg border border-[color:var(--border-ui)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/40"
                       >
                         {maxDurOptions.map((m) => <option key={m} value={m}>{m} min</option>)}
                       </select>
@@ -552,7 +554,7 @@ export default function ProfilePage() {
                     type="button"
                     onClick={() => void handleSavePrefs()}
                     disabled={prefsSaving}
-                    className="inline-flex items-center gap-2 rounded-xl border border-[color:color-mix(in_srgb,var(--cyan)_45%,var(--border-ui))] bg-[color:color-mix(in_srgb,var(--cyan)_10%,var(--surface))] px-4 py-2.5 text-sm font-bold text-[var(--cyan)] hover:bg-[color:color-mix(in_srgb,var(--cyan)_16%,var(--surface))] disabled:opacity-50 transition-colors"
+                    className="inline-flex items-center gap-2 rounded-lg border border-[color:color-mix(in_srgb,var(--cyan)_45%,var(--border-ui))] bg-[color:color-mix(in_srgb,var(--cyan)_10%,var(--surface))] px-4 py-2.5 text-sm font-bold text-[var(--cyan)] hover:bg-[color:color-mix(in_srgb,var(--cyan)_16%,var(--surface))] disabled:opacity-50 transition-colors"
                   >
                     {prefsSaving ? t('prefsSaving') : t('prefsSave')}
                   </button>
@@ -585,7 +587,7 @@ export default function ProfilePage() {
                       <Link
                         key={l.href}
                         href={l.href}
-                        className="flex items-center gap-2 rounded-xl border border-[color:var(--border-ui)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold text-[var(--text)] hover:border-[color:color-mix(in_srgb,var(--cyan)_45%,var(--border-ui))] hover:bg-[color:color-mix(in_srgb,var(--cyan)_8%,var(--surface))] transition-colors"
+                        className="flex items-center gap-2 rounded-lg border border-[color:var(--border-ui)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold text-[var(--text)] hover:border-[color:color-mix(in_srgb,var(--cyan)_45%,var(--border-ui))] hover:bg-[color:color-mix(in_srgb,var(--cyan)_8%,var(--surface))] transition-colors"
                       >
                         <Icon name={l.icon} size="sm" className="text-[var(--muted)] shrink-0" aria-hidden />
                         {l.label}
@@ -602,7 +604,7 @@ export default function ProfilePage() {
                     type="button"
                     onClick={() => void handleExport()}
                     disabled={exporting}
-                    className="inline-flex items-center gap-2 rounded-xl border border-[color:color-mix(in_srgb,var(--cyan)_45%,var(--border-ui))] bg-[color:color-mix(in_srgb,var(--cyan)_10%,var(--surface))] px-4 py-2.5 text-sm font-bold text-[var(--cyan)] hover:bg-[color:color-mix(in_srgb,var(--cyan)_16%,var(--surface))] hover:border-[color:color-mix(in_srgb,var(--cyan)_55%,var(--border-ui))] transition-colors disabled:opacity-50"
+                    className="inline-flex items-center gap-2 rounded-lg border border-[color:color-mix(in_srgb,var(--cyan)_45%,var(--border-ui))] bg-[color:color-mix(in_srgb,var(--cyan)_10%,var(--surface))] px-4 py-2.5 text-sm font-bold text-[var(--cyan)] hover:bg-[color:color-mix(in_srgb,var(--cyan)_16%,var(--surface))] hover:border-[color:color-mix(in_srgb,var(--cyan)_55%,var(--border-ui))] transition-colors disabled:opacity-50"
                   >
                     <Icon name="Download" size="sm" className="shrink-0" aria-hidden />
                     {exporting ? t('exportPreparing') : t('exportCta')}
@@ -610,7 +612,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Suppression */}
-                <div className="p-5 sm:p-6 rounded-2xl border border-[color:color-mix(in_srgb,var(--red)_42%,var(--border-ui-strong))] bg-[color:color-mix(in_srgb,var(--red)_10%,var(--card))]">
+                <div className="p-5 sm:p-6 rounded-[2px] border border-[color:color-mix(in_srgb,var(--red)_42%,var(--border-ui-strong))] bg-[color:color-mix(in_srgb,var(--red)_10%,var(--card))]">
                   <div className="flex items-start gap-3 mb-3">
                     <Icon name="AlertTriangle" size="md" className="shrink-0 text-[var(--red)] mt-0.5" aria-hidden />
                     <div>
@@ -639,7 +641,7 @@ export default function ProfilePage() {
                     type="button"
                     onClick={() => void handleDeleteAccount()}
                     disabled={deleting || deleteConfirm !== t('deleteWord')}
-                    className="rounded-xl bg-[var(--red)] px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="rounded-lg bg-[var(--red)] px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {deleting ? t('deleteDeleting') : t('deleteCta')}
                   </button>

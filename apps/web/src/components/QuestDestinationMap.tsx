@@ -115,7 +115,7 @@ export default function QuestDestinationMap({
 
   if (!dest) {
     return (
-      <div className="rounded-2xl border border-[var(--border-cyan)] bg-[var(--card)] p-4">
+      <div className="rounded-[2px] border border-[var(--border-cyan)] bg-[var(--card)] p-4">
         <p className="flex items-start gap-2 text-sm font-semibold text-[var(--text)]">
           <Icon name="MapPin" size="sm" className="mt-0.5 shrink-0 text-[var(--violet)]" aria-hidden />
           <span>
@@ -145,7 +145,7 @@ export default function QuestDestinationMap({
 
   return (
     <div className="space-y-3 sm:space-y-4">
-      <div className="overflow-hidden rounded-2xl border border-[var(--border-cyan)] bg-[var(--card)]">
+      <div className="overflow-hidden rounded-[2px] border border-[var(--border-cyan)] bg-[var(--card)]">
         <div className={mapFrameClass}>
           <QuestDestinationMapLeaflet
             key={mapInstanceKey}
