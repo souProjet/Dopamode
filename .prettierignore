@@ -1,0 +1,22 @@
+# Sorties de build et rapports
+.next/
+.turbo/
+.expo/
+dist/
+coverage/
+playwright-report/
+test-results/
+blob-report/
+generated/
+ios/
+android/
+
+# Verrous et artefacts
+package-lock.json
+*.tsbuildinfo
+apps/web/public/_deploy-check.html
+
+# Les tokens de design sont alignés en colonnes à la main : c'est une aide à la
+# lecture d'une table de 4 thèmes, et Prettier ne sait pas l'exprimer. Il
+# écraserait aussi `[data-theme="…"]` en quotes simples. Fichier tenu à la main.
+apps/web/src/app/globals.css
