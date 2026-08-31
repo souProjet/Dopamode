@@ -46,13 +46,13 @@ export function Navbar() {
 
   const marketingMenu = useMemo((): { href: string; label: string }[] => {
     const examples = { href: '#hero-examples', label: t('navExamples') };
-    const how = { href: '#how', label: t('navHow') };
+    const how = { href: '#principe', label: t('navHow') };
     const download = {
       href: '#telecharger',
       label: storesReady ? t('navDownload') : t('navDownloadWeb'),
     };
     const tail = [
-      { href: '#testimonials', label: t('navTestimonials') },
+      { href: '#temoignages', label: t('navTestimonials') },
       { href: '#faq', label: t('navFaq') },
     ];
     // Web-only landing: examples are already beside the hero CTA on large screens — lead with "How it works".

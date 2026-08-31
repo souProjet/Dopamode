@@ -153,7 +153,7 @@
     },
     "hero": {
       "eyebrow": "Carnet de route",
-      "title": "Une quête par jour, dans la vraie vie.",
+      "title": "<line>Une quête par jour,</line><line><em>dans la vraie vie.</em></line>",
       "lead": "Chaque matin, une mission courte calibrée sur ton profil. Tu la fais, tu la coches, tu refermes le carnet. Pas de série à tenir, pas de culpabilité.",
       "ctaFree": "Commencer gratuitement",
       "ctaSecondary": "Voir comment ça marche",
@@ -162,6 +162,8 @@
       "continueBrowser": "Continuer dans le navigateur",
       "examplesAsideLabel": "Exemples de quêtes",
       "examplesCaption": "Trois quêtes tirées du carnet",
+      "stampTop": "Quête",
+      "stampBottom": "du jour",
       "examplePrev": "Quête précédente",
       "exampleNext": "Quête suivante",
       "exampleGoTo": "Aller à la quête {index} sur {total}",

@@ -151,7 +151,7 @@
     },
     "hero": {
       "eyebrow": "Field notes",
-      "title": "One quest a day, out in the real world.",
+      "title": "<line>One quest a day,</line><line><em>out in the real world.</em></line>",
       "lead": "Every morning, one short mission tuned to your profile. You do it, you tick it off, you close the notebook. No streak to keep, no guilt.",
       "ctaFree": "Start for free",
       "ctaSecondary": "See how it works",
@@ -160,6 +160,8 @@
       "continueBrowser": "Continue in your browser",
       "examplesAsideLabel": "Example quests",
       "examplesCaption": "Three quests from the notebook",
+      "stampTop": "Daily",
+      "stampBottom": "quest",
       "examplePrev": "Previous quest",
       "exampleNext": "Next quest",
       "exampleGoTo": "Go to quest {index} of {total}",

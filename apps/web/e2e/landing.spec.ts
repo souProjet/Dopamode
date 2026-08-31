@@ -7,7 +7,7 @@ test.describe('Landing (HTML SSR)', () => {
     const html = await res.text();
     expect(html).toMatch(/quêtes quotidiennes/i);
     expect(html).toContain('id="hero-heading"');
-    expect(html).toMatch(/Questions fréquentes/i);
+    expect(html).toContain('id="faq-heading"');
     expect(html).toContain('skip-link');
     expect(html).toContain('href="#main-content"');
   });

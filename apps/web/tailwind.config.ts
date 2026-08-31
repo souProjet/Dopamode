@@ -14,6 +14,8 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
         display: ['var(--font-space)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
+        /** Rôle « registre » : données, surtitres, tampons (IBM Plex Mono). */
+        mono: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -66,6 +68,8 @@ const config: Config = {
         'quest-loader-halo': 'questLoaderHalo 10s linear infinite',
         'quest-loader-bar': 'questLoaderBar 1.25s ease-in-out infinite alternate',
         'quest-loader-bounce': 'questLoaderBounce 1.05s ease-in-out infinite',
+        /** Landing — entrée de la carte de quête et pose du tampon. */
+        'stamp-press': 'stampPress 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both',
       },
       keyframes: {
         fadeIn: {
@@ -75,6 +79,11 @@ const config: Config = {
         onboardingStep: {
           '0%': { opacity: '0', transform: 'translateY(16px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        stampPress: {
+          '0%': { opacity: '0', transform: 'rotate(-22deg) scale(1.5)' },
+          '60%': { opacity: '0.88', transform: 'rotate(-8deg) scale(0.96)' },
+          '100%': { opacity: '0.88', transform: 'rotate(-9deg) scale(1)' },
         },
         fadeUp: {
           '0%': { opacity: '0', transform: 'translateY(18px)' },

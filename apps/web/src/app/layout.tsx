@@ -1,4 +1,4 @@
-import { IBM_Plex_Sans, IBM_Plex_Serif } from 'next/font/google';
+import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from 'next/font/google';
 import { headers } from 'next/headers';
 import './globals.css';
 
@@ -6,6 +6,19 @@ const plexSans = IBM_Plex_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-inter',
+  display: 'swap',
+  adjustFontFallback: false,
+});
+
+/**
+ * Rôle « registre » : surtitres, numéros de série, durées, tampons. La landing
+ * lit « carnet de mission » parce que les données sont composées en chasse fixe,
+ * pas en sans letterspacée. Même superfamille que le corps et les titres.
+ */
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-mono',
   display: 'swap',
   adjustFontFallback: false,
 });
@@ -28,7 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const h = await headers();
   const lang = h.get('x-questia-locale') ?? 'fr';
   return (
-    <html lang={lang} className={`${plexSans.variable} ${plexSerif.variable}`} suppressHydrationWarning>
+    <html lang={lang} className={`${plexSans.variable} ${plexSerif.variable} ${plexMono.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased">{children}</body>
     </html>
   );
