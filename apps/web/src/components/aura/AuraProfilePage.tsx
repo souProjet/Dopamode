@@ -1,6 +1,6 @@
 'use client';
 
-import { Link } from '@/i18n/navigation';
+import { MastheadBackLink, PageMasthead } from '@/components/PageMasthead';
 import { AuraProfileSimulator } from './AuraProfileSimulator';
 
 // ─── Textes ───────────────────────────────────────────────────────────────────
@@ -82,74 +82,71 @@ export function AuraProfilePage({ locale }: { locale: Locale }) {
   const t = COPY[locale];
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-5 pb-16 pt-10 sm:px-8 sm:pb-24 sm:pt-14">
-      <div className="max-w-[46rem]">
-        <p className="carnet-eyebrow">
-          <Link href="/" className="transition-colors hover:text-[var(--text)]">
-            {t.backHome}
-          </Link>
-        </p>
-        <h1 className="mt-4 font-display text-[clamp(1.9rem,3.4vw+1rem,2.9rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-balance text-[var(--text)]">
-          {t.title}
-        </h1>
-        <p className="mt-5 text-base leading-[1.65] text-[var(--muted)] sm:text-lg">{t.lead}</p>
-      </div>
+    <>
+      <PageMasthead
+        eyebrow={<MastheadBackLink label={t.backHome} />}
+        title={t.title}
+        lead={t.lead}
+      />
 
-      {/* ── Simulateur : la planche de démonstration, pas une carte flottante ── */}
-      <section aria-labelledby="simulator-section-title" className="carnet-rule mt-14 pt-8 sm:mt-16">
-        <p className="carnet-eyebrow">01</p>
-        <h2
-          id="simulator-section-title"
-          className="mt-3 font-display text-[clamp(1.4rem,1.6vw+1rem,1.9rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-[var(--text)]"
-        >
-          {t.simulatorTitle}
-        </h2>
-        <p className="mt-3 max-w-[46rem] text-[15px] leading-[1.65] text-[var(--muted)] sm:text-base">
-          {t.simulatorLead}
-        </p>
-        <div className="mt-8 border border-[var(--border-ui-strong)] bg-[var(--card)] p-5 sm:p-8">
-          <AuraProfileSimulator />
-        </div>
-      </section>
-
-      {/* ── Comment ça fonctionne : numérotation en marge, filets, aucun tuilage coloré ── */}
-      <section aria-labelledby="how-title" className="carnet-rule mt-14 pt-8 sm:mt-16">
-        <p className="carnet-eyebrow">02</p>
-        <h2
-          id="how-title"
-          className="mt-3 font-display text-[clamp(1.4rem,1.6vw+1rem,1.9rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-[var(--text)]"
-        >
-          {t.howTitle}
-        </h2>
-        {/* Le dernier item occupe les deux colonnes : sinon la cellule vide lit comme un aplat gris. */}
-        <ol className="mt-8 grid gap-px bg-[var(--border-ui)] sm:grid-cols-2">
-          {t.steps.map((step, i) => (
-            <li key={i} className="bg-[var(--bg)] sm:last:col-span-2">
-              <div className="flex h-full gap-5 px-1 py-7 sm:px-6">
-                <span className="carnet-numeral shrink-0 text-[2.1rem] sm:text-[2.5rem]" aria-hidden>
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <div className="min-w-0">
-                  <h3 className="font-display text-lg font-semibold leading-snug tracking-[-0.01em] text-[var(--text)]">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2.5 text-[15px] leading-[1.65] text-[var(--muted)]">{step.body}</p>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {/* ── Note finale ── */}
-      <section className="carnet-rule mt-14 pt-8 sm:mt-16">
-        <div className="max-w-[46rem] border-l-2 border-[var(--violet)] pl-5 sm:pl-6">
-          <h2 className="font-display text-lg font-semibold tracking-[-0.01em] text-[var(--text)]">
-            {t.noteTitle}
+      <div className="mx-auto w-full max-w-6xl px-5 pb-16 pt-14 sm:px-8 sm:pb-24 sm:pt-16">
+        {/* ── Simulateur : la planche de démonstration, pas une carte flottante.
+            Pas de filet en tête : le bandeau en pose déjà un juste au-dessus. ── */}
+        <section aria-labelledby="simulator-section-title">
+          <p className="carnet-eyebrow">01</p>
+          <h2
+            id="simulator-section-title"
+            className="mt-3 font-display text-[clamp(1.4rem,1.6vw+1rem,1.9rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-[var(--text)]"
+          >
+            {t.simulatorTitle}
           </h2>
-          <p className="mt-3 text-[15px] leading-[1.7] text-[var(--muted)] sm:text-base">{t.noteBody}</p>
-        </div>
-      </section>
-    </div>
+          <p className="mt-3 max-w-[46rem] text-[15px] leading-[1.65] text-[var(--muted)] sm:text-base">
+            {t.simulatorLead}
+          </p>
+          <div className="mt-8 border border-[var(--border-ui-strong)] bg-[var(--card)] p-5 sm:p-8">
+            <AuraProfileSimulator />
+          </div>
+        </section>
+
+        {/* ── Comment ça fonctionne : numérotation en marge, filets, aucun tuilage coloré ── */}
+        <section aria-labelledby="how-title" className="carnet-rule mt-14 pt-8 sm:mt-16">
+          <p className="carnet-eyebrow">02</p>
+          <h2
+            id="how-title"
+            className="mt-3 font-display text-[clamp(1.4rem,1.6vw+1rem,1.9rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-[var(--text)]"
+          >
+            {t.howTitle}
+          </h2>
+          {/* Le dernier item occupe les deux colonnes : sinon la cellule vide lit comme un aplat gris. */}
+          <ol className="mt-8 grid gap-px bg-[var(--border-ui)] sm:grid-cols-2">
+            {t.steps.map((step, i) => (
+              <li key={i} className="bg-[var(--bg)] sm:last:col-span-2">
+                <div className="flex h-full gap-5 px-1 py-7 sm:px-6">
+                  <span className="carnet-numeral shrink-0 text-[2.1rem] sm:text-[2.5rem]" aria-hidden>
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="font-display text-lg font-semibold leading-snug tracking-[-0.01em] text-[var(--text)]">
+                      {step.title}
+                    </h3>
+                    <p className="mt-2.5 text-[15px] leading-[1.65] text-[var(--muted)]">{step.body}</p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* ── Note finale ── */}
+        <section className="carnet-rule mt-14 pt-8 sm:mt-16">
+          <div className="max-w-[46rem] border-l-2 border-[var(--violet)] pl-5 sm:pl-6">
+            <h2 className="font-display text-lg font-semibold tracking-[-0.01em] text-[var(--text)]">
+              {t.noteTitle}
+            </h2>
+            <p className="mt-3 text-[15px] leading-[1.7] text-[var(--muted)] sm:text-base">{t.noteBody}</p>
+          </div>
+        </section>
+      </div>
+    </>
   );
 }

@@ -1,11 +1,13 @@
 import Link from 'next/link';
 import { headers } from 'next/headers';
+import { PageMasthead } from '@/components/PageMasthead';
 
 /**
  * 404 racine — rendu hors du segment `[locale]` : pas de next-intl ici (la locale
  * n'est pas résolue pour une URL qui ne correspond à aucune route). On lit donc
  * l'en-tête posé par le middleware et on garde deux jeux de chaînes en dur.
- * Même registre « carnet de route » que le reste du site public.
+ * Même sol que le reste du site public : la carte porte le titre. C'est la page
+ * où la métaphore tombe juste — le lien demandé ne figure pas au relevé.
  */
 const COPY = {
   fr: {
@@ -40,14 +42,11 @@ export default async function NotFound() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <main className="mx-auto w-full max-w-[38rem] flex-1 px-5 py-16 sm:px-8 sm:py-24">
-        <p className="carnet-eyebrow">{t.eyebrow}</p>
-        <h1 className="mt-4 text-balance font-display text-[clamp(1.9rem,3.4vw+1rem,2.6rem)] font-semibold leading-[1.08] tracking-[-0.025em] text-[var(--text)]">
-          {t.title}
-        </h1>
-        <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted)]">{t.lead}</p>
-
-        <ul className="carnet-rule mt-10">
+      <PageMasthead eyebrow={t.eyebrow} title={t.title} lead={t.lead} />
+      <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-12 sm:px-8 sm:py-16">
+        {/* Les issues, numérotées comme les étapes d'un relevé. Pas de filet en
+            tête : le bandeau en pose déjà un juste au-dessus. */}
+        <ul className="max-w-[38rem]">
           {t.links.map((link, i) => (
             <li key={link.href}>
               <Link
@@ -66,7 +65,10 @@ export default async function NotFound() {
           ))}
         </ul>
 
-        <Link href={t.links[0].href} className="btn btn-cta mt-10 inline-flex rounded-lg px-7 py-3.5 text-[15px]">
+        <Link
+          href={t.links[0].href}
+          className="btn btn-cta mt-10 inline-flex rounded-lg px-7 py-3.5 text-[15px]"
+        >
           {t.cta}
         </Link>
       </main>

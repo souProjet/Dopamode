@@ -83,10 +83,11 @@ Trois calques donnent au papier son grain et son relief. Ils sont décoratifs : 
 | `.paper-tooth` | Même grain, à l'échelle d'une surface (fiche de quête, fiche de retour, bande CTA). Ses enfants passent en `position: relative; z-index: 1` pour rester au-dessus |
 | `.topo-mark` / `.topo-mark--invert` | Filigrane topographique (`LandingTopo`), encre à 8% / papier à 11% sur fond inversé |
 | `.hero-terrain` | La carte du hero (`LandingTerrain`), à 17% : un fond **lisible**, pas un filigrane |
+| `.page-masthead` | La même carte, à 15%, en bandeau de titre sur toutes les autres pages publiques (`MapBand`). Bord à bord, fermée par un filet en bas |
 
 `LandingTopo` prend un `id` **unique par instance** : le `<filter>` `feDisplacementMap` vit dans l'espace de noms du document, deux instances qui partagent un id se marchent dessus.
 
-### La carte du hero
+### La carte, sol du site public
 
 Le fond du hero est une **carte topographique**, pas un aplat de papier : les courbes de niveau se lisent vraiment, bord à bord, et tout le reste est un objet posé dessus. Le produit envoie dehors, donc le sol de la page est le dehors.
 
@@ -95,6 +96,13 @@ Trois règles la tiennent :
 - **Une hiérarchie de trait.** Une courbe maîtresse (2 px, pleine opacité) toutes les cinq intercalaires (1 px, 55%), comme sur une carte au 1:25000. C'est ce qui distingue une carte d'un motif : le fond a sa propre lecture.
 - **Un champ plus haut que la section** (`viewBox` 1440×1300, `slice`). Un grand écran en garde la bande centrale, un écran étroit la colonne centrale : les quatre reliefs sont placés pour que ces **deux découpes** tombent chacune sur du dessin. Déplacer un relief sans vérifier le cadrage mobile vide le fond de moitié.
 - **Deux objets, pas plus.** Le cartouche et la fiche épinglée. Tout ce qu'on ajouterait sur la carte la ramènerait au statut de décor.
+
+**La carte ne s'arrête pas à l'accueil.** Toutes les pages publiques la reprennent en bandeau de titre (`MapBand`) : légales, `/aura`, `/generation-quetes`, 404, tunnel d'authentification, quête partagée. La règle est la même partout — la carte court bord à bord, le titre est un cartouche posé dessus, le corps redescend sur papier nu. Sans ça, chaque page secondaire redevenait un titre sur fond blanc, c'est-à-dire n'importe quel site.
+
+Deux choses **ne se répètent pas**, sinon la signature s'use à la troisième page :
+
+- **Le relevé au clip-path** (`terrain-survey`) reste le geste d'ouverture de l'accueil. Ailleurs, la carte arrive déjà tracée : la règle est portée par `.hero-terrain .terrain-ink`, pas par `.terrain-ink`.
+- **Le corps de page reste du papier nu.** On ne lit pas un texte long, et surtout pas un champ de saisie, par-dessus des courbes de niveau. La carte porte le titre, rien d'autre.
 
 ### Les trois sols de la landing
 
@@ -118,7 +126,7 @@ Chaque accent a un seul métier — c'est ce qui empêche la page de virer au pa
 | `.trail-steps` | La grille des trois étapes. Porte la `view-timeline: --trail` et force `grid-auto-rows: 1fr` |
 | `.trail-line` / `.trail-planned` / `.trail-walked` | Le tracé (`LandingTrail`) : pointillé = route prévue, trait plein = route parcourue, dessiné au scroll |
 | `.trail-station` | Le repère d'étape : perle ambre détourée dans le fond de la bande, plus une amorce (`::after`) vers le texte |
-| `.hero-cartouche` | Le papier du hero, découpé dans la carte comme la légende d'une feuille d'état-major : fond opaque, bord franc, double filet (`::after`, `inset: 5px`), ombre portée. C'est lui qui rend le titre lisible sur un fond dessiné |
+| `.cartouche` | Le papier posé sur la carte, découpé comme la légende d'une feuille d'état-major : fond opaque, bord franc, double filet (`::after`, `inset: 5px`), ombre portée. C'est lui qui rend le titre lisible sur un fond dessiné. **Le même objet partout où la carte sert de sol** — hero comme bandeaux des pages secondaires |
 | `.hero-eyebrow` / `.ink-line` | L'encre du hero : le surtitre s'essuie derrière son amorce brique, chaque ligne de titre monte derrière son propre cache (`overflow: clip`) |
 | `.hero-band` / `.hero-ledger` | Le relevé en bandeau **bord à bord**, la carte visible dessous : une ligne de registre (chiffre en chasse fixe + libellé, filets verticaux), et non trois grands chiffres. Le filet du haut appartient au bandeau, pas au relevé, sinon il s'arrête à la gouttière |
 | `.quest-pin` | La punaise : ce qui rattache la fiche à la carte plutôt qu'à la page. Le paquet pivote autour d'elle (`transform-origin: 26px 0`) |
@@ -222,7 +230,7 @@ Aplats et non dégradés : c'est ce qui distingue le plus la DA d'un rendu gén�
 
 **Le sol, puis deux voies parallèles, puis une ponctuation.** Cinq blocs qui montent avec le même décalage, c'est le geste par défaut : le hero tient deux matières opposées sur un même relevé.
 
-- **Le terrain d'abord.** La carte se trace de gauche à droite (`terrain-survey`, 1500 ms), comme sortie d'un traceur ; le cartouche se pose dessus (`paper-lay`, 40 ms) avant qu'on y écrive. L'ordre porte le sens : on lève la feuille, on pose le papier, on écrit.
+- **Le terrain d'abord.** La carte se trace de gauche à droite (`terrain-survey`, 1500 ms), comme sortie d'un traceur ; le cartouche se pose dessus (`paper-lay`, 40 ms) avant qu'on y écrive. L'ordre porte le sens : on lève la feuille, on pose le papier, on écrit. Le tracé est réservé à l'accueil (`.hero-terrain .terrain-ink`) ; sur les autres pages seul le `paper-lay` du cartouche subsiste.
 - **À gauche, de l'encre.** Rien ne flotte vers le haut. L'amorce brique se trace (`rule-draw`), le surtitre s'essuie de gauche à droite (`ink-wipe`), les deux lignes du titre montent derrière leur cache (`ink-rise`, 250 et 370 ms), l'accroche et le CTA se posent en opacité seule (`ink-settle`), et le relevé s'écrit en dernier — son filet d'abord, puis ses trois mesures.
 - **À droite, du papier.** Le paquet arrive (`deal-card`, 300 ms), puis les fiches du dessous ne sortent de dessous la première qu'une fois celle-ci posée (660 et 740 ms).
 - **La punaise** pique en dernier (620 ms) : c'est elle qui referme la séquence côté carte.
@@ -285,7 +293,8 @@ Un bloc `@media (prefers-reduced-transparency: reduce)` neutralise les `backdrop
 | `packages/ui/src/theme.ts` | Espacements, rayons, typo mobile |
 | `apps/web/tailwind.config.ts` | Fonts, animations, keyframes |
 | `apps/web/src/app/layout.tsx` | Chargement IBM Plex Sans / Serif / Mono |
-| `apps/web/src/components/LandingTerrain.tsx` | La carte du hero (quatre reliefs, courbes maîtresses / intercalaires) |
+| `apps/web/src/components/LandingTerrain.tsx` | La carte (quatre reliefs, courbes maîtresses / intercalaires) |
+| `apps/web/src/components/PageMasthead.tsx` | `MapBand` (la carte bord à bord) et le bandeau de titre des pages secondaires |
 | `apps/web/src/components/LandingTopo.tsx` | Filigrane topographique (`feTurbulence` + `feDisplacementMap`) |
 | `apps/web/src/components/LandingTrail.tsx` | Tracé de l'itinéraire (route prévue + route parcourue) |
 | `apps/web/src/components/aura/AuraOrbsLayer.tsx` | Pilotage des variables `--aura-*` |

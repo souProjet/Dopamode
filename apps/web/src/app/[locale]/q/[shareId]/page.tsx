@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { questDisplayEmoji } from '@questia/shared';
 import { Icon } from '@/components/Icons';
 import { QuestiaLogo } from '@/components/QuestiaLogo';
+import { MapBand } from '@/components/PageMasthead';
 import { prisma } from '@/lib/db';
 import { alternatesForLocalePath, canonicalUrlFor } from '@/lib/seo/alternates';
 
@@ -83,31 +84,38 @@ export default async function SharedQuestPage({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <main className="mx-auto w-full max-w-[38rem] flex-1 px-5 py-10 sm:px-8 sm:py-14">
-        {/* En-tête : marque à gauche, nature de la page à droite */}
-        <div className="flex items-center justify-between gap-4">
-          <Link
-            href={isEn ? '/en' : '/'}
-            className="inline-flex items-center gap-2.5 transition-opacity duration-200 hover:opacity-70"
-          >
-            <QuestiaLogo variant="footer" />
-            <span className="font-display text-lg font-semibold tracking-[-0.02em] text-[var(--text)]">Questia</span>
-          </Link>
-          <span className="carnet-eyebrow">{isEn ? 'Shared quest' : 'Quête partagée'}</span>
+      {/* Une quête accomplie est un point relevé sur la carte : elle est posée
+          sur le même sol que le reste du site, marque et titre en cartouche. */}
+      <MapBand className="max-w-[38rem]">
+        <div className="cartouche">
+          <div className="flex items-center justify-between gap-4">
+            <Link
+              href={isEn ? '/en' : '/'}
+              className="inline-flex items-center gap-2.5 transition-opacity duration-200 hover:opacity-70"
+            >
+              <QuestiaLogo variant="footer" />
+              <span className="font-display text-lg font-semibold tracking-[-0.02em] text-[var(--text)]">
+                Questia
+              </span>
+            </Link>
+            <span className="carnet-eyebrow">{isEn ? 'Shared quest' : 'Quête partagée'}</span>
+          </div>
+
+          <header className="carnet-rule mt-9 pt-8">
+            <h1 className="flex flex-wrap items-baseline gap-3 text-balance font-display text-[clamp(1.9rem,3.4vw+1rem,2.6rem)] font-semibold leading-[1.08] tracking-[-0.025em] text-[var(--text)]">
+              <Icon name={questIcon} size="lg" className="shrink-0 self-center text-[var(--muted)]" aria-hidden />
+              <span>{log.generatedTitle}</span>
+            </h1>
+            <p className="carnet-meta mt-4 text-sm">
+              {new Date(`${log.questDate}T12:00:00.000Z`).toLocaleDateString(isEn ? 'en-GB' : 'fr-FR')}{' '}
+              · {log.generatedDuration}
+            </p>
+          </header>
         </div>
+      </MapBand>
 
-        <header className="carnet-rule mt-10 pt-9">
-          <h1 className="flex flex-wrap items-baseline gap-3 text-balance font-display text-[clamp(1.9rem,3.4vw+1rem,2.6rem)] font-semibold leading-[1.08] tracking-[-0.025em] text-[var(--text)]">
-            <Icon name={questIcon} size="lg" className="shrink-0 self-center text-[var(--muted)]" aria-hidden />
-            <span>{log.generatedTitle}</span>
-          </h1>
-          <p className="carnet-meta mt-4 text-sm">
-            {new Date(`${log.questDate}T12:00:00.000Z`).toLocaleDateString(isEn ? 'en-GB' : 'fr-FR')} ·{' '}
-            {log.generatedDuration}
-          </p>
-        </header>
-
-        <section className="carnet-rule mt-11 pt-7">
+      <main className="mx-auto w-full max-w-[38rem] flex-1 px-5 pb-12 pt-10 sm:px-8 sm:pb-16 sm:pt-12">
+        <section>
           <p className="carnet-eyebrow">Mission</p>
           <p className="mt-4 font-display text-[1.35rem] font-semibold leading-snug tracking-[-0.015em] text-[var(--text)]">
             {log.generatedMission}

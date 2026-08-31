@@ -155,7 +155,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <LandingTerrain className="hero-terrain pointer-events-none absolute inset-0 h-full w-full" />
             <div className={`${SHELL} relative`}>
               <div className="grid items-start gap-11 lg:grid-cols-12 lg:gap-14">
-                <div className="hero-cartouche lg:col-span-7">
+                <div className="cartouche lg:col-span-7">
                   <p className="hero-eyebrow carnet-eyebrow">
                     <span className="hero-eyebrow__text">{t('hero.eyebrow')}</span>
                   </p>
