@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import {
   QuestGenerationExplainer,
   type QuestFlowStep,
 } from '@/components/generation-quest/QuestGenerationExplainer';
+import { pickMessages } from '@/i18n/clientMessages';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -28,5 +30,11 @@ export default async function GenerationQuetesPage({ params }: Props) {
   const raw = t.raw('stepsList');
   const stepsList: QuestFlowStep[] = Array.isArray(raw) ? (raw as QuestFlowStep[]) : [];
 
-  return <QuestGenerationExplainer stepsList={stepsList} />;
+  return (
+    <NextIntlClientProvider
+      messages={pickMessages(await getMessages(), ['QuestGenerationPage'])}
+    >
+      <QuestGenerationExplainer stepsList={stepsList} />
+    </NextIntlClientProvider>
+  );
 }

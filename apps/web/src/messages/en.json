@@ -711,5 +711,8 @@
     "learnMore": "Learn more",
     "refuse": "Decline",
     "accept": "Accept"
+  },
+  "AppLoading": {
+    "label": "Loading…"
   }
 }

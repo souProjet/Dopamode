@@ -713,5 +713,8 @@
     "learnMore": "En savoir plus",
     "refuse": "Refuser",
     "accept": "Accepter"
+  },
+  "AppLoading": {
+    "label": "Chargement…"
   }
 }

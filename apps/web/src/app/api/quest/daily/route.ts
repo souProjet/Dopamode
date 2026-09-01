@@ -15,7 +15,6 @@ import {
   dailyRerollsForLevel,
   nextStreakOnCompletion,
   streakForNewDay,
-  getBadgeCatalogForUi,
   XP_SHOP_BONUS_PER_CHARGE,
   REFINEMENT_SCHEMA_VERSION,
   refinementAnswersToCategoryBias,
@@ -24,7 +23,6 @@ import {
   questPackBiasFromOwned,
   parseCapState,
   capCategoryBias,
-  capProgressView,
   isMilestoneQuestNext,
   milestoneQuestIdealDuration,
   advanceCapOnCompletion,
@@ -39,11 +37,8 @@ import {
   isValidSociabilityLevel,
   clampQuestDurationBounds,
   parseHeavyQuestPreference,
-  effectiveOwnedThemes,
-  isTitleEquippable,
 } from '@questia/shared';
 import type {
-  AppLocale,
   EscalationPhase,
   ExplorerAxis,
   PersonalityVector,
@@ -51,7 +46,6 @@ import type {
   QuestLog,
   QuestModel,
   QuestParameters,
-  QuestRatingValue,
   RiskAxis,
   ScoringQuestLog,
   SociabilityLevel,
@@ -70,13 +64,18 @@ import {
   getDefaultFallbackArchetypeId,
 } from '@/lib/quest-taxonomy/cache';
 import { findArchetypeById } from '@/lib/quest-taxonomy/map-prisma';
+import {
+  capPayload,
+  isPlaceholderDestinationLabel,
+  loadDailyQuestState,
+  mapPrismaQuestRating,
+  progressionPayload,
+  sanitizeDestinationLabelForStorage,
+  shopClientPayload,
+  toQuestResponse,
+} from '@/lib/quest/dailyQuest';
 
 export const dynamic = 'force-dynamic';
-
-function mapPrismaQuestRating(r: string | null | undefined): QuestRatingValue | null {
-  if (r === 'upvote' || r === 'downvote') return r;
-  return null;
-}
 
 /** Fenêtre d'historique injectée au moteur (sélection + résumé pour le LLM). */
 const HISTORY_WINDOW_LOGS = 28;
@@ -132,23 +131,6 @@ function buildTaxonomyMap(taxonomy: QuestModel[]): Map<number, QuestModel> {
 
 // ── Helpers génération ───────────────────────────────────────────────────────
 
-/** Libellés génériques renvoyés par le modèle ou des prompts — à ignorer au profit du géocodage. */
-function isPlaceholderDestinationLabel(s: string): boolean {
-  const t = s.trim().toLowerCase();
-  if (t.length < 2) return true;
-  if (t === 'lieu de la quête' || t === 'nom court du lieu' || t === 'lieu') return true;
-  if (/^nom (court )?du lieu$/i.test(t)) return true;
-  if (/^lieu (public|de la quête|suggéré)$/i.test(t)) return true;
-  return false;
-}
-
-function sanitizeDestinationLabelForStorage(s: string | null | undefined): string | null {
-  if (s == null) return null;
-  const t = s.trim();
-  if (!t || /^null$/i.test(t) || /^undefined$/i.test(t)) return null;
-  return t;
-}
-
 /** Mission qui évoque un déplacement large : recherche géo moins contrainte. */
 function inferWideDestinationSearch(mission: string): boolean {
   const m = mission.toLowerCase();
@@ -157,50 +139,6 @@ function inferWideDestinationSearch(mission: string): boolean {
       m,
     ) || /\b(road trip|week-end|weekend)\b/i.test(m)
   );
-}
-
-// ── Helpers réponse ──────────────────────────────────────────────────────────
-
-function shopClientPayload(profile: {
-  rerollsRemaining: number;
-  bonusRerollCredits: number;
-  activeThemeId: string;
-  ownedThemes: unknown;
-  coinBalance?: number | null;
-  ownedTitleIds?: unknown;
-  equippedTitleId?: string | null;
-  xpBonusCharges?: number | null;
-  ownedQuestPackIds?: unknown;
-}) {
-  const ownedTitles = parseStringArray(profile.ownedTitleIds);
-  let equipped = profile.equippedTitleId ?? null;
-  if (equipped && !isTitleEquippable(equipped, ownedTitles)) equipped = null;
-  return {
-    coinBalance: profile.coinBalance ?? 0,
-    rerollsRemaining: profile.rerollsRemaining,
-    bonusRerollCredits: profile.bonusRerollCredits ?? 0,
-    activeThemeId: profile.activeThemeId ?? 'default',
-    ownedThemes: effectiveOwnedThemes(parseStringArray(profile.ownedThemes)),
-    ownedTitleIds: ownedTitles,
-    equippedTitleId: equipped,
-    xpBonusCharges: profile.xpBonusCharges ?? 0,
-    ownedQuestPackIds: parseStringArray(profile.ownedQuestPackIds),
-  };
-}
-
-/** Cap en cours, tel qu'affiché par le client (null si aucun). */
-function capPayload(profile: { capState?: unknown }, locale: AppLocale) {
-  return { cap: capProgressView(parseCapState(profile.capState), locale) };
-}
-
-function progressionPayload(profile: { totalXp: number; badgesEarned: unknown }, locale: AppLocale) {
-  const safe = Math.max(0, Math.floor(profile.totalXp ?? 0));
-  return {
-    totalXp: safe,
-    ...levelFromTotalXp(safe),
-    badges: serializeBadges(profile.badgesEarned, locale),
-    badgeCatalog: getBadgeCatalogForUi(profile.badgesEarned, locale),
-  };
 }
 
 // ── Route GET ────────────────────────────────────────────────────────────────
@@ -221,84 +159,34 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const profile = await prisma.profile.findUnique({ where: { clerkId: userId } });
-  if (!profile) {
+  /**
+   * Lecture partagée avec le rendu serveur de `/app` : même requêtage, même charge utile,
+   * une seule définition de ce qu'est « la quête du jour ».
+   */
+  const state = await loadDailyQuestState(userId, questLocale, requestedQuestDate);
+
+  if (state.kind === 'profile_missing') {
     return NextResponse.json(
-      { error: 'Profil introuvable. Complète l\'onboarding.' },
+      { error: 'Profil introuvable. Complète l\'onboarding.', code: 'profile_missing' },
       { status: 404 },
     );
   }
 
-  const completedQuestCount = await prisma.questLog.count({
-    where: { profileId: profile.id, status: 'completed' },
-  });
-  const refinementSurvey = getRefinementSurveyPayload(
-    {
-      currentDay: profile.currentDay,
-      refinementSchemaVersion: profile.refinementSchemaVersion ?? 0,
-      refinementSkippedAt: profile.refinementSkippedAt ?? null,
-    },
-    completedQuestCount,
-  );
-
-  const today = getQuestCalendarDateNow();
-  const cachedTax = await getQuestTaxonomy();
-
-  // ── Quête historique (deeplink / partage) ──────────────────────────────────
-  if (requestedQuestDate && requestedQuestDate !== today) {
-    const historical = await prisma.questLog.findUnique({
-      where: { profileId_questDate: { profileId: profile.id, questDate: requestedQuestDate } },
-    });
-    if (!historical) {
-      return NextResponse.json({ error: 'Aucune quête pour cette date.' }, { status: 404 });
-    }
-    const context =
-      historical.weatherDescription != null
-        ? {
-            weatherIcon: '',
-            weatherDescription: historical.weatherDescription,
-            temp: Math.round(historical.weatherTemp ?? 18),
-            city: historical.locationCity ?? '',
-          }
-        : undefined;
-    return NextResponse.json({
-      ...(await toQuestResponse(historical, profile, cachedTax)),
-      fromCache: true,
-      day: profile.currentDay,
-      streak: profile.streakCount,
-      phase: profile.currentPhase,
-      deferredSocialUntil: profile.deferredSocialUntil ?? null,
-      ...shopClientPayload(profile),
-      ...capPayload(profile, questLocale),
-      progression: progressionPayload(profile, questLocale),
-      refinement: refinementSurvey,
-      ...(context ? { context } : {}),
-    });
+  /** Date passée sans log : rien à générer rétroactivement. */
+  if (state.kind === 'quest_date_not_found') {
+    return NextResponse.json(
+      { error: 'Aucune quête pour cette date.', code: 'quest_date_not_found' },
+      { status: 404 },
+    );
   }
 
-  // ── Cache : quête déjà générée aujourd'hui ─────────────────────────────────
-  const existing = await prisma.questLog.findUnique({
-    where: { profileId_questDate: { profileId: profile.id, questDate: today } },
-  });
+  // ── Quête déjà en base : cache du jour, ou quête historique (deeplink / partage) ──
+  if (state.kind === 'cached') return NextResponse.json(state.quest);
 
-  if (existing) {
-    return NextResponse.json({
-      ...(await toQuestResponse(existing, profile, cachedTax)),
-      fromCache: true,
-      day: profile.currentDay,
-      streak: profile.streakCount,
-      phase: profile.currentPhase,
-      deferredSocialUntil: profile.deferredSocialUntil ?? null,
-      ...shopClientPayload(profile),
-      ...capPayload(profile, questLocale),
-      progression: progressionPayload(profile, questLocale),
-      refinement: refinementSurvey,
-    });
-  }
+  const { profile, taxonomy, completedQuestCount, today } = state;
 
   // ── Génération nouvelle quête ──────────────────────────────────────────────
-  const context = await getQuestContext(lat, lon);
-  const taxonomy = cachedTax;
+  /** Contrôlé avant la météo : inutile de payer un appel HTTP pour finir en 503. */
   if (taxonomy.length === 0) {
     return NextResponse.json(
       { error: 'Aucun archétype publié en base. Exécute npm run db:seed-archetypes (apps/web).' },
@@ -307,22 +195,29 @@ export async function GET(request: NextRequest) {
   }
 
   const taxMap = buildTaxonomyMap(taxonomy);
-  const fallbackDefault = await getDefaultFallbackArchetypeId();
 
-  // Historique récent : pour le moteur (fenêtre courte) et pour le brief LLM (5 logs détaillés)
-  const recentLogRows = await prisma.questLog.findMany({
-    where: { profileId: profile.id },
-    orderBy: { assignedAt: 'desc' },
-    take: HISTORY_WINDOW_LOGS,
-    select: {
-      archetypeId: true,
-      status: true,
-      questDate: true,
-      generatedTitle: true,
-      generatedMission: true,
-      rating: true,
-    },
-  });
+  /**
+   * Météo (HTTP externe), archétype de repli et historique récent : aucune dépendance
+   * entre eux, donc lancés ensemble plutôt qu'en série.
+   * Historique récent : pour le moteur (fenêtre courte) et pour le brief LLM (5 logs détaillés).
+   */
+  const [context, fallbackDefault, recentLogRows] = await Promise.all([
+    getQuestContext(lat, lon),
+    getDefaultFallbackArchetypeId(),
+    prisma.questLog.findMany({
+      where: { profileId: profile.id },
+      orderBy: { assignedAt: 'desc' },
+      take: HISTORY_WINDOW_LOGS,
+      select: {
+        archetypeId: true,
+        status: true,
+        questDate: true,
+        generatedTitle: true,
+        generatedMission: true,
+        rating: true,
+      },
+    }),
+  ]);
 
   const declaredPersonality = profile.declaredPersonality as unknown as PersonalityVector;
   const exhibitedPersonality = computeExhibitedPersonality(
@@ -650,7 +545,11 @@ export async function POST(request: NextRequest) {
   };
 
   const profile = await prisma.profile.findUnique({ where: { clerkId: userId } });
-  if (!profile) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 });
+  if (!profile)
+    return NextResponse.json(
+      { error: 'Profil introuvable', code: 'profile_missing' },
+      { status: 404 },
+    );
 
   const today = body.questDate ?? getQuestCalendarDateNow();
   const postTaxonomy = await getQuestTaxonomy();
@@ -1143,74 +1042,3 @@ export async function POST(request: NextRequest) {
   });
 }
 
-// ── Helper response shape ────────────────────────────────────────────────────
-
-async function toQuestResponse(
-  log: {
-    id: string;
-    questDate: string;
-    archetypeId: number;
-    generatedEmoji: string;
-    generatedTitle: string;
-    generatedMission: string;
-    generatedHook: string;
-    generatedDuration: string;
-    generatedSafetyNote: string | null;
-    isOutdoor: boolean;
-    destinationLabel: string | null;
-    destinationLat: number | null;
-    destinationLon: number | null;
-    locationCity: string | null;
-    weatherDescription: string | null;
-    weatherTemp: number | null;
-    status: string;
-    wasRerolled?: boolean;
-    wasFallback?: boolean;
-    xpAwarded?: number | null;
-    rating?: string | null;
-  },
-  profile?: { deferredSocialUntil?: string | null } | null,
-  cachedTaxonomy?: QuestModel[],
-) {
-  const taxonomy = cachedTaxonomy ?? (await getQuestTaxonomy());
-  const archetype = findArchetypeById(taxonomy, log.archetypeId);
-  const hasCoords =
-    log.destinationLat != null &&
-    log.destinationLon != null &&
-    Number.isFinite(log.destinationLat) &&
-    Number.isFinite(log.destinationLon);
-  const storedLabel = sanitizeDestinationLabelForStorage(log.destinationLabel);
-  const destination =
-    log.isOutdoor && hasCoords
-      ? {
-          label: storedLabel ?? 'Lieu sur la carte',
-          lat: log.destinationLat,
-          lon: log.destinationLon,
-        }
-      : null;
-  return {
-    id: log.id,
-    questDate: log.questDate,
-    archetypeId: log.archetypeId,
-    archetypeName: archetype?.title ?? '',
-    archetypeCategory: archetype?.category ?? '',
-    emoji: log.generatedEmoji,
-    title: log.generatedTitle,
-    mission: log.generatedMission,
-    hook: log.generatedHook,
-    duration: log.generatedDuration,
-    safetyNote: log.generatedSafetyNote,
-    isOutdoor: log.isOutdoor,
-    destination,
-    city: log.locationCity,
-    weather: log.weatherDescription,
-    weatherTemp: log.weatherTemp,
-    status: log.status,
-    rating: mapPrismaQuestRating(log.rating),
-    wasRerolled: log.wasRerolled ?? false,
-    wasFallback: log.wasFallback ?? false,
-    xpAwarded: log.xpAwarded ?? null,
-    questPace: archetype?.questPace ?? 'instant',
-    deferredSocialUntil: profile?.deferredSocialUntil ?? null,
-  };
-}

@@ -8,6 +8,7 @@ import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server
 import { hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
+import { BASE_CLIENT_MESSAGES, pickMessages } from '@/i18n/clientMessages';
 import { facebookAppId, siteUrl, storeAvailability } from '@/config/marketing';
 import { alternatesForLocalePath, canonicalUrlFor, stripLocalePrefix } from '@/lib/seo/alternates';
 import { CookieNotice } from '@/components/CookieNotice';
@@ -130,7 +131,8 @@ export default async function LocaleLayout({
 
   return (
     <ClerkProvider localization={clerkLocale} afterSignOutUrl={afterSignOutUrl} {...clerkPaths}>
-      <NextIntlClientProvider messages={messages}>
+      {/* Layout partagé par toutes les routes : uniquement le socle, chaque segment complète. */}
+      <NextIntlClientProvider messages={pickMessages(messages, BASE_CLIENT_MESSAGES)}>
         <QuestiaPostHogProvider>
           <HtmlLang />
           <SkipLink />
